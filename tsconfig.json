@@ -1,0 +1,11 @@
+{
+  "files": ["src/js/FormValidator.ts"],
+  "compilerOptions": {
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "emitDeclarationOnly": true,
+    "declaration": true,
+    "declarationMap": true,
+    "outFile": "./dist/js/FormValidator.js"
+  }
+}
