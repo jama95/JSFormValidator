@@ -1,3 +1,4 @@
+import { options } from "./config";
 import { Options, Lang, Validator, Suggestion } from "./types";
 import { triggerMessageCallback } from "./utils";
 
@@ -16,11 +17,10 @@ export function TextAreaLengthRestriction(
   container.classList.add("fv-textAreaLength");
   let remaining: number;
   const characterCount = function () {
-    const count = TextArea.value.length;
-    if (count > max) {
-      const scrollPos = TextArea.scrollTop;
+    let count = TextArea.value.length;
+    if (count >= max) {
+      count = max;
       TextArea.value = TextArea.value.substring(0, max);
-      TextArea.scrollTop = scrollPos;
     }
     remaining = max - count;
     if (remaining < 0) remaining = 0;
@@ -40,12 +40,15 @@ export function TextAreaLengthRestriction(
   };
   const position = function () {
     TextArea.dispatchEvent(new Event("input"));
-    container.style.left = `${
+    let left =
       TextArea.getBoundingClientRect().width -
       container.getBoundingClientRect().width -
-      5
+      20;
+    left = left < 8 ? 8 : left;
+    container.style.marginLeft = `${left}px`;
+    container.style.marginTop = `-${
+      container.getBoundingClientRect().height / 2
     }px`;
-    container.style.top = `${TextArea.getBoundingClientRect().top + 2}px`;
   };
   TextArea.before(container);
   TextArea.addEventListener("input", characterCount);
@@ -64,42 +67,35 @@ export function inputSuggestion(
   settings?: Suggestion
 ) {
   let conf: Suggestion = {
-    maxHeight: "150px",
-    containerClass: "fv-suggestion_container",
-    optionClass: "fv-suggestion_option",
+    maxHeight: options.suggestionConfig.maxHeight,
+    containerClass: options.suggestionConfig.containerClass,
+    optionClass: options.suggestionConfig.optionClass,
   };
   conf = { ...conf, ...settings };
   let datalist: HTMLDataListElement = document.createElement("datalist");
-  datalist.classList.add(".fv-suggestions");
+  datalist.classList.add("fv-suggestions");
   datalist.classList.add(conf.containerClass);
   datalist.style.maxHeight = conf.maxHeight;
   datalist.style.display = "none";
   datalist.setAttribute("target", `#${input.id}`);
   input.setAttribute("autocomplete", "off");
   input.setAttribute("list", "");
-  const BLRadius = input.style.borderBottomLeftRadius,
-    BRRadius = input.style.borderBottomRightRadius;
   const fillDatalist = function (words: string[]) {
     while (datalist.firstChild) datalist.removeChild(datalist.firstChild);
     for (let word of words) {
       const option = document.createElement("option");
       option.value = word;
+      option.innerText = word;
       option.classList.add(conf.optionClass);
       option.onclick = function () {
-        input.style.borderBottomLeftRadius = BLRadius;
-        input.style.borderBottomRightRadius = BRRadius;
         datalist.style.display = "none";
         input.value = option.value;
       };
       datalist.appendChild(option);
     }
     if (datalist.options.length > 0) {
-      input.style.borderBottomLeftRadius = "0px";
-      input.style.borderBottomRightRadius = "0px";
       datalist.style.display = "block";
     } else {
-      input.style.borderBottomLeftRadius = BLRadius;
-      input.style.borderBottomRightRadius = BRRadius;
       datalist.style.display = "none";
     }
   };
@@ -109,8 +105,6 @@ export function inputSuggestion(
       `datalist.fv-suggestions[target="#${input.id}"] option:hover`
     );
     if (no) return;
-    input.style.borderBottomLeftRadius = BLRadius;
-    input.style.borderBottomRightRadius = BRRadius;
     datalist.style.display = "none";
   });
   // Shows all options when double-clicked
@@ -119,11 +113,12 @@ export function inputSuggestion(
   });
   // Shows matched options when input
   input.addEventListener("input", function () {
+    datalist.style.display = "none";
+    if (input.value.trim().length == 0) return;
     setTimeout(() => {
-      datalist.style.display = "none";
-      const regexp = new RegExp(input.value.trim(), "i");
+      const regexp = new RegExp(input.value, "i");
       const match = words.filter((word) => regexp.test(word));
-      fillDatalist(match);
+      if (match.length > 0) fillDatalist(match);
     }, 100);
   });
   // Choose an option with the keyboard
@@ -132,7 +127,7 @@ export function inputSuggestion(
     if (datalist.options) {
       if (e.key == "ArrowUp") currentFocus--;
       if (e.key == "ArrowDown") currentFocus++;
-      if (currentFocus > -1 || currentFocus <= datalist.options.length) {
+      if (currentFocus > -1 && currentFocus <= datalist.options.length) {
         addActive(datalist.options);
         if (e.key == "Enter") {
           e.preventDefault();
@@ -365,12 +360,12 @@ function setTopMessage(
   invalidView.replace("{topMessageClass}", options.topMessagesClass);
   if (valid_invalid) {
     validView.replace("{title}", language.validTitle);
-    validView.replace("{iv-MessageClass}", options.validMessagesClass);
+    validView.replace("{valid_invalid}", options.validMessagesClass);
     message = getValidMessage(field, validator, options);
     options.validMessages[fieldName] = message;
   } else {
     invalidView.replace("{title}", language.invalidTitle);
-    invalidView.replace("{iv-MessageClass}", options.invalidMessagesClass);
+    invalidView.replace("{valid_invalid}", options.invalidMessagesClass);
     message = getInvalidMessage(field, validator, options, language);
     options.invalidMessages[fieldName] = message;
   }
