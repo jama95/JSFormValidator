@@ -5,38 +5,38 @@ export type Options = {
   [key: string]: any;
   /** List of fields names that will not be validated @default []*/
   ignoredFieldsNames: string[];
-  /** Valid inline message class @default 'validMessage' */
+  /** Valid inline message class @default 'valid-feedback' */
   validMessageClass: string;
-  /** Invalid inline message class @default 'invalidMessage' */
+  /** Invalid inline message class @default 'invalid-feedback' */
   invalidMessageClass: string;
-  /** Valid field class @default 'valid' */
+  /** Valid field class @default 'is-valid' */
   validClass: string;
-  /** Invalid field class @default 'invalid' */
+  /** Invalid field class @default 'is-invalid' */
   invalidClass: string;
-  /** Valid class for parent's field @default 'isValid' */
+  /** Valid class for parent's field @default 'Valid' */
   validParentClass: string;
-  /** Invalid class for parent's field @default 'isInvalid' */
+  /** Invalid class for parent's field @default 'Invalid' */
   invalidParentClass: string;
-  /** Inline message class @default 'inlineMessageClass' */
+  /** Inline message class @default 'fv-msg' */
   inlineMessageClass: string;
-  /** Top message class @default 'topMessagesClass' */
+  /** Top message class @default 'alert' */
   topMessagesClass: string;
-  /** Valid class for the top container messages @default 'validMessagesClass' */
+  /** Valid class for the top container messages @default 'alert-success' */
   validMessagesClass: string;
-  /** Invalid class for the top container messages @default 'invalidMessagesClass' */
+  /** Invalid class for the top container messages @default 'alert-danger' */
   invalidMessagesClass: string;
   /** Valid message position (Available positions: inline & top) @default 'inline' */
   validMessagesPosition: string;
   /** Invalid message position (Available positions: inline & top) @default 'inline' */
   invalidMessagesPosition: string;
-  /** Top messages HTML template (values with {} are mandatory) @default '<div class="{topMessagesClass} {iv-MessageClass}"><strong>{title}</strong><ul>{fields&messagesList}</ul></div>' */
+  /** Top messages HTML template (values with {} are mandatory) @default '<div class="{topMessagesClass} {iv-MessageClass}"><h4>{title}</h4><ul>{fields&messagesList}</ul></div>' */
   topMessagesTemplate: string;
   /** Scrolls the page up to the top messages position on submit event @default false */
   scrollToTopOnInvalid: boolean;
   /** Adds a valid class on all fields even if they are not validated @default false */
   addValidClassOnAll: boolean;
-  /** Validates hidden type inputs @default false */
-  validateHiddenInputs: boolean;
+  /** Validates hidden type fields @default false */
+  validateHiddenFields: boolean;
   /** Function triggered when valid messages are shown @default undefined */
   validMessageCallback: MessageCallback | undefined;
   /** Function triggered when invalid messages are shown @default undefined */
@@ -45,7 +45,7 @@ export type Options = {
   dateFormat: string;
   /** List of forms selectors (comma separated) @default 'form' */
   form: string;
-  /** Parent selector for all form fields @default '' */
+  /** Parent selector for all form fields @default 'fv-group' */
   parentField: string;
   /** Data attribute of the field to list modifiers @default 'data-modifyList' */
   fieldModifyAttribute: string;
@@ -103,10 +103,18 @@ export type Configuration = {
 export type Lang = {
   /** Signature symbol */
   [key: string]: string;
+  /** Language and region code (for more information see "BCP 47 standard language tags") */
+  locale: string;
+  /** Currency code (for more information se "ISO 4217 standard") */
+  currencyCode: string;
+  /** Decimal sign */
+  decimal: string;
   /** Valid top messages title */
   validTitle: string;
   /** Invalid top messages title */
   invalidTitle: string;
+  /** Value not confirmed */
+  notConfirmed: string;
   /** Required field message */
   required: string;
   /** Invalid time message */
@@ -115,50 +123,38 @@ export type Lang = {
   invalidEmail: string;
   /** Invalid telephone number message */
   invalidTelephone: string;
-  /** Invalid  security answer message */
-  invalidSecurityAnswer: string;
   /** Invalid date message */
   invalidDate: string;
-  /** Invalid length value message */
-  invalidLength: string;
-  /** Too long value length message */
-  lengthTooLongStart: string;
-  /** Too short value length message */
-  lengthTooShortStart: string;
-  /** Input value not confirmed */
-  notConfirmed: string;
   /** Invalid domain message */
   invalidDomain: string;
   /** Invalid url message */
   invalidUrl: string;
-  /** Invalid custom value message */
-  invalidCustomVal: string;
-  /** Additional message */
-  andSpaces: string;
   /** Invalid number type message */
   invalidNumber: string;
-  /**Invalid password strength message */
-  invalidStrength: string;
+  /** Invalid length value message */
+  invalidLength: string;
+  /** Too long value length message */
+  lengthTooLong: string;
+  /** Too short value length message */
+  lengthTooShort: string;
+  /** Invalid custom value message */
+  invalidCustomVal: string;
   /** Invalid count of selected options message */
   invalidNumberOfSelectedOptions: string;
   /** Invalid alphanumeric value message */
   invalidAlphaNumeric: string;
   /** Invalid alphanumeric extra value message */
   invalidAlphaNumericExtra: string;
-  /** Invalid file size message */
-  invalidFileSize: string;
-  /** Invalid file type message */
-  invalidFileType: string;
   /** Invalid checked values message */
   groupCheckedRangeStart: string;
   /** Invalid checked values message */
   groupCheckedTooFewStart: string;
   /** Invalid checked values message */
   groupCheckedTooManyStart: string;
-  /** Invalid credit card number message*/
-  invalidCreditCard: string;
-  /** Invalid credit card cvv number message */
-  invalidCVV: string;
+  /** Invalid file size message */
+  invalidFileSize: string;
+  /** Invalid file type message */
+  invalidFileType: string;
   /** Invalid image dimensions message */
   invalidImageDim: string;
   /** Invalid image height message */
@@ -167,28 +163,38 @@ export type Lang = {
   imageTooWide: string;
   /** Invalid image size message */
   imageTooSmall: string;
-  /** Minimum abbreviation  */
-  min: string;
-  /** Maximum abbreviation */
-  max: string;
   /** Invalid image ratio message */
   imageRatioNotAccepted: string;
-  /** Password tittle message */
-  passwordComplexityStart: string;
-  /** Password require message */
+  /** Invalid credit card number message*/
+  invalidCreditCard: string;
+  /** Invalid credit card cvv number message */
+  invalidCVV: string;
+  /** Invalid  security answer message */
+  invalidSecurityAnswer: string;
+  /** Insecure password message */
+  invalidStrength: string;
+  /** Title for secure password conditions */
+  passwordComplexityTitle: string;
+  /** Password requires upper case letters */
   passwordComplexityUppercaseInfo: string;
-  /** Password require message */
+  /** Password requires lower case letters */
   passwordComplexityLowercaseInfo: string;
-  /** Password require message */
+  /** Password requires special characters */
   passwordComplexitySpecialCharsInfo: string;
-  /** Password require message */
+  /** Password requires numbers */
   passwordComplexityNumericCharsInfo: string;
-  /** Language and region code (for more information see "BCP 47 standard language tags") */
-  locale: string;
-  /** Currency code (for more information se "ISO 4217 standard") */
-  currencyCode: string;
-  /** Decimal sign */
-  decimal: string;
+  /** Password requires min  and max length */
+  passwordComplexityLengthInfo: string;
+  /** Password strength very weak */
+  passwordStrengthVeryWeak: string;
+  /** Password strength weak */
+  passwordStrengthWeak: string;
+  /** Password strength normal */
+  passwordStrengthNormal: string;
+  /** Password strength strong  */
+  passwordStrengthStrong: string;
+  /** Password strength very strong  */
+  passwordStrengthVeryStrong: string;
 };
 
 export type Validator = {
