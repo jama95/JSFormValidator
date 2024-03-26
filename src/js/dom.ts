@@ -72,6 +72,7 @@ export function inputSuggestion(
     optionClass: options.suggestionConfig.optionClass,
   };
   conf = { ...conf, ...settings };
+  let currentFocus = -1; // The first option element index is 0
   let datalist: HTMLDataListElement = document.createElement("datalist");
   datalist.classList.add("fv-suggestions");
   datalist.classList.add(conf.containerClass);
@@ -81,6 +82,7 @@ export function inputSuggestion(
   input.setAttribute("autocomplete", "off");
   input.setAttribute("list", "");
   const fillDatalist = function (words: string[]) {
+    currentFocus = -1;
     while (datalist.firstChild) datalist.removeChild(datalist.firstChild);
     for (let word of words) {
       const option = document.createElement("option");
@@ -95,6 +97,7 @@ export function inputSuggestion(
     }
     if (datalist.options.length > 0) {
       datalist.style.display = "block";
+      datalist.scrollTo(0, 0);
     } else {
       datalist.style.display = "none";
     }
@@ -108,7 +111,7 @@ export function inputSuggestion(
     datalist.style.display = "none";
   });
   // Shows all options when double-clicked
-  input.addEventListener("ondblclick", function () {
+  input.addEventListener("dblclick", function () {
     fillDatalist(words);
   });
   // Shows matched options when input
@@ -119,34 +122,57 @@ export function inputSuggestion(
       const regexp = new RegExp(input.value, "i");
       const match = words.filter((word) => regexp.test(word));
       if (match.length > 0) fillDatalist(match);
-    }, 100);
+    }, 200);
   });
   // Choose an option with the keyboard
-  let currentFocus = -1; // The first option element index is 0
   input.addEventListener("keydown", function (e) {
-    if (datalist.options) {
-      if (e.key == "ArrowUp") currentFocus--;
-      if (e.key == "ArrowDown") currentFocus++;
-      if (currentFocus > -1 && currentFocus <= datalist.options.length) {
-        addActive(datalist.options);
-        if (e.key == "Enter") {
-          e.preventDefault();
-          datalist.options[currentFocus].click();
-        }
+    if (datalist.style.display == "block" && datalist.options) {
+      if (e.key == "Escape") {
+        e.preventDefault();
+        datalist.style.display = "none";
+      }
+      if (e.key == "ArrowUp") {
+        e.preventDefault();
+        currentFocus--;
+        simulateScroll();
+      }
+      if (e.key == "ArrowDown") {
+        e.preventDefault();
+        currentFocus++;
+        simulateScroll();
+      }
+      addActive();
+      if (e.key == "Enter") {
+        e.preventDefault();
+        datalist.options[currentFocus].click();
       }
     }
   });
   // Select an option with the keyboard
-  const addActive = function (x: HTMLCollectionOf<HTMLOptionElement>): boolean {
-    if (!x) return false;
+  const addActive = function () {
     let selected = document.querySelector(
       "datalist.fv-suggestions option.active"
     );
     if (selected) selected.classList.remove("active");
-    if (currentFocus >= x.length) currentFocus = 0;
-    if (currentFocus < 0) currentFocus = x.length - 1;
-    x[currentFocus].classList.add("active");
+    if (currentFocus >= datalist.options.length) currentFocus = 0;
+    if (currentFocus < 0) currentFocus = datalist.options.length - 1;
+    datalist.options[currentFocus].classList.add("active");
     return true;
+  };
+  // Simulates de scroll move when use up and down arrows
+  const simulateScroll = function () {
+    currentFocus = currentFocus <= -1 ? 0 : currentFocus;
+    currentFocus =
+      currentFocus > datalist.options.length - 1
+        ? datalist.options.length - 1
+        : currentFocus;
+    let c = Math.floor(
+      parseInt(datalist.style.maxHeight, 10) / datalist.options[0].offsetHeight
+    );
+    datalist.scrollTo(
+      0,
+      datalist.options[0].offsetHeight * (currentFocus - c + 1)
+    );
   };
   // Append the DataList for the input in the DOM
   input.after(datalist);
