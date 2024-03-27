@@ -176,6 +176,9 @@ export function inputSuggestion(
   };
   // Append the DataList for the input in the DOM
   input.after(datalist);
+  new ResizeObserver(() => {
+    datalist.style.width = `${input.getBoundingClientRect().width}px`;
+  }).observe(input);
 }
 
 /**
