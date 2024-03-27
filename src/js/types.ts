@@ -75,6 +75,10 @@ export type Options = {
   lengthRestrictAttribute: string;
   /** Length restriction info to show (Available options: both, count, remaining) @default 'count' @example count: 100/5000 ; remaining: 4900/5000 ; both: 100(4900)/5000*/
   lengthRestrictInfo: string;
+  /** Regex for admitted password special characters @default /[@%+\x5C/!#$^?:.(){}\x5B\x5D~_-]/ */
+  passwordSpecialChars: RegExp;
+  /** Password info container additional class @default card */
+  passwordInfoClass: string;
 };
 
 export type Configuration = {
@@ -174,17 +178,17 @@ export type Lang = {
   /** Insecure password message */
   invalidStrength: string;
   /** Title for secure password conditions */
-  passwordComplexityTitle: string;
+  passwordConditionsTitle: string;
   /** Password requires upper case letters */
-  passwordComplexityUppercaseInfo: string;
+  passwordConditionUppercase: string;
   /** Password requires lower case letters */
-  passwordComplexityLowercaseInfo: string;
+  passwordConditionLowercase: string;
   /** Password requires special characters */
-  passwordComplexitySpecialCharsInfo: string;
+  passwordConditionSpecialChars: string;
   /** Password requires numbers */
-  passwordComplexityNumericCharsInfo: string;
+  passwordConditionNumericChars: string;
   /** Password requires min  and max length */
-  passwordComplexityLengthInfo: string;
+  passwordConditionLength: string;
   /** Password strength very weak */
   passwordStrengthVeryWeak: string;
   /** Password strength weak */

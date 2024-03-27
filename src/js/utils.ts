@@ -1,3 +1,4 @@
+import { options } from "./config";
 import type { Lang, Options } from "./types";
 
 /**
@@ -172,4 +173,41 @@ export function triggerMessageCallback(
  */
 export function escapeRegExp(str: string): string {
   return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/**
+ * Description placeholder
+ * @param {string} password Password to check
+ * @returns {{
+ *   strength: number;
+ *   check: string[];
+ * }} Password strength
+ */
+export function CheckPasswordStrength(password: string): {
+  strength: number;
+  check: string[];
+} {
+  let strength: number = 0,
+    check = [];
+  if (/[A-Z]/.test(password)) {
+    strength++;
+    check.push("UC");
+  }
+  if (/[a-z]/.test(password)) {
+    strength++;
+    check.push("LC");
+  }
+  if (options.passwordSpecialChars.test(password)) {
+    strength++;
+    check.push("SC");
+  }
+  if (/\d/.test(password)) {
+    strength++;
+    check.push("NC");
+  }
+  if (password.length < 8) strength--;
+  if (password.length >= 8) check.push("L");
+  if (password.length >= 12) strength++;
+  if (/\s/.test(password)) strength = 1;
+  return { strength: strength, check: check };
 }

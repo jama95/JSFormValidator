@@ -41,6 +41,8 @@ export const options: Options = {
   suggestionAttribute: "data-suggestions",
   lengthRestrictAttribute: "data-lengthRestrict",
   lengthRestrictInfo: "count",
+  passwordSpecialChars: /[@%+\x5C/!#$^?:.(){}\x5B\x5D~_-]/,
+  passwordInfoClass: "card",
 };
 
 export const language: Lang = {
@@ -80,12 +82,12 @@ export const language: Lang = {
   invalidCVV: "The CVV number is not correct.",
   invalidSecurityAnswer: "The answer to the security question is incorrect.",
   invalidStrength: "The password is not strong enough",
-  passwordComplexityTitle: "Password must contain:",
-  passwordComplexityUppercaseInfo: "Uppercase letter(s).",
-  passwordComplexityLowercaseInfo: "Lowercase letter(s).",
-  passwordComplexitySpecialCharsInfo: "Special character(s).",
-  passwordComplexityNumericCharsInfo: "Numeric character(s).",
-  passwordComplexityLengthInfo: "At least 4 characters.",
+  passwordConditionsTitle: "Password must contain:",
+  passwordConditionUppercase: "Uppercase letter(s).",
+  passwordConditionLowercase: "Lowercase letter(s).",
+  passwordConditionSpecialChars: "Special character(s).",
+  passwordConditionNumericChars: "Numeric character(s).",
+  passwordConditionLength: "At least 8 characters.",
   passwordStrengthVeryWeak: "Very weak &#128552;",
   passwordStrengthWeak: "Weak &#128542;",
   passwordStrengthNormal: "Normal &#128528;",

@@ -1,6 +1,6 @@
-import { options } from "./config";
+import { language, options } from "./config";
 import { Options, Lang, Validator, Suggestion } from "./types";
-import { triggerMessageCallback } from "./utils";
+import { CheckPasswordStrength, triggerMessageCallback } from "./utils";
 
 /**
  * Restricts the number of characters in a TextArea and displays the information
@@ -176,6 +176,107 @@ export function inputSuggestion(
   };
   // Append the DataList for the input in the DOM
   input.after(datalist);
+}
+
+/**
+ * Show password strength info
+ * @param {HTMLInputElement} input Input type password
+ */
+export function PasswordInfo(input: HTMLInputElement) {
+  if (input.type != "password") return;
+  let container = document.createElement("div");
+  let additionalClass = options.passwordInfoClass ?? "";
+  container.classList.add("fv-password", additionalClass);
+  container.style.display = "none";
+  const content = `<div class="tittle">${language.passwordConditionsTitle}</div>
+<div class="condition UC">${language.passwordConditionUppercase}</div>
+<div class="condition LC">${language.passwordConditionLowercase}</div>
+<div class="condition SC">${language.passwordConditionSpecialChars}</div>
+<div class="condition NC">${language.passwordConditionNumericChars}</div>
+<div class="condition L">${language.passwordConditionLength}</div>
+<div class="strength-text"></div>
+<div class="strength-bar"></div>`;
+  container.innerHTML = content;
+  input.after(container);
+  let strengthBar = document.querySelector(
+      "div.fv-password div.strength-bar"
+    ) as HTMLDivElement,
+    strength = document.querySelector(
+      "div.fv-password div.strength-text"
+    ) as HTMLDivElement;
+  input.addEventListener("focus", function () {
+    container.style.display = "block";
+  });
+  input.addEventListener("blur", function () {
+    container.style.display = "none";
+  });
+  input.addEventListener("input", function () {
+    strengthBar.classList.remove(
+      "very-strong",
+      "strong",
+      "normal",
+      "weak",
+      "very-weak"
+    );
+    strength.innerHTML = "";
+    document
+      .querySelectorAll<HTMLDivElement>("div.fv-password div.condition")
+      .forEach((condition) => {
+        condition.classList.remove("check", "no-check");
+      });
+    if (input.value.length == 0) return;
+    const p = CheckPasswordStrength(input.value);
+    const checkList: string[] = p.check;
+    const strengthLevel: number = p.strength;
+    (
+      document.querySelector(
+        "div.fv-password div.condition.UC"
+      ) as HTMLDivElement
+    ).classList.add(checkList.includes("UC") ? "check" : "no-check");
+    (
+      document.querySelector(
+        "div.fv-password div.condition.LC"
+      ) as HTMLDivElement
+    ).classList.add(checkList.includes("LC") ? "check" : "no-check");
+    (
+      document.querySelector(
+        "div.fv-password div.condition.SC"
+      ) as HTMLDivElement
+    ).classList.add(checkList.includes("SC") ? "check" : "no-check");
+    (
+      document.querySelector(
+        "div.fv-password div.condition.NC"
+      ) as HTMLDivElement
+    ).classList.add(checkList.includes("NC") ? "check" : "no-check");
+    (
+      document.querySelector(
+        "div.fv-password div.condition.L"
+      ) as HTMLDivElement
+    ).classList.add(checkList.includes("L") ? "check" : "no-check");
+    switch (strengthLevel) {
+      case 5:
+        strength.innerHTML = language.passwordStrengthVeryStrong;
+        strengthBar.classList.add("very-strong");
+        break;
+      case 4:
+        strength.innerHTML = language.passwordStrengthStrong;
+        strengthBar.classList.add("strong");
+        break;
+      case 3:
+        strength.innerHTML = language.passwordStrengthNormal;
+        strengthBar.classList.add("normal");
+        break;
+      case 2:
+        strength.innerHTML = language.passwordStrengthWeak;
+        strengthBar.classList.add("weak");
+        break;
+      case 1:
+      default:
+        strength.innerHTML = language.passwordStrengthVeryWeak;
+        strengthBar.classList.add("very-weak");
+        break;
+    }
+  });
 }
 
 /**
