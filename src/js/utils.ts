@@ -150,7 +150,7 @@ export function CheckTimeFormat(time: string, format: string): string {
  * @param {string} decimal Decimal sign
  * @returns {string} Returns ok or the unfulfilled range
  */
-export function checkNumberRange(
+function checkNumberRange(
   value: number,
   range: string,
   decimal: string
@@ -184,7 +184,7 @@ export function checkNumberRange(
  * @param {string} decimal Decimal sign
  * @returns {string[]} Returns ok or the unfulfilled step
  */
-export function checkNumberStep(
+function checkNumberStep(
   value: number,
   step: string,
   decimal: string
@@ -194,6 +194,56 @@ export function checkNumberStep(
   const s = parseFloat(step.replace(decimal, "."));
   if (value % s !== 0) return ["step", step];
   return ["ok"];
+}
+
+/**
+ * Check if the number match the range or the step
+ * @param {string[]} allow Allowed numbers options
+ * @param {number} value Number to check
+ * @param {string} rangeVal The range
+ * @param {string} stepVal The step
+ * @param {string} decimal Decimal sign
+ * @returns {string[][]} The response of range and step check
+ */
+export function checkRangeStep(
+  allow: string[],
+  value: number,
+  rangeVal: string,
+  stepVal: string,
+  decimal: string
+): string[][] {
+  let check: string[][] = [],
+    r: string[] = [],
+    s: string[] = [];
+  if (
+    (allow.includes("noPositive") && !stepVal.includes("-")) ||
+    !rangeVal.includes("-")
+  ) {
+    r = ["no"];
+    s = ["no"];
+  }
+  if (
+    (!allow.includes("negative") && stepVal.includes("-")) ||
+    rangeVal.includes("-")
+  ) {
+    r = ["no"];
+    s = ["no"];
+  }
+  if (
+    (!allow.includes("decimal") && stepVal.includes(decimal)) ||
+    rangeVal.includes(decimal)
+  ) {
+    r = ["no"];
+    s = ["no"];
+  }
+  if (allow.includes("range") && r[0] != "no") {
+    r = checkNumberRange(value, rangeVal, decimal);
+  }
+  if (allow.includes("steps") && s[0] != "no") {
+    s = checkNumberStep(value, stepVal, decimal);
+  }
+  check = [[...r], [...s]];
+  return check;
 }
 
 /**
@@ -244,10 +294,14 @@ export function currencyFormat(
   let num = parseFloat(value).toFixed(decimals);
   locale = !locale ? lang.locale : locale;
   currency = !currency ? lang.currencyCode : currency;
-  return parseFloat(num).toLocaleString(locale, {
-    style: "currency",
-    currency: currency,
-  });
+  try {
+    return parseFloat(num).toLocaleString(locale, {
+      style: "currency",
+      currency: currency,
+    });
+  } catch {
+    return parseFloat(num).toFixed(decimals);
+  }
 }
 
 /**
