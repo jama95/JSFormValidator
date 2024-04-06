@@ -113,6 +113,10 @@ export type Lang = {
   currencyCode: string;
   /** Decimal sign */
   decimal: string;
+  /** Default date format */
+  dateFormat: string;
+  /** Default time format */
+  timeFormat: string;
   /** Valid top messages title */
   validTitle: string;
   /** Invalid top messages title */
@@ -135,26 +139,30 @@ export type Lang = {
   invalidUrl: string;
   /** Invalid number type message */
   invalidNumber: string;
-  /** Invalid length value message */
-  invalidLength: string;
-  /** Too long value length message */
-  lengthTooLong: string;
-  /** Too short value length message */
-  lengthTooShort: string;
+  /** Invalid number, max value exceeded message */
+  invalidNumberMax: string;
+  /** Invalid number, min value exceeded message */
+  invalidNumberMin: string;
+  /** Invalid number, out of range message */
+  invalidNumberRange: string;
+  /** Invalid number, not equal message */
+  invalidNumberEqual: string;
+  /** Invalid number, out of step message */
+  invalidNumberStep: string;
+  /** Invalid length, too long value message (text|files|options) */
+  invalidLengthMax: string;
+  /** Invalid length, too short value message (text|files|options) */
+  invalidLengthMin: string;
+  /** Invalid length, too long or too short value message (text|files|options) */
+  invalidLengthRange: string;
+  /** Invalid length, not equal value message (text|files|options) */
+  invalidLengthEqual: string;
+  /** Invalid letters and/or allowed values message */
+  invalidLetters: string;
   /** Invalid custom value message */
   invalidCustomVal: string;
-  /** Invalid count of selected options message */
-  invalidNumberOfSelectedOptions: string;
   /** Invalid alphanumeric value message */
   invalidAlphaNumeric: string;
-  /** Invalid alphanumeric extra value message */
-  invalidAlphaNumericExtra: string;
-  /** Invalid checked values message */
-  groupCheckedRangeStart: string;
-  /** Invalid checked values message */
-  groupCheckedTooFewStart: string;
-  /** Invalid checked values message */
-  groupCheckedTooManyStart: string;
   /** Invalid file size message */
   invalidFileSize: string;
   /** Invalid file type message */
