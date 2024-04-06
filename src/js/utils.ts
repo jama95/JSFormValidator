@@ -147,27 +147,20 @@ export function CheckTimeFormat(time: string, format: string): string {
  * Checks if a number matches with a specific range
  * @param {number} value Number to check
  * @param {string} range Accepted range
- * @param {string} decimal Decimal sign
  * @returns {string} Returns ok or the unfulfilled range
  */
-function checkNumberRange(
-  value: number,
-  range: string,
-  decimal: string
-): string[] {
+function checkNumberRange(value: number, range: string): string[] {
   if (range.includes("::") && (range.includes("max") || range.includes("min")))
     return ["no"];
   const match = range.match(
-    new RegExp(
-      `^(min|max)?((?:-?)\\d+(?:${decimal}\\d+)?)(?:\u003A\u003A((?:-?)\\d+(?:${decimal}\\d+)?))?$`
-    )
+    /^(min|max)?((?:-?)\d+(?:\u002E\d+)?)(?:\u003A\u003A((?:-?)\d+(?:\u002E\d+)?))?$/
   );
   if (!match) return ["no"];
   const [, minOrMax, num1, num2] = match,
     min = minOrMax === "min",
     max = minOrMax === "max",
-    number1 = parseFloat(num1.replace(decimal, ".")),
-    number2 = num2 ? parseFloat(num2.replace(decimal, ".")) : undefined;
+    number1 = parseFloat(num1),
+    number2 = num2 ? parseFloat(num2) : undefined;
   if (min && value < number1) return ["min", num1];
   if (max && value > number1) return ["max", num1];
   if (number2 !== undefined && (value < number1 || value > number2))
@@ -181,17 +174,12 @@ function checkNumberRange(
  * Checks if a number satisfies with the step
  * @param {number} value Number to check
  * @param {string} step Step
- * @param {string} decimal Decimal sign
  * @returns {string[]} Returns ok or the unfulfilled step
  */
-function checkNumberStep(
-  value: number,
-  step: string,
-  decimal: string
-): string[] {
-  const regex = new RegExp(`^-?\\d+([${decimal}]\\d+)?$`);
+function checkNumberStep(value: number, step: string): string[] {
+  const regex = /^-?\d+(\u002E\d+)?$/;
   if (!regex.test(step)) return ["no"];
-  const s = parseFloat(step.replace(decimal, "."));
+  const s = parseFloat(step);
   if (value % s !== 0) return ["step", step];
   return ["ok"];
 }
@@ -202,15 +190,13 @@ function checkNumberStep(
  * @param {number} value Number to check
  * @param {string} rangeVal The range
  * @param {string} stepVal The step
- * @param {string} decimal Decimal sign
  * @returns {string[][]} The response of range and step check
  */
 export function checkRangeStep(
   allow: string[],
   value: number,
   rangeVal: string,
-  stepVal: string,
-  decimal: string
+  stepVal: string
 ): string[][] {
   let check: string[][] = [],
     r: string[] = [],
@@ -230,17 +216,17 @@ export function checkRangeStep(
     s = ["no"];
   }
   if (
-    (!allow.includes("decimal") && stepVal.includes(decimal)) ||
-    rangeVal.includes(decimal)
+    (!allow.includes("decimal") && stepVal.includes(".")) ||
+    rangeVal.includes(".")
   ) {
     r = ["no"];
     s = ["no"];
   }
   if (allow.includes("range") && r[0] != "no") {
-    r = checkNumberRange(value, rangeVal, decimal);
+    r = checkNumberRange(value, rangeVal);
   }
   if (allow.includes("steps") && s[0] != "no") {
-    s = checkNumberStep(value, stepVal, decimal);
+    s = checkNumberStep(value, stepVal);
   }
   check = [[...r], [...s]];
   return check;
