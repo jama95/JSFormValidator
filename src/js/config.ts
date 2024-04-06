@@ -20,7 +20,6 @@ export const options: Options = {
   validateHiddenFields: false,
   validMessageCallback: undefined,
   invalidMessageCallback: undefined,
-  dateFormat: "YYYY-MM-DD",
   form: "form",
   parentField: "fv-group",
   fieldModifyAttribute: "data-modifyList",
@@ -41,7 +40,7 @@ export const options: Options = {
   suggestionAttribute: "data-suggestions",
   lengthRestrictAttribute: "data-lengthRestrict",
   lengthRestrictInfo: "count",
-  passwordSpecialChars: /[@%+\x5C/!#$^?:.(){}\x5B\x5D~_-]/,
+  passwordSpecialChars: /[@%+\u005C/!#$^?:.(){}\u005B\u005D~_-]/,
   passwordInfoClass: "card",
 };
 

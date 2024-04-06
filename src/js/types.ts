@@ -41,8 +41,6 @@ export type Options = {
   validMessageCallback: MessageCallback | undefined;
   /** Function triggered when invalid messages are shown @default undefined */
   invalidMessageCallback: MessageCallback | undefined;
-  /** Default date format @default 'YYYY-MM-DD' */
-  dateFormat: string;
   /** List of forms selectors (comma separated) @default 'form' */
   form: string;
   /** Parent selector for all form fields @default 'fv-group' */
