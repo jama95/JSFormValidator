@@ -1,7 +1,6 @@
 $valid: #198754;
 $invalid: #dc3545;
 $BG: #fff !default;
-$sgMaxHeight: 150px !default;
 $BorderColor: #dee2e6 !default;
 $sgBorderWidth: 1px !default;
 $sgBorderRadius: 0.375rem !default;
@@ -14,7 +13,6 @@ $lengthRestrictColor: #808080 !default;
   --valid: #{$valid};
   --invalid: #{$invalid};
   --BG: #{$BG};
-  --sgMaxHeight: #{$sgMaxHeight};
   --BorderColor: #{$BorderColor};
   --sgBorderWidth: #{$sgBorderWidth};
   --sgBorderRadius: #{$sgBorderRadius};
@@ -53,7 +51,6 @@ form.fv {
       border: var(--sgBorderWidth) solid var(--BorderColor);
       background-color: var(--BG);
       border-radius: var(--sgBorderRadius);
-      max-height: var(--sgMaxHeight);
     }
     // Default options styles
     option {
