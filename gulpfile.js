@@ -94,3 +94,5 @@ gulp.task(
   )
 );
 gulp.task("dev", gulp.parallel(watch, server));
+gulp.task("css", gulp.series(buildCSS, postCSS, miniCSS));
+gulp.task("js", gulp.series(buildJS, miniJS));

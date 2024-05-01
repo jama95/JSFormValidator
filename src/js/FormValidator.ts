@@ -232,7 +232,7 @@ class FormValidate {
    */
   private addEventListenersToFormFields(form: HTMLFormElement): void {
     let fields = form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>(
-      `textarea, input:not(${notAccept(this.conf.validateHiddenInputs, false)})`
+      `textarea, input:not(${notAccept(this.conf.validateHiddenFields, false)})`
     );
     fields.forEach((field) => {
       field.addEventListener("focus", () => {
@@ -263,7 +263,7 @@ class FormValidate {
     form.addEventListener("submit", (e) => {
       let isValid = this.validateAllFields(
         form,
-        notAccept(this.conf.validateHiddenInputs, false)
+        notAccept(this.conf.validateHiddenFields, false)
       );
       form.setAttribute("valid-state", isValid ? "validForm" : "invalidForm");
       if (!isValid) {
