@@ -39,9 +39,7 @@ class FormValidate {
     form: HTMLFormElement
   ): boolean {
     const validatorsList = field.getAttribute(this.conf.fieldValidateAttribute),
-      list = validatorsList
-        ? validatorsList?.split(new RegExp(/[,|\s-]*/))
-        : [],
+      list = validatorsList ? validatorsList?.split(/[,|-]+\s*|\s+/) : [],
       value = field.value;
     let valid_invalid: boolean | null = null;
     list.forEach((validator) => {
@@ -109,9 +107,7 @@ class FormValidate {
           ["search", "checkbox", "radio"].indexOf(field.type) == -1) ||
         field instanceof HTMLTextAreaElement;
     if (!isForModifier && ["input", "blur"].indexOf(event)) return;
-    let list = modifiersList
-        ? modifiersList?.split(new RegExp(/[,|\s-]*/))
-        : [],
+    let list = modifiersList ? modifiersList?.split(/[,|-]+\s*|\s+/) : [],
       value = field.value;
     list.forEach((modifier) => {
       if (this.conf.modifiers[modifier]) {
@@ -177,7 +173,7 @@ class FormValidate {
           if (suggestions)
             inputSuggestion(
               field,
-              suggestions.split(new RegExp(/[,|\s-]*/)),
+              suggestions.split(/[,|-]+\s*|\s+/),
               this.conf.suggestionConfig
             );
         }
@@ -214,9 +210,7 @@ class FormValidate {
       if (Array.isArray(this.conf.ignoredFieldsNames)) {
         list = this.conf.ignoredFieldsNames;
       } else if (typeof this.conf.ignoredFieldsNames == "string") {
-        list = (this.conf.ignoredFieldsNames as string).split(
-          new RegExp(/[,|\s-]*/)
-        );
+        list = (this.conf.ignoredFieldsNames as string).split(/[,|-]+\s*|\s+/);
       }
       if (list.indexOf(name) > -1) {
         field.setAttribute("ignored", "true");
@@ -284,7 +278,7 @@ class FormValidate {
    * Set up modifiers and validators in all fields of all configured forms
    */
   private setUpFV(): void {
-    let form = this.conf.form.split(new RegExp(/[,|\s-]*/)).join(","),
+    let form = this.conf.form.split(/[,|-]+\s*|\s+/).join(","),
       forms = document.querySelectorAll<HTMLFormElement>(form);
     if (!forms) forms = document.querySelectorAll<HTMLFormElement>("form");
     forms.forEach((form) => {
