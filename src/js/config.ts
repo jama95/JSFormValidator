@@ -1,4 +1,4 @@
-import type { Options, Configuration, Lang } from "./types";
+import type { Options, Configuration, Lang, TelephoneFormats } from "./types";
 
 export const options: Options = {
   ignoredFieldsNames: [],
@@ -115,4 +115,10 @@ export const configuration: Configuration = {
   validMessages: {},
   invalidMessages: {},
   language: language,
+};
+
+export const telephoneFormats: TelephoneFormats = {
+  EC: [
+    /^(?:0|\x2B593\s)(?:(?:[2-7]\s)?|(?:\d{2}(?:\s|-)?))\d{3}(?:\s|-)?\d{4}$/,
+  ],
 };

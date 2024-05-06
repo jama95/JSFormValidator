@@ -287,3 +287,7 @@ export type Suggestion = {
   /** Custom class for the options of the Datalist element @default 'fv-suggestion_option' */
   optionClass: string;
 };
+
+export type TelephoneFormats = {
+  [key: string]: RegExp[];
+};
