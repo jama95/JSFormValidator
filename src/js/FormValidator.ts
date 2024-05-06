@@ -6,7 +6,7 @@ import {
   setMessage,
   setStyles,
   inputSuggestion,
-  TextAreaLengthRestriction,
+  textAreaLengthRestriction,
   toggleHelpMessage,
   addValidStyleInAllFields,
   fieldHelpMessage,
@@ -181,7 +181,7 @@ class FormValidate {
       if (field instanceof HTMLTextAreaElement) {
         let restriction = field.getAttribute(this.conf.lengthRestrictAttribute);
         if (restriction)
-          TextAreaLengthRestriction(
+          textAreaLengthRestriction(
             field,
             parseInt(restriction, 10),
             this.options.lengthRestrictInfo

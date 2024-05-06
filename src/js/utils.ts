@@ -63,7 +63,7 @@ function dateRegex(format: string, separator: string): string {
  * @param {string} format Number date format: (DD) for day, (MM) for month, (YYYY) for year
  * @returns {string} Returns invalid, ok if is valid or no if the format is incorrect
  */
-export function CheckDateFormat(date: string, format: string): string {
+export function checkDateFormat(date: string, format: string): string {
   const separator = format.toUpperCase().replace(/[DMY]/, "").charAt(0);
   if (!validateDateFormat(format.toUpperCase(), separator)) return "no";
   const regex = dateRegex(format.toUpperCase(), separator);
@@ -123,7 +123,7 @@ function timeRegex(format: string): string {
  * @param {string} format Time format: (HH) for Hours, (mm) for minutes, (ss) for seconds, (sss) for milliseconds, (A) for AM/PM
  * @returns {string} Returns invalid, ok if is valid or no if the format is incorrect
  */
-export function CheckTimeFormat(time: string, format: string): string {
+export function checkTimeFormat(time: string, format: string): string {
   if (!/^(HH\x3Amm)((\x3Ass)|(\x3Ass\x2Esss))?(A)?$/.test(format)) return "no";
   const regex = timeRegex(format);
   if (!new RegExp(regex).test(time)) return "invalid";

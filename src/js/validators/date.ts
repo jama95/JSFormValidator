@@ -1,5 +1,5 @@
 import { language, configuration } from "../config";
-import { CheckDateFormat, CheckTimeFormat } from "../utils";
+import { checkDateFormat, checkTimeFormat } from "../utils";
 
 let dateMessage = language.invalidDate;
 
@@ -8,7 +8,7 @@ configuration.validators["date"] = {
   name: "date",
   validatorFunction: function (value, form, field, options, lang) {
     const format = field.getAttribute("data-fv-date_format") || lang.dateFormat;
-    const check = CheckDateFormat(value, format);
+    const check = checkDateFormat(value, format);
     if (check == "no") {
       dateMessage = lang.notConfirmed;
       return false;
@@ -29,7 +29,7 @@ configuration.validators["time"] = {
   name: "time",
   validatorFunction: function (value, form, field, options, lang) {
     const format = field.getAttribute("data-fv-time_format") || lang.timeFormat;
-    const check = CheckTimeFormat(value, format);
+    const check = checkTimeFormat(value, format);
     if (check == "no") {
       dateMessage = lang.notConfirmed;
       return false;

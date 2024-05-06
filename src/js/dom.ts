@@ -1,6 +1,6 @@
 import { language, options } from "./config";
 import { Options, Lang, Validator, Suggestion } from "./types";
-import { CheckPasswordStrength, triggerMessageCallback } from "./utils";
+import { checkPasswordStrength, triggerMessageCallback } from "./utils";
 
 /**
  * Restricts the number of characters in a TextArea and displays the information
@@ -8,7 +8,7 @@ import { CheckPasswordStrength, triggerMessageCallback } from "./utils";
  * @param {number} max Max number of character to write
  * @param {string} info Type of information showed
  */
-export function TextAreaLengthRestriction(
+export function textAreaLengthRestriction(
   TextArea: HTMLTextAreaElement,
   max: number,
   info: string
@@ -185,7 +185,7 @@ export function inputSuggestion(
  * Show password strength info
  * @param {HTMLInputElement} input Input type password
  */
-export function PasswordInfo(input: HTMLInputElement) {
+export function passwordInfo(input: HTMLInputElement) {
   if (input.type != "password") return;
   let container = document.createElement("div");
   let additionalClass = options.passwordInfoClass ?? "";
@@ -228,34 +228,14 @@ export function PasswordInfo(input: HTMLInputElement) {
         condition.classList.remove("check", "no-check");
       });
     if (input.value.length == 0) return;
-    const p = CheckPasswordStrength(input.value);
+    const p = checkPasswordStrength(input.value);
     const checkList: string[] = p.check;
     const strengthLevel: number = p.strength;
-    (
-      document.querySelector(
-        "div.fv-password div.condition.UC"
-      ) as HTMLDivElement
-    ).classList.add(checkList.includes("UC") ? "check" : "no-check");
-    (
-      document.querySelector(
-        "div.fv-password div.condition.LC"
-      ) as HTMLDivElement
-    ).classList.add(checkList.includes("LC") ? "check" : "no-check");
-    (
-      document.querySelector(
-        "div.fv-password div.condition.SC"
-      ) as HTMLDivElement
-    ).classList.add(checkList.includes("SC") ? "check" : "no-check");
-    (
-      document.querySelector(
-        "div.fv-password div.condition.NC"
-      ) as HTMLDivElement
-    ).classList.add(checkList.includes("NC") ? "check" : "no-check");
-    (
-      document.querySelector(
-        "div.fv-password div.condition.L"
-      ) as HTMLDivElement
-    ).classList.add(checkList.includes("L") ? "check" : "no-check");
+    ["UC", "LC", "SC", "NC", "L"].forEach((c) => {
+      document
+        .querySelector<HTMLDivElement>(`div.fv-password div.condition.${c}`)
+        ?.classList.add(checkList.includes(c) ? "check" : "no-check");
+    });
     switch (strengthLevel) {
       case 5:
         strength.innerHTML = language.passwordStrengthVeryStrong;
@@ -279,6 +259,7 @@ export function PasswordInfo(input: HTMLInputElement) {
         strengthBar.classList.add("very-weak");
         break;
     }
+    input.setAttribute("data-fv-password_strength", strengthLevel.toString());
   });
 }
 
