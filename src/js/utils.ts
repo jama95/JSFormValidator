@@ -107,10 +107,10 @@ function timeRegex(format: string): string {
       .replace("A", "")
       .split(":")
       .map((part) => {
-        if (part.includes(".")) return `\\d{2}\\u002E\\d{3}`;
+        if (part.includes(".")) return `\\d{2}\\x2E\\d{3}`;
         return `\\d{2}`;
       })
-      .join(`\\u003A`) +
+      .join(`\\x3A`) +
     (format.lastIndexOf("A") > -1 ? "(AM|PM)" : "") +
     "$"
   );
@@ -124,8 +124,7 @@ function timeRegex(format: string): string {
  * @returns {string} Returns invalid, ok if is valid or no if the format is incorrect
  */
 export function CheckTimeFormat(time: string, format: string): string {
-  if (!/^(HH\u003Amm)((\u003Ass)|(\u003Ass\u002Esss))?(A)?$/.test(format))
-    return "no";
+  if (!/^(HH\x3Amm)((\x3Ass)|(\x3Ass\x2Esss))?(A)?$/.test(format)) return "no";
   const regex = timeRegex(format);
   if (!new RegExp(regex).test(time)) return "invalid";
   const tParts = splitTime(time.replace(/AM|PM/, "")),
@@ -153,7 +152,7 @@ function checkNumberRange(value: number, range: string): string[] {
   if (range.includes("::") && (range.includes("max") || range.includes("min")))
     return ["no"];
   const match = range.match(
-    /^(min|max)?((?:-?)\d+(?:\u002E\d+)?)(?:\u003A\u003A((?:-?)\d+(?:\u002E\d+)?))?$/
+    /^(min|max)?((?:-?)\d+(?:\x2E\d+)?)(?:\x3A\x3A((?:-?)\d+(?:\x2E\d+)?))?$/
   );
   if (!match) return ["no"];
   const [, minOrMax, num1, num2] = match,
@@ -177,7 +176,7 @@ function checkNumberRange(value: number, range: string): string[] {
  * @returns {string[]} Returns ok or the unfulfilled step
  */
 function checkNumberStep(value: number, step: string): string[] {
-  const regex = /^-?\d+(\u002E\d+)?$/;
+  const regex = /^-?\d+(\x2E\d+)?$/;
   if (!regex.test(step)) return ["no"];
   const s = parseFloat(step);
   if (value % s !== 0) return ["step", step];
@@ -241,7 +240,7 @@ export function checkRangeStep(
 export function checkStringLength(value: number, range: string): string[] {
   if (range.includes("::") && (range.includes("max") || range.includes("min")))
     return ["no"];
-  const match = range.match(/^(min|max)?(\\d+)(?:\u003A\u003A(\\d+))?$/);
+  const match = range.match(/^(min|max)?(\\d+)(?:\x3A\x3A(\\d+))?$/);
   if (!match) return ["no"];
   const [, minOrMax, num1, , num2] = match,
     min = minOrMax === "min",
@@ -369,18 +368,18 @@ export function triggerMessageCallback(
  * @returns {string} Scaped string
  */
 export function escapeRegExp(str: string): string {
-  return str.replace(/[.*+?^${}()|\u005B\u005D\u002F\u005C]/g, "\\$&");
+  return str.replace(/[.*+?^${}()|\x5B\x5D\x2F\x5C]/g, "\\$&");
 }
 
 /**
- * Description placeholder
+ * Check the password strength and character conditions
  * @param {string} password Password to check
  * @returns {{
  *   strength: number;
  *   check: string[];
- * }} Password strength
+ * }} Password check
  */
-export function CheckPasswordStrength(password: string): {
+export function checkPasswordStrength(password: string): {
   strength: number;
   check: string[];
 } {
