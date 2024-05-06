@@ -1,7 +1,7 @@
 export type FV = Options & Configuration;
 
 export type Options = {
-  /** Signature symbol */
+  /* Signature symbol */
   [key: string]: any;
   /** List of fields names that will not be validated @default []*/
   ignoredFieldsNames: string[];
@@ -73,7 +73,7 @@ export type Options = {
   lengthRestrictAttribute: string;
   /** Length restriction info to show (Available options: both, count, remaining) @default 'count' @example count: 100/5000 ; remaining: 4900/5000 ; both: 100(4900)/5000*/
   lengthRestrictInfo: string;
-  /** Regex for admitted password special characters @default /[@%+\x5C/!#$^?:.(){}\x5B\x5D~_-]/ */
+  /** Regex for admitted password special characters @default /(\x21\x40\x23\x24\x25\x5E\x26\x2A\x5F\x2D\x2B\x3D)/ */
   passwordSpecialChars: RegExp;
   /** Password info container additional class @default card */
   passwordInfoClass: string;
@@ -103,14 +103,12 @@ export type Configuration = {
 };
 
 export type Lang = {
-  /** Signature symbol */
+  /* Signature symbol */
   [key: string]: string;
   /** Language and region code (for more information see "BCP 47 standard language tags") */
   locale: string;
-  /** Currency code (for more information se "ISO 4217 standard") */
+  /** Currency code (for more information see "ISO 4217 standard") */
   currencyCode: string;
-  /** Decimal sign */
-  decimal: string;
   /** Default date format */
   dateFormat: string;
   /** Default time format */
@@ -123,16 +121,20 @@ export type Lang = {
   notConfirmed: string;
   /** Required field message */
   required: string;
-  /** Invalid time message */
-  invalidTime: string;
-  /** Invalid email message */
-  invalidEmail: string;
-  /** Invalid telephone number message */
-  invalidTelephone: string;
   /** Invalid date message */
   invalidDate: string;
+  /** Invalid time message */
+  invalidTime: string;
+  /** Invalid telephone number message */
+  invalidTelephone: string;
+  /** Invalid IPv4 address */
+  invalidIPv4: string;
+  /** Invalid IPv6 address */
+  invalidIPv6: string;
   /** Invalid domain message */
   invalidDomain: string;
+  /** Invalid email message */
+  invalidEmail: string;
   /** Invalid url message */
   invalidUrl: string;
   /** Invalid number type message */
@@ -161,18 +163,20 @@ export type Lang = {
   invalidCustomVal: string;
   /** Invalid alphanumeric value message */
   invalidAlphaNumeric: string;
+  /** Invalid color */
+  invalidColor: string;
   /** Invalid file size message */
   invalidFileSize: string;
   /** Invalid file type message */
   invalidFileType: string;
+  /** Invalid file extension message */
+  invalidFileExtension: string;
   /** Invalid image dimensions message */
   invalidImageDim: string;
   /** Invalid image height message */
   imageTooTall: string;
   /** Invalid image width message */
   imageTooWide: string;
-  /** Invalid image size message */
-  imageTooSmall: string;
   /** Invalid image ratio message */
   imageRatioNotAccepted: string;
   /** Invalid credit card number message*/
@@ -214,9 +218,10 @@ export type Validator = {
   validatorFunction: (
     /** Field value */
     value: string,
+    /** Form element (parent of the field) */
     form: HTMLFormElement,
     /** Field element (Input, Select or TextArea) */
-    filed: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement,
+    field: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement,
     /** Validator options */
     options: Options,
     /** Validator language */
@@ -230,7 +235,7 @@ export type Validator = {
   validMessage?: string;
   /** Valid message attribute key */
   validMessageKey?: string;
-  /** Indicates whether validation is triggered on each keyUp event */
+  /** Indicates whether validation is triggered on each Input event */
   validateOnInput?: boolean;
 };
 
