@@ -15,8 +15,8 @@ configuration.validators["ipv4"] = {
     return false;
   },
   invalidMessage: language.invalidIPv4,
-  invalidMessageKey: "InvIPv4",
-  validMessageKey: "ValIPv4",
+  invalidMessageKey: "inv_ipv4",
+  validMessageKey: "val_ipv4",
 };
 
 // Regex according to RFC4291, RFC4007 and RFC5952, compatible with "test" and "match"
@@ -75,8 +75,8 @@ configuration.validators["ipv6"] = {
     return false;
   },
   invalidMessage: language.invalidIPv6,
-  invalidMessageKey: "InvIPv6",
-  validMessageKey: "ValIPv6",
+  invalidMessageKey: "inv_ipv6",
+  validMessageKey: "val_ipv6",
 };
 
 // Regex according to RFC1034, RFC1035 and RFC3696, compatible with "test" and "match"
@@ -108,8 +108,8 @@ configuration.validators["domain"] = {
     return !equal;
   },
   invalidMessage: language.invalidDomain,
-  invalidMessageKey: "InvDomain",
-  validMessageKey: "ValDomain",
+  invalidMessageKey: "inv_domain",
+  validMessageKey: "val_domain",
 };
 
 const Ipv4NoGroups = IPv4Regex.replace("((?:", "(?:(?:");
@@ -158,8 +158,8 @@ configuration.validators["email"] = {
     return true;
   },
   invalidMessage: language.invalidEmail,
-  invalidMessageKey: "InvEmail",
-  validMessageKey: "ValEmail",
+  invalidMessageKey: "inv_email",
+  validMessageKey: "val_email",
 };
 
 const IPv6ZoneNoGroupsURL = IPv6Zone.replace("(\\x25", "(?:\\x2525");
@@ -185,6 +185,6 @@ configuration.validators["url"] = {
     return true;
   },
   invalidMessage: language.invalidUrl,
-  invalidMessageKey: "InvURL",
-  validMessageKey: "ValURL",
+  invalidMessageKey: "inv_url",
+  validMessageKey: "val_url",
 };

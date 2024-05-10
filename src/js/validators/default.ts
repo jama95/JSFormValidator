@@ -19,8 +19,8 @@ configuration.validators["required"] = {
     }
   },
   invalidMessage: language.required,
-  invalidMessageKey: "InvRequired",
-  validMessageKey: "ValRequired",
+  invalidMessageKey: "inv_required",
+  validMessageKey: "val_required",
 };
 
 let lengthMessage = language.notConfirmed;
@@ -102,8 +102,8 @@ configuration.validators["length"] = {
     return true;
   },
   invalidMessage: lengthMessage,
-  invalidMessageKey: "InvLength",
-  validMessageKey: "ValLength",
+  invalidMessageKey: "inv_length",
+  validMessageKey: "val_length",
 };
 
 let numberMessage = language.invalidNumber;
@@ -165,8 +165,8 @@ configuration.validators["numbers"] = {
     return true;
   },
   invalidMessage: numberMessage,
-  invalidMessageKey: "InvNumbers",
-  validMessageKey: "ValNumbers",
+  invalidMessageKey: "inv_numbers",
+  validMessageKey: "val_numbers",
 };
 
 let lettersMessage = language.invalidLetters;
@@ -190,8 +190,8 @@ configuration.validators["letters"] = {
     return true;
   },
   invalidMessage: lettersMessage,
-  invalidMessageKey: "InvLetters",
-  validMessageKey: "ValLetters",
+  invalidMessageKey: "inv_letters",
+  validMessageKey: "val_letters",
 };
 
 let alphanumericMessage = language.invalidAlphaNumeric;
@@ -223,8 +223,8 @@ configuration.validators["alphanumeric"] = {
     return true;
   },
   invalidMessage: alphanumericMessage,
-  invalidMessageKey: "InvAlphanumeric",
-  validMessageKey: "ValAlphanumeric",
+  invalidMessageKey: "inv_alphanumeric",
+  validMessageKey: "val_alphanumeric",
 };
 
 /* Checks if the field value match with the specified regular expression */
@@ -237,8 +237,8 @@ configuration.validators["regex"] = {
     return new RegExp(regex, flags).test(value);
   },
   invalidMessage: language.invalidCustomVal,
-  invalidMessageKey: "InvRegExp",
-  validMessageKey: "ValRegExp",
+  invalidMessageKey: "inv_regexp",
+  validMessageKey: "val_regexp",
 };
 
 /* Checks if the field value match with the specified time format   */
@@ -251,8 +251,8 @@ configuration.validators["telephone"] = {
     return false;
   },
   invalidMessage: language.invalidTelephone,
-  invalidMessageKey: "InvTelephone",
-  validMessageKey: "ValTelephone",
+  invalidMessageKey: "inv_telephone",
+  validMessageKey: "val_telephone",
 };
 
 // Regex compatible with "test" and "match"
@@ -288,6 +288,6 @@ configuration.validators["color"] = {
     return false;
   },
   invalidMessage: language.color,
-  invalidMessageKey: "InvColor",
-  validMessageKey: "ValColor",
+  invalidMessageKey: "inv_color",
+  validMessageKey: "val_color",
 };

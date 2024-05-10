@@ -20,8 +20,8 @@ configuration.validators["date"] = {
     return true;
   },
   invalidMessage: dateMessage,
-  invalidMessageKey: "InvDate",
-  validMessageKey: "ValDate",
+  invalidMessageKey: "inv_date",
+  validMessageKey: "val_date",
 };
 
 /* Checks if the field value match with the specified time format   */
@@ -41,6 +41,6 @@ configuration.validators["time"] = {
     return true;
   },
   invalidMessage: language.invalidTime,
-  invalidMessageKey: "InvTime",
-  validMessageKey: "ValTime",
+  invalidMessageKey: "inv_time",
+  validMessageKey: "val_time",
 };

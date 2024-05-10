@@ -1,4 +1,10 @@
-import type { Options, Configuration, Lang, TelephoneFormats } from "./types";
+import type {
+  Options,
+  Configuration,
+  Lang,
+  TelephoneFormats,
+  CardInfo,
+} from "./types";
 
 export const options: Options = {
   ignoredFieldsNames: [],
@@ -84,11 +90,12 @@ export const language: Lang = {
   invalidFileType: "File(S) type must be: {type}.",
   invalidFileExtension: "File(s) extension must be: {extension}.",
   invalidImageDim: "Image(s) dimensions are incorrect.",
-  imageTooTall: "Image(S) heigh must not exceed {max}px.",
-  imageTooWide: "Image(s) width must not exceed {max}px.",
-  imageRatioNotAccepted: "Image ratio is not correct",
-  invalidCreditCard: "Credit card number is not correct.",
+  invalidImageHeigh: "Image(S) heigh must not exceed {max}px.",
+  invalidImageWidth: "Image(s) width must not exceed {max}px.",
+  invalidImageRatio: "Image ratio is not correct",
+  invalidCreditCardNumber: "Credit card number is not correct.",
   invalidCVV: "CVV number is not correct.",
+  invalidConfirmationValue: "The [values] do not match.",
   invalidSecurityAnswer: "Security question answer is incorrect.",
   invalidStrength: "Password is not strong enough.",
   passwordConditionsTitle: "Password must contain:",
@@ -121,4 +128,11 @@ export const telephoneFormats: TelephoneFormats = {
   EC: [
     /^(?:0|\x2B593\s)(?:(?:[2-7]\s)?|(?:\d{2}(?:\s|-)?))\d{3}(?:\s|-)?\d{4}$/,
   ],
+};
+
+export const cardInfo: CardInfo = {
+  AMEX: { first: [3], length: { min: 15, max: 15 }, cvv: 4 },
+  VISA: { first: [4], length: { min: 16, max: 16 }, cvv: 3 },
+  MASTERCARD: { first: [5], length: { min: 16, max: 16 }, cvv: 3 },
+  DISCOVER: { first: [6], length: { min: 16, max: 16 }, cvv: 3 },
 };

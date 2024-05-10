@@ -407,3 +407,56 @@ export function checkPasswordStrength(password: string): {
   if (/\s/.test(password)) strength = 1;
   return { strength: strength, check: check };
 }
+
+/**
+ * Lhun algorithm
+ * @param {number[]} digits digits to calculate
+ * @returns {number} Calculated digit
+ */
+export function luhn(digits: number[]): number {
+  let sum = 0;
+  digits.reverse().forEach((digit, i) => {
+    if (i % 2 == 0) {
+      digit *= 2;
+      if (digit > 9) digit -= 9;
+    }
+    sum += digit;
+  });
+  return sum % 10;
+}
+
+/**
+ * Module 11 algorithm
+ * @param {number[]} digits digits to calculate
+ * @returns {number} Calculated digit
+ */
+export function module11(digits: number[]): number {
+  let sum = 0;
+  let factor = 2;
+  digits.reverse().forEach((digit) => {
+    sum += digit * factor;
+    factor++;
+    if (factor > 7) factor = 2;
+  });
+  return sum % 11;
+}
+
+/**
+ * Convert the user provided size to bytes
+ * @param {string} size Size with string size type
+ * @returns {number} Size in bytes
+ */
+export function sizeStringToBytes(size: string): number {
+  size = size.toUpperCase();
+  if (size.slice(-2) === "GB") {
+    return parseInt(size.slice(0, -2), 10) * 1024 * 1024 * 1024;
+  } else if (size.slice(-2) === "MB") {
+    return parseInt(size.slice(0, -2), 10) * 1024 * 1024;
+  } else if (size.slice(-2) === "KB") {
+    return parseInt(size.slice(0, -2), 10) * 1024;
+  } else if (size.slice(-1) === "B") {
+    return parseInt(size.slice(0, -1), 10);
+  } else {
+    return parseInt(size, 10);
+  }
+}

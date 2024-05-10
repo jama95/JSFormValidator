@@ -174,15 +174,17 @@ export type Lang = {
   /** Invalid image dimensions message */
   invalidImageDim: string;
   /** Invalid image height message */
-  imageTooTall: string;
+  invalidImageHeigh: string;
   /** Invalid image width message */
-  imageTooWide: string;
+  invalidImageWidth: string;
   /** Invalid image ratio message */
-  imageRatioNotAccepted: string;
+  invalidImageRatio: string;
   /** Invalid credit card number message*/
-  invalidCreditCard: string;
+  invalidCreditCardNumber: string;
   /** Invalid credit card cvv number message */
   invalidCVV: string;
+  /** Invalid confirmation value message */
+  invalidConfirmationValue: string;
   /** Invalid  security answer message */
   invalidSecurityAnswer: string;
   /** Insecure password message */
@@ -290,4 +292,12 @@ export type Suggestion = {
 
 export type TelephoneFormats = {
   [key: string]: RegExp[];
+};
+
+export type CardInfo = {
+  [key: string]: {
+    first: number[];
+    length: { min: number; max: number };
+    cvv: number;
+  };
 };
