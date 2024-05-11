@@ -1,5 +1,5 @@
 import { options } from "./config";
-import type { Lang, Options } from "./types";
+import type { Lang, Options, ValidationField } from "./types";
 
 /**
  * Check if the format is correct
@@ -345,14 +345,14 @@ export function notAccept(
  * Trigger the callbacks when a message is showed
  * @param {boolean} isValid Validation state
  * @param {Options} options FormValidator options
- * @param {(HTMLInputElement | HTMLTextAreaElement)} field The validated field
+ * @param {ValidationField} field The validated field
  * @param {string} message The validation message
  */
 export function triggerMessageCallback(
   isValid: boolean,
   options: Options,
   form: HTMLFormElement,
-  field: HTMLInputElement | HTMLTextAreaElement,
+  field: ValidationField,
   message: string
 ) {
   if (isValid && options.validMessageCallback) {

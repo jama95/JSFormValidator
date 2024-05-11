@@ -1,5 +1,5 @@
 import { language, options } from "./config";
-import { Options, Lang, Validator, Suggestion } from "./types";
+import { Options, Lang, Validator, Suggestion, ValidationField } from "./types";
 import { checkPasswordStrength, triggerMessageCallback } from "./utils";
 
 /**
@@ -265,13 +265,10 @@ export function passwordInfo(input: HTMLInputElement) {
 
 /**
  * Set the field help message
- * @param {(HTMLInputElement | HTMLTextAreaElement)} field The field to attach the message
+ * @param {ValidationField} field The field to attach the message
  * @param {string} message The message to show
  */
-export function fieldHelpMessage(
-  field: HTMLInputElement | HTMLTextAreaElement,
-  message: string
-) {
+export function fieldHelpMessage(field: ValidationField, message: string) {
   let span = document.createElement("span"),
     name = field.getAttribute("name");
   if (!name) return;
@@ -284,13 +281,13 @@ export function fieldHelpMessage(
 
 /**
  * Get the parent of the field
- * @param {(HTMLInputElement | HTMLTextAreaElement)} field The field element
+ * @param {ValidationField} field The field element
  * @param {Options} options FormValidator options
  * @param {HTMLFormElement} form The validated field parent form
  * @returns {HTMLElement | null} Parent element or null if the parent is the form
  */
 function getFieldParent(
-  field: HTMLInputElement | HTMLTextAreaElement,
+  field: ValidationField,
   form: HTMLFormElement,
   options: Options
 ): HTMLElement | null {
@@ -303,14 +300,14 @@ function getFieldParent(
 
 /**
  * Get the invalid message for the validator
- * @param {(HTMLInputElement | HTMLTextAreaElement)} field The validated field
+ * @param {ValidationField} field The validated field
  * @param {Validator} validator The validator
  * @param {Options} options FormValidator options
  * @param {Lang} language FormValidator language
  * @returns {string} Invalid message
  */
 function getInvalidMessage(
-  field: HTMLInputElement | HTMLTextAreaElement,
+  field: ValidationField,
   validator: Validator,
   options: Options,
   language: Lang
@@ -328,13 +325,13 @@ function getInvalidMessage(
 
 /**
  * Get the valid message for the validator
- * @param {(HTMLInputElement | HTMLTextAreaElement)} field The validated field
+ * @param {ValidationField} field The validated field
  * @param {Validator} validator The validator
  * @param {Options} options FormValidator options
  * @returns {string} Valid message
  */
 function getValidMessage(
-  field: HTMLInputElement | HTMLTextAreaElement,
+  field: ValidationField,
   validator: Validator,
   options: Options
 ): string {
@@ -350,13 +347,13 @@ function getValidMessage(
 
 /**
  * Sets the styles for the field and their parent
- * @param {(HTMLInputElement | HTMLTextAreaElement)} field The validated field
+ * @param {ValidationField} field The validated field
  * @param {HTMLFormElement} form The validated field parent form
  * @param {Options} options FormValidator options
  * @param {boolean} valid_invalid True if is valid, false if is invalid
  */
 export function setStyles(
-  field: HTMLInputElement | HTMLTextAreaElement,
+  field: ValidationField,
   form: HTMLFormElement,
   options: Options,
   valid_invalid: boolean
@@ -387,12 +384,12 @@ export function setStyles(
 
 /**
  * Removes the field style and its parent
- * @param {(HTMLInputElement | HTMLTextAreaElement)} field The validated field
+ * @param {ValidationField} field The validated field
  * @param {HTMLFormElement} form The validated field parent form
  * @param {Options} options FormValidator options
  */
 export function removeStyles(
-  field: HTMLInputElement | HTMLTextAreaElement,
+  field: ValidationField,
   form: HTMLFormElement,
   options: Options
 ) {
@@ -407,7 +404,7 @@ export function removeStyles(
 
 /**
  * Sets the field inline validation message
- * @param {(HTMLInputElement | HTMLTextAreaElement)} field The validated field
+ * @param {ValidationField} field The validated field
  * @param {HTMLFormElement} form The validated field parent form
  * @param {Options} options FormValidator options
  * @param {Lang} language FormValidator language
@@ -415,7 +412,7 @@ export function removeStyles(
  * @param {Validator} validator The validator
  */
 function setInlineMessage(
-  field: HTMLInputElement | HTMLTextAreaElement,
+  field: ValidationField,
   form: HTMLFormElement,
   options: Options,
   language: Lang,
@@ -447,7 +444,7 @@ function setInlineMessage(
 
 /**
  * Sets the field top validation message
- * @param {(HTMLInputElement | HTMLTextAreaElement)} field The validated field
+ * @param {ValidationField} field The validated field
  * @param {HTMLFormElement} form The validated field parent form
  * @param {Options} options FormValidator options
  * @param {Lang} language FormValidator language
@@ -455,7 +452,7 @@ function setInlineMessage(
  * @param {Validator} validator The validator
  */
 function setTopMessage(
-  field: HTMLInputElement | HTMLTextAreaElement,
+  field: ValidationField,
   form: HTMLFormElement,
   options: Options,
   language: Lang,
@@ -503,14 +500,13 @@ function setTopMessage(
 
 /**
  * Removes the field message
- * @param {(HTMLInputElement | HTMLTextAreaElement)} field The validated field
+ * @param {ValidationField} field The validated field
  * @param {HTMLFormElement} form The validated field parent form
  */
-function removeInlineMessages(
-  field: HTMLInputElement | HTMLTextAreaElement,
-  form: HTMLFormElement
-) {
-  let span = form.querySelector(`span[for-field="${field.name}"]`);
+function removeInlineMessages(field: ValidationField, form: HTMLFormElement) {
+  let span = form.querySelector<HTMLSpanElement>(
+    `span[for-field="${field.name}"]`
+  );
   if (span) span.remove();
 }
 
@@ -530,7 +526,7 @@ function removeTopMessage(form: HTMLFormElement, options: Options) {
 
 /**
  * Sets the field validation message
- * @param {(HTMLInputElement | HTMLTextAreaElement)} field The validated field
+ * @param {ValidationField} field The validated field
  * @param {HTMLFormElement} form The validated field parent form
  * @param {Options} options FormValidator options
  * @param {Lang} language FormValidator language
@@ -538,7 +534,7 @@ function removeTopMessage(form: HTMLFormElement, options: Options) {
  * @param {Validator} validator The validator
  */
 export function setMessage(
-  field: HTMLInputElement | HTMLTextAreaElement,
+  field: ValidationField,
   form: HTMLFormElement,
   options: Options,
   language: Lang,
@@ -567,8 +563,8 @@ export function setMessage(
  * @param {Options} options FormValidator options
  */
 export function formReset(form: HTMLFormElement, options: Options) {
-  let fields = form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>(
-    'textarea, input:not([type="submit"],[type="button"],[type="reset"])'
+  let fields = form.querySelectorAll<ValidationField>(
+    'textarea, select, input:not([type="submit"],[type="button"],[type="reset"])'
   );
   fields.forEach((field) => {
     removeStyles(field, form, options);
@@ -579,23 +575,24 @@ export function formReset(form: HTMLFormElement, options: Options) {
 
 /**
  * Toggles the visibility of the help messages
- * @param {(HTMLInputElement | HTMLTextAreaElement)} field Field owner of the help message
+ * @param {ValidationField} field Field owner of the help message
  * @param {HTMLFormElement} form Form to search fields
  * @param {Options} options FormValidator options
+ * @param {Boolean} show Show or hide de message
  */
 export function toggleHelpMessage(
-  field: HTMLInputElement | HTMLTextAreaElement,
+  field: ValidationField,
   form: HTMLFormElement,
-  options: Options
+  options: Options,
+  show: boolean
 ) {
   if (options.showHelpMessagesOnFocus) {
-    let name: string = field.getAttribute("name") ?? "",
+    let name = field.getAttribute("name") ?? "",
       span = form.querySelector<HTMLSpanElement>(
         `span.fv-help_message[for="${name}"]`
       );
     if (span) {
-      let state = span.style.display;
-      span.style.display = state == "none" ? "block" : "none";
+      span.style.display = show ? "block" : "none";
     }
   }
 }
@@ -610,8 +607,8 @@ export function addValidStyleInAllFields(
   options: Options
 ) {
   if (!options.addValidClassOnAll) return;
-  let fields = form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>(
-    `textarea:not(.${options.validClass},.${options.invalidClass}), input:not(.${options.validClass},.${options.invalidClass})`
+  let fields = form.querySelectorAll<ValidationField>(
+    `textarea:not(.${options.validClass}, .${options.invalidClass}), input:not(.${options.validClass}, .${options.invalidClass}), select:not(.${options.validClass}, .${options.invalidClass})`
   );
   fields.forEach((field) => setStyles(field, form, options, true));
 }
