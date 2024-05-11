@@ -4,7 +4,7 @@ export type Options = {
   /* Signature symbol */
   [key: string]: any;
   /** List of fields names that will not be validated @default []*/
-  ignoredFieldsNames: string[];
+  ignoredFieldsNames: string[] | string;
   /** Valid inline message class @default 'valid-feedback' */
   validMessageClass: string;
   /** Invalid inline message class @default 'invalid-feedback' */
@@ -45,15 +45,15 @@ export type Options = {
   form: string;
   /** Parent selector for all form fields @default 'fv-group' */
   parentField: string;
-  /** Data attribute of the field to list modifiers @default 'data-modifyList' */
+  /** Data attribute of the field to list modifiers @default 'data-modify_list' */
   fieldModifyAttribute: string;
-  /** Data attribute of the field to list validators @default 'data-validateList' */
+  /** Data attribute of the field to list validators @default 'data-validate_list' */
   fieldValidateAttribute: string;
-  /** Data attribute of the field to overwrite invalid messages @default 'data-validate-invalidMessage' */
+  /** Data attribute of the field to overwrite invalid messages @default 'data-validate-invalid_message' */
   fieldInvalidMessageAttribute: string;
-  /** Data attribute of the field to overwrite valid messages @default 'data-validate-validMessage' */
+  /** Data attribute of the field to overwrite valid messages @default 'data-validate-valid_message' */
   fieldValidMessageAttribute: string;
-  /** Data attribute of the field to show help messages @default 'data-validate-helpMessage' */
+  /** Data attribute of the field to show help messages @default 'data-validate-help_message' */
   fieldHelpMessageAttribute: string;
   /** Triggers validations on field's input event @default false */
   validateOnInput: boolean;
@@ -69,7 +69,7 @@ export type Options = {
   suggestionConfig: Suggestion;
   /** Data attribute of the input to list the words to be suggested @default 'data-suggestions'*/
   suggestionAttribute: string;
-  /** Data attribute of the textArea to set the max number of characters allowed @default 'data-lengthRestrict' */
+  /** Data attribute of the textArea to set the max number of characters allowed @default 'data-length_restrict' */
   lengthRestrictAttribute: string;
   /** Length restriction info to show (Available options: both, count, remaining) @default 'count' @example count: 100/5000 ; remaining: 4900/5000 ; both: 100(4900)/5000*/
   lengthRestrictInfo: string;
@@ -213,6 +213,11 @@ export type Lang = {
   passwordStrengthVeryStrong: string;
 };
 
+export type ValidationField =
+  | HTMLInputElement
+  | HTMLTextAreaElement
+  | HTMLSelectElement;
+
 export type Validator = {
   /** Validator name */
   name: string;
@@ -223,7 +228,7 @@ export type Validator = {
     /** Form element (parent of the field) */
     form: HTMLFormElement,
     /** Field element (Input, Select or TextArea) */
-    field: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement,
+    field: ValidationField,
     /** Validator options */
     options: Options,
     /** Validator language */
@@ -263,7 +268,7 @@ export type MessageCallback = (
   /** Parent form */
   form: HTMLFormElement,
   /** Field element (Input, Select or TextArea) */
-  field: HTMLInputElement | HTMLTextAreaElement,
+  field: ValidationField,
   /** Validation message */
   message: string,
   /** FormValidator options */
@@ -300,4 +305,9 @@ export type CardInfo = {
     length: { min: number; max: number };
     cvv: number;
   };
+};
+
+export type Country = {
+  country: string;
+  capital: string;
 };
