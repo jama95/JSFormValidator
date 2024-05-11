@@ -24,6 +24,8 @@ configuration.validators["date"] = {
   validMessageKey: "val_date",
 };
 
+let timeMessage = language.invalidTime;
+
 /* Checks if the field value match with the specified time format   */
 configuration.validators["time"] = {
   name: "time",
@@ -31,16 +33,16 @@ configuration.validators["time"] = {
     const format = field.getAttribute("data-fv-time_format") || lang.timeFormat;
     const check = checkTimeFormat(value, format);
     if (check == "no") {
-      dateMessage = lang.notConfirmed;
+      timeMessage = lang.notConfirmed;
       return false;
     }
     if (check == "invalid") {
-      dateMessage = lang.invalidTime;
+      timeMessage = lang.invalidTime;
       return false;
     }
     return true;
   },
-  invalidMessage: language.invalidTime,
+  invalidMessage: timeMessage,
   invalidMessageKey: "inv_time",
   validMessageKey: "val_time",
 };

@@ -15,7 +15,7 @@ configuration.validators["required"] = {
           .length > 0
       );
     } else {
-      return !!(value && value.trim().length > 0);
+      return value.trim().length > 0;
     }
   },
   invalidMessage: language.required,
