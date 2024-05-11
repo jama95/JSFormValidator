@@ -1,58 +1,64 @@
-import type { Lang } from "../types";
-import FV from "../FormValidator";
+import { Lang } from "../types";
 
-(function (window) {
-  const es: Lang = {
-    validTitle: "Formulario enviado correctamente!",
-    invalidTitle: "¡Falló el envío del formulario!",
-    required: "Este campo es obligatorio",
-    invalidTime: "La hora indicada es incorrecta",
-    invalidEmail: "La dirección de correo electrónico ingresada es incorrecta",
-    invalidTelephone: "El número de teléfono ingresado es incorrecto",
-    invalidSecurityAnswer:
-      "La respuesta a la pregunta de seguridad es incorrecta",
-    invalidDate: "La fecha indicada es incorrecta",
-    invalidLength:
-      "El valor ingresado debe estar comprendido entre {range} caracteres",
-    lengthTooLongStart: "El valor ingresado es superior a ",
-    lengthTooShortStart: "El valor ingresado es inferior a ",
-    notConfirmed: "No se han podido confirmar los valores ingresados",
-    invalidDomain: "El dominio ingresado es incorrecto",
-    invalidUrl: "La URL ingresada es incorrecta",
-    invalidCustomVal: "El valor ingresado es incorrecto",
-    andSpaces: " y espacios ",
-    invalidNumber: "El valor ingresado no es un número aceptado",
-    invalidStrength: "La contraseña no es lo suficientemente fuerte",
-    invalidNumberOfSelectedOptions: "Debe elegir al menos {options} respuestas",
-    invalidAlphaNumeric:
-      "El valor ingresado sólo puede contener letras y números ",
-    invalidAlphaNumericExtra: " y ",
-    invalidFileSize:
-      "El archivo que está intentando cargar es demasiado grande (max %s)",
-    invalidFileType: "Sólo se permiten archivos del tipo %s",
-    groupCheckedRangeStart: "Por favor, elige entre {range} ítem(s)",
-    groupCheckedTooFewStart: "Por favor, elija al menos {number} ítem(s)",
-    groupCheckedTooManyStart: "Por favor, elija un máximo de {number} ítem(s)",
-    invalidCreditCard: "El número de tarjeta de crédito no es correcto",
-    invalidCVV: "El número CVV no es correcto",
-    invalidImageDim: "Las dimensiones de la imagen son incorrectas",
-    imageTooTall: "la imagen no puede tener un alto mayor a",
-    imageTooWide: "la imagen no puede tener un ancho mayor a",
-    imageTooSmall: "la imagen es demasiado pequeña",
-    min: "mínimo",
-    max: "máximo",
-    imageRatioNotAccepted: "El ratio de la imagen no se acepta",
-    passwordComplexityStart: "La contraseña debe contener al menos ",
-    passwordComplexityUppercaseInfo: "Letra(s) mayúscula(s)",
-    passwordComplexityLowercaseInfo: "Letra(s) minúscula(s)",
-    passwordComplexitySpecialCharsInfo: "Carácter(es) especial(es)",
-    passwordComplexityNumericCharsInfo: "Carácter(es) numérico(s)",
-    passwordComplexityEnd: ".",
-    locale: "es-EC",
-    currencyCode: "USD",
-    decimal: ",",
-  };
-  window.addEventListener("validatorsLoaded", function () {
-    FV().registerLanguage(es);
-  });
-})(window);
+const es: Lang = {
+  locale: "es-EC",
+  currencyCode: "USD",
+  dateFormat: "YYYY-MM-DD",
+  timeFormat: "HH:mm:ss",
+  validTitle: "¡Formulario enviado correctamente!",
+  invalidTitle: "¡Falló el envío del formulario!",
+  notConfirmed: "No se pudo validar.",
+  required: "Este campo es obligatorio.",
+  invalidDate: "La fecha no es válida.",
+  invalidTime: "La hora no es válida.",
+  invalidTelephone: "El número de teléfono no es válido.",
+  invalidIPv4: "La dirección IPv4 no es válida.",
+  invalidIPv6: "La dirección IPv6 no es válida.",
+  invalidDomain: "El dominio no es válido.",
+  invalidEmail: "La dirección de correo electrónico no es válida.",
+  invalidUrl: "La URL no es válida.",
+  invalidNumber: "El número no es válido.",
+  invalidNumberMax: "Debe ser menor o igual a {max}.",
+  invalidNumberMin: "Debe ser mayor o igual a {mix}.",
+  invalidNumberRange: "Debe coincidir con el rango {range}.",
+  invalidNumberEqual: "Debe ser igual a {equal}.",
+  invalidNumberStep: "Debe aumentar en {step}.",
+  invalidLengthMax:
+    "Debe 1[tener]1|2[elegir]2 un máximo de {max} 3[caracter(es)]3|4[archivo(s)]4|5[opción(es)]5.",
+  invalidLengthMin:
+    "Debe 1[tener]1|2[elegir]2 un mínimo de {min} 3[caracter(es)]3|4[archivo(s)]4|5[opción(es)]5.",
+  invalidLengthRange:
+    "Debe 1[tener]1|2[elegir]2 entre {min} y {max} 3[caracteres]3|4[archivos]4|5[opciones]5.",
+  invalidLengthEqual:
+    "Debe 1[tener]1|2[elegir]2 {equal} 3[caracter(es)]3|4[archivo(s)]4|5[opción(es)]5.",
+  invalidLetters:
+    "Sólo puede contener letras.[ También puede contener {extra}]",
+  invalidCustomVal: "El valor no es válido.",
+  invalidAlphaNumeric:
+    "Sólo puede contener letras y números.[ También puede contener {extra}]",
+  invalidColor: "El formato de color no es válido.",
+  invalidFileSize: "El tamaño de los archivos debe ser: {max}.",
+  invalidFileType: "El tipo de los archivos debe ser: {type}.",
+  invalidFileExtension: "La extensión de los archivos debe ser: {extension}.",
+  invalidImageDim: "Las dimensiones de las imágenes no son válidas.",
+  invalidImageHeigh: "La altura de la(s) imagen(es) no debe superar: {max}px.",
+  invalidImageWidth: "El ancho de la(s) imagen(es) no debe superar: {max}px.",
+  invalidImageRatio: "La relación de aspecto de la imagen no es válida.",
+  invalidCreditCardNumber: "El número de tarjeta de crédito no es válido.",
+  invalidCVV: "El número CVV no es válido.",
+  invalidConfirmationValue: "Los [valores] no coinciden.",
+  invalidSecurityAnswer:
+    "La respuesta a la pregunta de seguridad no es válida.",
+  invalidStrength: "La contraseña no es lo suficientemente fuerte.",
+  passwordConditionsTitle: "La contraseña debe contener:",
+  passwordConditionUppercase: "Letra(s) mayúscula(s).",
+  passwordConditionLowercase: "Letra(s) minúscula(s).",
+  passwordConditionSpecialChars: "Caracter(es) especial(es).",
+  passwordConditionNumericChars: "Caracter(es) numérico(s).",
+  passwordConditionLength: "Al menos 8 caracteres.",
+  passwordStrengthVeryWeak: "Muy débil &#x1F628;",
+  passwordStrengthWeak: "Débil &#x1F61E;",
+  passwordStrengthNormal: "Normal &#x1F610;",
+  passwordStrengthStrong: "Fuerte &#x1F601;",
+  passwordStrengthVeryStrong: "Muy fuerte &#x1F60E;",
+};
