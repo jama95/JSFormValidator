@@ -45,8 +45,8 @@ class FormValidate {
       value = field.value;
     let valid_invalid: boolean | null = null;
     list.forEach((validator) => {
-      if (options.validators[validator]) {
-        valid_invalid = options.validators[validator].validatorFunction(
+      if (this.conf.validators[validator]) {
+        valid_invalid = this.conf.validators[validator].validatorFunction(
           value,
           form,
           field,
@@ -60,9 +60,10 @@ class FormValidate {
             field,
             form,
             options,
+            this.conf,
             this.lang,
             valid_invalid,
-            options.validators[validator]
+            this.conf.validators[validator]
           );
         }
       }
@@ -117,8 +118,8 @@ class FormValidate {
     const list = !modifiersList ? [] : modifiersList.split(/[,|-]+\s*|\s+/);
     let value = field.value;
     list.forEach((modifier) => {
-      if (options.modifiers[modifier]) {
-        value = options.modifiers[modifier].modifierFunction(
+      if (this.conf.modifiers[modifier]) {
+        value = this.conf.modifiers[modifier].modifierFunction(
           value,
           form,
           field,

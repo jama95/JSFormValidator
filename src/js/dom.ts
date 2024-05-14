@@ -1,5 +1,12 @@
 import { language } from "./config";
-import { Options, Lang, Validator, Suggestion, ValidationField } from "./types";
+import {
+  Options,
+  Lang,
+  Validator,
+  Suggestion,
+  ValidationField,
+  Configuration,
+} from "./types";
 import { checkPasswordStrength, triggerMessageCallback } from "./utils";
 
 /**
@@ -444,6 +451,7 @@ function setInlineMessage(
  * @param {ValidationField} field The validated field
  * @param {HTMLFormElement} form The validated field parent form
  * @param {Options} options Validation options
+ * @param {Configuration} configuration Form Validator configuration
  * @param {Lang} language Form Validator language
  * @param {boolean} valid_invalid True if is valid, false if is invalid
  * @param {Validator} validator The validator
@@ -452,6 +460,7 @@ function setTopMessage(
   field: ValidationField,
   form: HTMLFormElement,
   options: Options,
+  configuration: Configuration,
   language: Lang,
   valid_invalid: boolean,
   validator: Validator
@@ -469,20 +478,20 @@ function setTopMessage(
     validView.replace("{title}", language.validTitle);
     validView.replace("{valid_invalid}", options.validMessagesClass);
     message = getValidMessage(field, validator, options);
-    options.validMessages[fieldName] = message;
+    configuration.validMessages[fieldName] = message;
   } else {
     invalidView.replace("{title}", language.invalidTitle);
     invalidView.replace("{valid_invalid}", options.invalidMessagesClass);
     message = getInvalidMessage(field, validator, options, language);
-    options.invalidMessages[fieldName] = message;
+    configuration.invalidMessages[fieldName] = message;
   }
   let validMessages = "",
     invalidMessages = "";
-  for (const key in options.validMessages) {
-    validMessages += `<li><strong>${key}</strong>: ${options.validMessages[key]}</li>`;
+  for (const key in configuration.validMessages) {
+    validMessages += `<li><strong>${key}</strong>: ${configuration.validMessages[key]}</li>`;
   }
-  for (const key in options.invalidMessages) {
-    invalidMessages += `<li><strong>${key}</strong>: ${options.invalidMessages[key]}</li>`;
+  for (const key in configuration.invalidMessages) {
+    invalidMessages += `<li><strong>${key}</strong>: ${configuration.invalidMessages[key]}</li>`;
   }
   if (validMessages.length > 0) {
     validView.replace("{fields&messagesList}", validMessages);
@@ -527,6 +536,7 @@ function removeTopMessage(form: HTMLFormElement, options: Options) {
  * @param {ValidationField} field The validated field
  * @param {HTMLFormElement} form The validated field parent form
  * @param {Options} options Validation options
+ * @param {Configuration} configuration Form Validator configuration
  * @param {Lang} language Form Validator language
  * @param {boolean} valid_invalid True if is valid, false if is invalid
  * @param {Validator} validator The validator
@@ -535,6 +545,7 @@ export function setMessage(
   field: ValidationField,
   form: HTMLFormElement,
   options: Options,
+  configuration: Configuration,
   language: Lang,
   valid_invalid: boolean,
   validator: Validator
@@ -551,7 +562,15 @@ export function setMessage(
     options.validMessagesPosition == "top"
   ) {
     removeTopMessage(form, options);
-    setTopMessage(field, form, options, language, valid_invalid, validator);
+    setTopMessage(
+      field,
+      form,
+      options,
+      configuration,
+      language,
+      valid_invalid,
+      validator
+    );
   }
 }
 
