@@ -2,7 +2,7 @@ export type FV = Options & Configuration;
 
 export type Options = {
   /* Signature symbol */
-  [key: string]: any;
+  [key: string]: unknown;
   /** List of fields names that will not be validated @default []*/
   ignoredFieldsNames: string[] | string;
   /** Valid inline message class @default 'valid-feedback' */

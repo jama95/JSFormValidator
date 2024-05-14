@@ -311,7 +311,7 @@ export function capitalizedWords(str: string): string {
 }
 
 /**
- * Description placeholder
+ * Converts the text in camelCase or pascalCase
  * @param {string} str Text to convert
  * @param {boolean} p Indicates whether the text will be converted to pascalCase (true) or camelCase (false)
  * @returns {string} Converted text
@@ -460,3 +460,7 @@ export function sizeStringToBytes(size: string): number {
     return parseInt(size, 10);
   }
 }
+
+export function dependantValidation() {}
+
+export function optionalValidation() {}
