@@ -45,15 +45,15 @@ export type Options = {
   form: string;
   /** Parent selector for all form fields @default 'fv-group' */
   parentField: string;
-  /** Data attribute of the field to list modifiers @default 'data-modify_list' */
+  /** Data attribute of the field to list modifiers @default 'data-fv-modifiers' */
   fieldModifyAttribute: string;
-  /** Data attribute of the field to list validators @default 'data-validate_list' */
+  /** Data attribute of the field to list validators @default 'data-fv-validators' */
   fieldValidateAttribute: string;
-  /** Data attribute of the field to overwrite invalid messages @default 'data-validate-invalid_message' */
+  /** Data attribute of the field to overwrite invalid messages @default 'data-fv-invalid-msg' */
   fieldInvalidMessageAttribute: string;
-  /** Data attribute of the field to overwrite valid messages @default 'data-validate-valid_message' */
+  /** Data attribute of the field to overwrite valid messages @default 'data-fv-valid-msg' */
   fieldValidMessageAttribute: string;
-  /** Data attribute of the field to show help messages @default 'data-validate-help_message' */
+  /** Data attribute of the field to show help messages @default 'data-fv-help-msg' */
   fieldHelpMessageAttribute: string;
   /** Triggers validations on field's input event @default false */
   validateOnInput: boolean;
@@ -67,9 +67,9 @@ export type Options = {
   addSuggestions: boolean;
   /** Datalist style options */
   suggestionConfig: Suggestion;
-  /** Data attribute of the input to list the words to be suggested @default 'data-suggestions'*/
+  /** Data attribute of the input to list the words to be suggested @default 'data-fv-suggestions'*/
   suggestionAttribute: string;
-  /** Data attribute of the textArea to set the max number of characters allowed @default 'data-length_restrict' */
+  /** Data attribute of the textArea to set the max number of characters allowed @default 'data-fv-text-length' */
   lengthRestrictAttribute: string;
   /** Length restriction info to show (Available options: both, count, remaining) @default 'count' @example count: 100/5000 ; remaining: 4900/5000 ; both: 100(4900)/5000*/
   lengthRestrictInfo: string;
