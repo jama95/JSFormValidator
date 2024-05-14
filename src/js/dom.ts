@@ -1,4 +1,4 @@
-import { language, options } from "./config";
+import { language } from "./config";
 import { Options, Lang, Validator, Suggestion, ValidationField } from "./types";
 import { checkPasswordStrength, triggerMessageCallback } from "./utils";
 
@@ -59,24 +59,18 @@ export function textAreaLengthRestriction(
  * Set the input suggestions
  * @param {HTMLInputElement} input Input element where suggestions will be shown
  * @param {string[]} words List of words to suggest
- * @param {?(Suggestion)} [settings] Custom options for suggestion's DataList Element
+ * @param {Suggestion} settings Custom options for suggestion's DataList Element
  */
 export function inputSuggestion(
   input: HTMLInputElement,
   words: string[],
-  settings?: Suggestion
+  settings: Suggestion
 ) {
-  let conf: Suggestion = {
-    maxHeight: options.suggestionConfig.maxHeight,
-    containerClass: options.suggestionConfig.containerClass,
-    optionClass: options.suggestionConfig.optionClass,
-  };
-  conf = { ...conf, ...settings };
   let currentFocus = -1; // The first option element index is 0
   let datalist: HTMLDataListElement = document.createElement("datalist");
   datalist.classList.add("fv-suggestions");
-  datalist.classList.add(conf.containerClass);
-  datalist.style.maxHeight = conf.maxHeight;
+  datalist.classList.add(settings.containerClass);
+  datalist.style.maxHeight = settings.maxHeight;
   datalist.style.display = "none";
   datalist.setAttribute("target", `#${input.id}`);
   input.setAttribute("autocomplete", "off");
@@ -88,7 +82,7 @@ export function inputSuggestion(
       const option = document.createElement("option");
       option.value = word;
       option.innerText = word;
-      option.classList.add(conf.optionClass);
+      option.classList.add(settings.optionClass);
       option.onclick = function () {
         datalist.style.display = "none";
         input.value = option.value;
@@ -184,8 +178,9 @@ export function inputSuggestion(
 /**
  * Show password strength info
  * @param {HTMLInputElement} input Input type password
+ * @param {Options} options Validation options
  */
-export function passwordInfo(input: HTMLInputElement) {
+export function passwordInfo(input: HTMLInputElement, options: Options) {
   if (input.type != "password") return;
   let container = document.createElement("div");
   let additionalClass = options.passwordInfoClass ?? "";
@@ -282,7 +277,7 @@ export function fieldHelpMessage(field: ValidationField, message: string) {
 /**
  * Get the parent of the field
  * @param {ValidationField} field The field element
- * @param {Options} options FormValidator options
+ * @param {Options} options Validation options
  * @param {HTMLFormElement} form The validated field parent form
  * @returns {HTMLElement | null} Parent element or null if the parent is the form
  */
@@ -302,8 +297,8 @@ function getFieldParent(
  * Get the invalid message for the validator
  * @param {ValidationField} field The validated field
  * @param {Validator} validator The validator
- * @param {Options} options FormValidator options
- * @param {Lang} language FormValidator language
+ * @param {Options} options Validation options
+ * @param {Lang} language Form Validator language messages
  * @returns {string} Invalid message
  */
 function getInvalidMessage(
@@ -327,7 +322,7 @@ function getInvalidMessage(
  * Get the valid message for the validator
  * @param {ValidationField} field The validated field
  * @param {Validator} validator The validator
- * @param {Options} options FormValidator options
+ * @param {Options} options Validation options
  * @returns {string} Valid message
  */
 function getValidMessage(
@@ -349,7 +344,7 @@ function getValidMessage(
  * Sets the styles for the field and their parent
  * @param {ValidationField} field The validated field
  * @param {HTMLFormElement} form The validated field parent form
- * @param {Options} options FormValidator options
+ * @param {Options} options Form Validation options
  * @param {boolean} valid_invalid True if is valid, false if is invalid
  */
 export function setStyles(
@@ -386,7 +381,7 @@ export function setStyles(
  * Removes the field style and its parent
  * @param {ValidationField} field The validated field
  * @param {HTMLFormElement} form The validated field parent form
- * @param {Options} options FormValidator options
+ * @param {Options} options Validation options
  */
 export function removeStyles(
   field: ValidationField,
@@ -406,8 +401,8 @@ export function removeStyles(
  * Sets the field inline validation message
  * @param {ValidationField} field The validated field
  * @param {HTMLFormElement} form The validated field parent form
- * @param {Options} options FormValidator options
- * @param {Lang} language FormValidator language
+ * @param {Options} options Validation options
+ * @param {Lang} language Form Validator language
  * @param {boolean} valid_invalid True if is valid, false if is invalid
  * @param {Validator} validator The validator
  */
@@ -446,8 +441,8 @@ function setInlineMessage(
  * Sets the field top validation message
  * @param {ValidationField} field The validated field
  * @param {HTMLFormElement} form The validated field parent form
- * @param {Options} options FormValidator options
- * @param {Lang} language FormValidator language
+ * @param {Options} options Validation options
+ * @param {Lang} language Form Validator language
  * @param {boolean} valid_invalid True if is valid, false if is invalid
  * @param {Validator} validator The validator
  */
@@ -513,7 +508,7 @@ function removeInlineMessages(field: ValidationField, form: HTMLFormElement) {
 /**
  * Remove all the top messages
  * @param {HTMLFormElement} form The validated fields parent form
- * @param {Options} options FormValidator options
+ * @param {Options} options Validation options
  */
 function removeTopMessage(form: HTMLFormElement, options: Options) {
   options.validMessages = {};
@@ -528,8 +523,8 @@ function removeTopMessage(form: HTMLFormElement, options: Options) {
  * Sets the field validation message
  * @param {ValidationField} field The validated field
  * @param {HTMLFormElement} form The validated field parent form
- * @param {Options} options FormValidator options
- * @param {Lang} language FormValidator language
+ * @param {Options} options Validation options
+ * @param {Lang} language Form Validator language
  * @param {boolean} valid_invalid True if is valid, false if is invalid
  * @param {Validator} validator The validator
  */
@@ -560,7 +555,7 @@ export function setMessage(
 /**
  * Remove all styles and messages
  * @param {HTMLFormElement} form The validated fields parent form
- * @param {Options} options FormValidator options
+ * @param {Options} options Validation options
  */
 export function formReset(form: HTMLFormElement, options: Options) {
   let fields = form.querySelectorAll<ValidationField>(
@@ -577,7 +572,7 @@ export function formReset(form: HTMLFormElement, options: Options) {
  * Toggles the visibility of the help messages
  * @param {ValidationField} field Field owner of the help message
  * @param {HTMLFormElement} form Form to search fields
- * @param {Options} options FormValidator options
+ * @param {Options} options Validation options
  * @param {Boolean} show Show or hide de message
  */
 export function toggleHelpMessage(
@@ -600,7 +595,7 @@ export function toggleHelpMessage(
 /**
  * Adds the valid class in all no validated fields
  * @param {HTMLFormElement} form Form to search fields
- * @param {Options} options FormValidator options
+ * @param {Options} options Validation options
  */
 export function addValidStyleInAllFields(
   form: HTMLFormElement,

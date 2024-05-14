@@ -19,12 +19,12 @@ import { escapeRegExp, notAccept } from "./utils";
  */
 class FormValidate {
   private conf: FV;
-  private options: Options;
+  private opt: Options;
   private lang: Lang;
   constructor(opt?: Options, lang?: Lang) {
     this.conf = { ...options, ...configuration, ...opt };
     this.conf.language = { ...language, ...lang };
-    this.options = { ...options, ...opt };
+    this.opt = { ...options, ...opt };
     this.lang = this.conf.language;
   }
 
@@ -32,37 +32,37 @@ class FormValidate {
    * Triggers all validators set in the fields
    * @param {ValidationField} field Field to validate
    * @param {HTMLFormElement} form Parent form
+   * @param {Options} options Validation options
    * @returns {boolean} Returns true only if pass all validations
    */
   private validateField(
     field: ValidationField,
-    form: HTMLFormElement
+    form: HTMLFormElement,
+    options: Options
   ): boolean {
-    const validatorsList = field.getAttribute(this.conf.fieldValidateAttribute),
+    const validatorsList = field.getAttribute(options.fieldValidateAttribute),
       list = !validatorsList ? [] : validatorsList.split(/[,|-]+\s*|\s+/),
       value = field.value;
     let valid_invalid: boolean | null = null;
     list.forEach((validator) => {
-      if (this.conf.validators[validator]) {
-        const opt = this.options,
-          lang = this.lang;
-        valid_invalid = this.conf.validators[validator].validatorFunction(
+      if (options.validators[validator]) {
+        valid_invalid = options.validators[validator].validatorFunction(
           value,
           form,
           field,
-          opt,
-          lang
+          options,
+          this.lang
         );
         if (valid_invalid != null) {
-          removeStyles(field, form, this.options);
-          setStyles(field, form, this.options, valid_invalid);
+          removeStyles(field, form, options);
+          setStyles(field, form, options, valid_invalid);
           setMessage(
             field,
             form,
-            this.options,
+            options,
             this.lang,
             valid_invalid,
-            this.conf.validators[validator]
+            options.validators[validator]
           );
         }
       }
@@ -75,16 +75,21 @@ class FormValidate {
    * Triggers all validators set in the fields
    * @param {HTMLFormElement} form Parent form
    * @param {string} not List of inputs attributes not to be validated
+   * @param {Options} options Validation options
    * @returns {boolean} Returns true only if pass all validations
    */
-  private validateAllFields(form: HTMLFormElement, not: string): boolean {
+  private validateAllFields(
+    form: HTMLFormElement,
+    not: string,
+    options: Options
+  ): boolean {
     let fields = form.querySelectorAll<ValidationField>(
       `textarea, select, input:not(${not})`
     );
     let valid: boolean[] = [];
     fields.forEach((field) => {
-      if (this.validateFieldController(field, "submit"))
-        valid.push(this.validateField(field, form));
+      if (this.validateFieldController(field, "submit", options))
+        valid.push(this.validateField(field, form, options));
     });
     if (valid.length == 0) valid.push(true);
     return !valid.includes(false);
@@ -95,13 +100,15 @@ class FormValidate {
    * @param {(HTMLInputElement | HTMLTextAreaElement)} field Field to modify the value
    * @param {HTMLFormElement} form Form to search fields
    * @param {string} event Event type name
+   * @param {Options} options Validation options
    */
   private modifyField(
     field: HTMLInputElement | HTMLTextAreaElement,
     form: HTMLFormElement,
-    event: string
+    event: string,
+    options: Options
   ): void {
-    const modifiersList = field.getAttribute(this.conf.fieldModifyAttribute),
+    const modifiersList = field.getAttribute(options.fieldModifyAttribute),
       isForModifier =
         (field instanceof HTMLInputElement &&
           ["search", "checkbox", "radio"].includes(field.type)) ||
@@ -110,15 +117,13 @@ class FormValidate {
     const list = !modifiersList ? [] : modifiersList.split(/[,|-]+\s*|\s+/);
     let value = field.value;
     list.forEach((modifier) => {
-      if (this.conf.modifiers[modifier]) {
-        const opt = this.options,
-          lang = this.lang;
-        value = this.conf.modifiers[modifier].modifierFunction(
+      if (options.modifiers[modifier]) {
+        value = options.modifiers[modifier].modifierFunction(
           value,
           form,
           field,
-          opt,
-          lang
+          options,
+          this.lang
         );
       }
     });
@@ -126,25 +131,31 @@ class FormValidate {
   }
 
   /**
-   * Controls if the field will be validated
+   * Controls if the field could be validated
    * @param {ValidationField} field Field to check the type
    * @param {string} event Event to check if must be triggered
+   * @param {Options} options Validation options
+   * @returns {boolean} True if could be validated
    */
-  private validateFieldController(field: ValidationField, event: string) {
+  private validateFieldController(
+    field: ValidationField,
+    event: string,
+    options: Options
+  ): boolean {
     const isCheckOrRadio =
       field instanceof HTMLInputElement &&
       ["checkbox", "radio"].includes(field.type);
     let validate = false;
     switch (event) {
       case "click":
-        if (isCheckOrRadio && this.conf.validateCheckboxRadioOnClick)
+        if (isCheckOrRadio && options.validateCheckboxRadioOnClick)
           validate = true;
         break;
       case "blur":
-        if (this.conf.validateOnBlur) validate = true;
+        if (options.validateOnBlur) validate = true;
         break;
       case "input":
-        if (this.conf.validateOnInput) validate = true;
+        if (options.validateOnInput) validate = true;
         break;
       case "submit":
       default:
@@ -158,10 +169,12 @@ class FormValidate {
    * Adds the DOM features to the field
    * @param {HTMLFormElement} form Parent form
    * @param {ValidationField} field Target field
+   * @param {Options} options Form validation options
    */
   private domFieldsFeatures(
     form: HTMLFormElement,
-    field: ValidationField
+    field: ValidationField,
+    options: Options
   ): void {
     let fieldsToIgnore = form.querySelectorAll<HTMLInputElement>(
       `input:not(${notAccept(false, false)})`
@@ -172,27 +185,27 @@ class FormValidate {
     )
       return;
     if (field instanceof HTMLInputElement) {
-      if (this.conf.addSuggestions) {
-        let suggestions = field.getAttribute(this.conf.suggestionAttribute);
+      if (options.addSuggestions) {
+        let suggestions = field.getAttribute(options.suggestionAttribute);
         if (suggestions)
           inputSuggestion(
             field,
             suggestions.split(/[,|-]+\s*|\s+/),
-            this.conf.suggestionConfig
+            options.suggestionConfig
           );
       }
     }
     if (field instanceof HTMLTextAreaElement) {
-      let restriction = field.getAttribute(this.conf.lengthRestrictAttribute);
+      let restriction = field.getAttribute(options.lengthRestrictAttribute);
       if (restriction)
         textAreaLengthRestriction(
           field,
           parseInt(restriction, 10),
-          this.options.lengthRestrictInfo
+          options.lengthRestrictInfo
         );
     }
-    if (this.conf.showHelpMessagesOnFocus) {
-      let message = field.getAttribute(this.conf.fieldHelpMessageAttribute);
+    if (options.showHelpMessagesOnFocus) {
+      let message = field.getAttribute(options.fieldHelpMessageAttribute);
       if (message) {
         fieldHelpMessage(field, message);
       }
@@ -203,8 +216,13 @@ class FormValidate {
    * Adds an ignore attribute to the field if it is in the ignore list
    * @param {HTMLFormElement} form Parent form
    * @param {ValidationField} field Target field
+   * @param {Options} options Validation options
    */
-  private ignoreField(form: HTMLFormElement, field: ValidationField): void {
+  private ignoreField(
+    form: HTMLFormElement,
+    field: ValidationField,
+    options: Options
+  ): void {
     let fieldsToIgnore = form.querySelectorAll<HTMLInputElement>(
       `input:not(${notAccept(false, false)})`
     );
@@ -215,10 +233,10 @@ class FormValidate {
       return;
     let list: string[] = [],
       name = field.getAttribute("name") ?? "";
-    if (Array.isArray(this.conf.ignoredFieldsNames)) {
-      list = this.conf.ignoredFieldsNames;
-    } else if (typeof this.conf.ignoredFieldsNames == "string") {
-      list = this.conf.ignoredFieldsNames.split(/[,|-]+\s*|\s+/);
+    if (Array.isArray(options.ignoredFieldsNames)) {
+      list = options.ignoredFieldsNames;
+    } else if (typeof options.ignoredFieldsNames == "string") {
+      list = options.ignoredFieldsNames.split(/[,|-]+\s*|\s+/);
     }
     if (list.indexOf(name) > -1) {
       field.setAttribute("ignored", "true");
@@ -231,13 +249,15 @@ class FormValidate {
    * Adds the event listeners to the field
    * @param {HTMLFormElement} form Parent form
    * @param {ValidationField} field Target field
+   * @param {Options} options Validation options
    */
   private addEventListenersToFormFields(
     form: HTMLFormElement,
-    field: ValidationField
+    field: ValidationField,
+    options: Options
   ): void {
     let fieldsToIgnore = form.querySelectorAll<HTMLInputElement>(
-      `input:not(${notAccept(this.conf.validateHiddenFields, false)})`
+      `input:not(${notAccept(options.validateHiddenFields, false)})`
     );
     if (
       field instanceof HTMLInputElement &&
@@ -245,22 +265,22 @@ class FormValidate {
     )
       return;
     field.addEventListener("focus", () => {
-      toggleHelpMessage(field, form, this.options, true);
+      toggleHelpMessage(field, form, options, true);
     });
     field.addEventListener("click", () => {
-      toggleHelpMessage(field, form, this.options, true);
-      if (this.validateFieldController(field, "click"))
-        this.validateField(field, form);
+      toggleHelpMessage(field, form, options, true);
+      if (this.validateFieldController(field, "click", options))
+        this.validateField(field, form, options);
     });
     field.addEventListener("blur", () => {
-      toggleHelpMessage(field, form, this.options, false);
+      toggleHelpMessage(field, form, options, false);
       if (
         field instanceof HTMLInputElement ||
         field instanceof HTMLTextAreaElement
       ) {
-        this.modifyField(field, form, "blur");
-        if (this.validateFieldController(field, "blur"))
-          this.validateField(field, form);
+        this.modifyField(field, form, "blur", options);
+        if (this.validateFieldController(field, "blur", options))
+          this.validateField(field, form, options);
       }
     });
     field.addEventListener("input", () => {
@@ -268,58 +288,64 @@ class FormValidate {
         field instanceof HTMLInputElement ||
         field instanceof HTMLTextAreaElement
       ) {
-        this.modifyField(field, form, "input");
-        if (this.validateFieldController(field, "input"))
-          this.validateField(field, form);
+        this.modifyField(field, form, "input", options);
+        if (this.validateFieldController(field, "input", options))
+          this.validateField(field, form, options);
       }
     });
     if (field instanceof HTMLSelectElement)
       field.addEventListener("change", () => {
-        this.validateField(field, form);
+        this.validateField(field, form, options);
       });
   }
 
   /**
    * Add the event listeners to the form
    * @param {HTMLFormElement} form Parent form
+   * @param {Options} options Validation options
    */
-  private addEventListenersToForm(form: HTMLFormElement) {
+  private addEventListenersToForm(
+    form: HTMLFormElement,
+    options: Options
+  ): void {
     form.addEventListener("submit", (e) => {
       let isValid = this.validateAllFields(
         form,
-        notAccept(this.conf.validateHiddenFields, false)
+        notAccept(options.validateHiddenFields, false),
+        options
       );
       form.setAttribute("valid-state", isValid ? "validForm" : "invalidForm");
       if (!isValid) {
-        if (this.conf.scrollToTopOnInvalid)
+        if (options.scrollToTopOnInvalid)
           form.scrollIntoView({ behavior: "smooth" });
         e.stopImmediatePropagation();
         e.preventDefault();
       }
-      addValidStyleInAllFields(form, this.options);
+      addValidStyleInAllFields(form, options);
     });
     form.addEventListener("reset", () => {
-      formReset(form, this.options);
+      formReset(form, options);
       form.removeAttribute("valid-state");
     });
   }
 
   /**
    * Set up modifiers and validators in all fields of all configured forms
+   * @param {Options} options Validation options
    */
-  private setUpFV(): void {
-    const form = this.conf.form.split(/[,|-]+\s*|\s+/).join(",");
+  private setUpFV(options: Options): void {
+    const form = options.form.split(/[,|-]+\s*|\s+/).join(",");
     let forms = document.querySelectorAll<HTMLFormElement>(form);
     if (!forms) forms = document.querySelectorAll<HTMLFormElement>("form");
     forms.forEach((form) => {
-      this.addEventListenersToForm(form);
+      this.addEventListenersToForm(form, options);
       const fields = form.querySelectorAll<ValidationField>(
         "input, textarea, select"
       );
       fields.forEach((field) => {
-        this.domFieldsFeatures(form, field);
-        this.ignoreField(form, field);
-        this.addEventListenersToFormFields(form, field);
+        this.domFieldsFeatures(form, field, options);
+        this.ignoreField(form, field, options);
+        this.addEventListenersToFormFields(form, field, options);
       });
     });
   }
@@ -327,17 +353,20 @@ class FormValidate {
   /**
    * Validates the specified fields of the specified forms
    * @param {?string} [form] Form or forms id to validate (comma separated)
-   * @param {?Options} [options] FormValidation configuration options
+   * @param {?Options} [options] Validation options
    */
-  public validate(form?: string, options?: Options) {
-    this.conf = { ...this.conf, ...options };
-    if (options) this.options = { ...options };
-    let forms = this.conf.form,
+  public validate(form?: string, options?: Options): void {
+    let opt = { ...this.opt, ...options };
+    let f: string;
+    if (!form) {
+      f = opt.form;
+    } else {
       f = form ?? "";
-    f = f.length > 0 ? `${forms},${f}` : f;
-    form = forms.length > 0 && forms !== "form" ? f : forms;
-    this.conf.form = form;
-    this.setUpFV();
+
+      f = f.trim().length > 0 ? f : opt.form;
+    }
+    opt.form = f;
+    this.setUpFV(opt);
   }
 
   /**
@@ -352,7 +381,7 @@ class FormValidate {
     type: string,
     reject?: string,
     accept?: string
-  ) {
+  ): void {
     if (reject) reject = escapeRegExp(reject);
     if (accept) accept = escapeRegExp(accept);
     let acceptRegexp: RegExp, rejectRegexp: RegExp;
