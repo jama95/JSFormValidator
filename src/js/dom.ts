@@ -67,7 +67,7 @@ export function inputSuggestion(
   settings: Suggestion
 ) {
   let currentFocus = -1; // The first option element index is 0
-  let datalist: HTMLDataListElement = document.createElement("datalist");
+  const datalist = document.createElement("datalist");
   datalist.classList.add("fv-suggestions");
   datalist.classList.add(settings.containerClass);
   datalist.style.maxHeight = settings.maxHeight;
@@ -98,7 +98,7 @@ export function inputSuggestion(
   };
   // Hide the datalist when it is not focused
   input.addEventListener("blur", function () {
-    let no = document.querySelector(
+    let no = document.querySelector<HTMLDataListElement>(
       `datalist.fv-suggestions[target="#${input.id}"] option:hover`
     );
     if (no) return;
@@ -144,7 +144,7 @@ export function inputSuggestion(
   });
   // Select an option with the keyboard
   const addActive = function () {
-    let selected = document.querySelector(
+    let selected = document.querySelector<HTMLDataListElement>(
       "datalist.fv-suggestions option.active"
     );
     if (selected) selected.classList.remove("active");
@@ -182,7 +182,7 @@ export function inputSuggestion(
  */
 export function passwordInfo(input: HTMLInputElement, options: Options) {
   if (input.type != "password") return;
-  let container = document.createElement("div");
+  const container = document.createElement("div");
   let additionalClass = options.passwordInfoClass ?? "";
   container.classList.add("fv-password", additionalClass);
   container.style.display = "none";
@@ -196,10 +196,10 @@ export function passwordInfo(input: HTMLInputElement, options: Options) {
 <div class="strength-bar"></div>`;
   container.innerHTML = content;
   input.after(container);
-  let strengthBar = document.querySelector(
+  let strengthBar = document.querySelector<HTMLDivElement>(
       "div.fv-password div.strength-bar"
     ) as HTMLDivElement,
-    strength = document.querySelector(
+    strength = document.querySelector<HTMLDivElement>(
       "div.fv-password div.strength-text"
     ) as HTMLDivElement;
   input.addEventListener("focus", function () {
@@ -264,7 +264,7 @@ export function passwordInfo(input: HTMLInputElement, options: Options) {
  * @param {string} message The message to show
  */
 export function fieldHelpMessage(field: ValidationField, message: string) {
-  let span = document.createElement("span"),
+  const span = document.createElement("span"),
     name = field.getAttribute("name");
   if (!name) return;
   span.classList.add("fv-help_message");
@@ -414,9 +414,11 @@ function setInlineMessage(
   valid_invalid: boolean,
   validator: Validator
 ) {
+  const span = document.createElement("span");
   let parent = getFieldParent(field, form, options),
-    span = document.createElement("span"),
-    fieldName = form.querySelector(`label[for="${field.name}"]`)?.textContent,
+    fieldName =
+      form.querySelector<HTMLLabelElement>(`label[for="${field.name}"]`)
+        ?.textContent ?? "",
     message: string;
   span.classList.add(options.inlineMessageClass);
   if (!fieldName) fieldName = field.name;
@@ -457,7 +459,9 @@ function setTopMessage(
   let message: string,
     validView = options.topMessagesTemplate,
     invalidView = options.topMessagesTemplate,
-    fieldName = form.querySelector(`label[for="${field.name}"]`)?.textContent;
+    fieldName =
+      form.querySelector<HTMLLabelElement>(`label[for="${field.name}"]`)
+        ?.textContent ?? "";
   if (!fieldName) fieldName = field.name;
   validView.replace("{topMessageClass}", options.topMessagesClass);
   invalidView.replace("{topMessageClass}", options.topMessagesClass);
@@ -480,15 +484,13 @@ function setTopMessage(
   for (const key in options.invalidMessages) {
     invalidMessages += `<li><strong>${key}</strong>: ${options.invalidMessages[key]}</li>`;
   }
-  if (invalidMessages.length > 0) {
-    validMessages = `<ul>${validMessages}</ul>`;
-    validView.replace("{fields&messagesList}", validMessages);
-    form.insertAdjacentHTML("afterbegin", invalidView);
-  }
   if (validMessages.length > 0) {
-    invalidMessages += `<ul>${invalidMessages}</ul>`;
-    invalidView.replace("{fields&messagesList}", invalidMessages);
+    validView.replace("{fields&messagesList}", validMessages);
     form.insertAdjacentHTML("afterbegin", validView);
+  }
+  if (invalidMessages.length > 0) {
+    invalidView.replace("{fields&messagesList}", invalidMessages);
+    form.insertAdjacentHTML("afterbegin", invalidView);
   }
   triggerMessageCallback(valid_invalid, options, form, field, message);
 }
@@ -513,10 +515,11 @@ function removeInlineMessages(field: ValidationField, form: HTMLFormElement) {
 function removeTopMessage(form: HTMLFormElement, options: Options) {
   options.validMessages = {};
   options.invalidMessages = {};
-  let top = form.querySelectorAll(`.${options.topMessagesClass}`);
-  top.forEach((t) => {
-    t.remove();
-  });
+  const classes = options.topMessagesClass.split(" ").join(".");
+  let ul = form.querySelector<HTMLUListElement>(
+    `.fv-top-messages.${classes} ul`
+  );
+  if (ul) ul.innerHTML = "";
 }
 
 /**
