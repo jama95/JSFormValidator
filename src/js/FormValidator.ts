@@ -143,6 +143,8 @@ class FormValidate {
     event: string,
     options: Options
   ): boolean {
+    const isIgnored = field.getAttribute("fv-ignored") ?? "false";
+    if (isIgnored == "true") return false;
     const isCheckOrRadio =
       field instanceof HTMLInputElement &&
       ["checkbox", "radio"].includes(field.type);
@@ -240,10 +242,11 @@ class FormValidate {
       list = options.ignoredFieldsNames.split(/[,|-]+\s*|\s+/);
     }
     if (list.indexOf(name) > -1) {
-      field.setAttribute("ignored", "true");
+      field.setAttribute("fv-ignored", "true");
     } else {
-      field.setAttribute("ignored", "false");
+      field.setAttribute("fv-ignored", "false");
     }
+    field.setAttribute("fv-skipped", "false");
   }
 
   /**
@@ -372,17 +375,28 @@ class FormValidate {
 
   /**
    * Restricts typed characters of the input
-   * @param {HTMLInputElement} input Input to restrict
-   * @param {string} type Accepted types of characters (numbers, letters, text, all)
+   * @param {(string | HTMLInputElement)} input Input element or input name to restrict
+   * @param {string} type Accepted types of characters (numbers, letters, text, all, none)
    * @param {?string} [reject] Additional rejected characters
    * @param {?string} [accept] Additional accepted characters
    */
   public restrict(
-    input: HTMLInputElement,
+    input: string | HTMLInputElement,
     type: string,
     reject?: string,
     accept?: string
   ): void {
+    let i: HTMLInputElement | null = null;
+    if (!(input instanceof HTMLInputElement)) {
+      i = document.querySelector<HTMLInputElement>(`[name=${input}]`);
+      if (i) input = i;
+      else {
+        console.error(
+          `FormValidator: Failed to set the restriction, the input named '${input}' does not exist.`
+        );
+        return;
+      }
+    }
     if (reject) reject = escapeRegExp(reject);
     if (accept) accept = escapeRegExp(accept);
     let acceptRegexp: RegExp, rejectRegexp: RegExp;
@@ -395,6 +409,9 @@ class FormValidate {
         break;
       case "alphanumeric":
         acceptRegexp = new RegExp(`[a-zA-Z0-9${accept ?? ""}]`);
+        break;
+      case "none":
+        acceptRegexp = new RegExp(`[${accept ?? ""}]`);
         break;
       default:
         acceptRegexp = /[.]/;
