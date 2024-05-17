@@ -484,7 +484,7 @@ class FormValidate {
    * Set the password info to the input type password
    * @param {(string | HTMLInputElement)} input Input element or input name
    */
-  setPasswordInfo(input: string | HTMLInputElement): void {
+  public setPasswordInfo(input: string | HTMLInputElement): void {
     let i: HTMLInputElement | null = null;
     if (!(input instanceof HTMLInputElement)) {
       i = document.querySelector<HTMLInputElement>(`[name=${input}]`);
