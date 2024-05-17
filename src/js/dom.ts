@@ -72,7 +72,8 @@ export function inputSuggestion(
   input: HTMLInputElement,
   words: string[],
   settings: Suggestion
-) {
+): void {
+  if (words.length == 0) return;
   let currentFocus = -1; // The first option element index is 0
   const datalist = document.createElement("datalist");
   datalist.classList.add("fv-suggestions");
@@ -187,7 +188,7 @@ export function inputSuggestion(
  * @param {HTMLInputElement} input Input type password
  * @param {Options} options Validation options
  */
-export function passwordInfo(input: HTMLInputElement, options: Options) {
+export function passwordInfo(input: HTMLInputElement, options: Options): void {
   if (input.type != "password") return;
   const container = document.createElement("div");
   let additionalClass = options.passwordInfoClass ?? "";
@@ -270,7 +271,10 @@ export function passwordInfo(input: HTMLInputElement, options: Options) {
  * @param {ValidationField} field The field to attach the message
  * @param {string} message The message to show
  */
-export function fieldHelpMessage(field: ValidationField, message: string) {
+export function fieldHelpMessage(
+  field: ValidationField,
+  message: string
+): void {
   const span = document.createElement("span"),
     name = field.getAttribute("name");
   if (!name) return;
@@ -359,7 +363,7 @@ export function setStyles(
   form: HTMLFormElement,
   options: Options,
   valid_invalid: boolean
-) {
+): void {
   let fieldClass: string,
     fieldRemove: string,
     parent = getFieldParent(field, form, options),
@@ -394,7 +398,7 @@ export function removeStyles(
   field: ValidationField,
   form: HTMLFormElement,
   options: Options
-) {
+): void {
   let parent = getFieldParent(field, form, options);
   field.classList.remove(options.invalidClass ?? "invalid");
   field.classList.remove(options.validClass ?? "valid");
@@ -420,7 +424,7 @@ function setInlineMessage(
   language: Lang,
   valid_invalid: boolean,
   validator: Validator
-) {
+): void {
   const span = document.createElement("span");
   let parent = getFieldParent(field, form, options),
     fieldName =
@@ -464,7 +468,7 @@ function setTopMessage(
   language: Lang,
   valid_invalid: boolean,
   validator: Validator
-) {
+): void {
   let message: string,
     validView = options.topMessagesTemplate,
     invalidView = options.topMessagesTemplate,
@@ -509,7 +513,10 @@ function setTopMessage(
  * @param {ValidationField} field The validated field
  * @param {HTMLFormElement} form The validated field parent form
  */
-function removeInlineMessages(field: ValidationField, form: HTMLFormElement) {
+function removeInlineMessages(
+  field: ValidationField,
+  form: HTMLFormElement
+): void {
   let span = form.querySelector<HTMLSpanElement>(
     `span[for-field="${field.name}"]`
   );
@@ -521,7 +528,7 @@ function removeInlineMessages(field: ValidationField, form: HTMLFormElement) {
  * @param {HTMLFormElement} form The validated fields parent form
  * @param {Options} options Validation options
  */
-function removeTopMessage(form: HTMLFormElement, options: Options) {
+function removeTopMessage(form: HTMLFormElement, options: Options): void {
   options.validMessages = {};
   options.invalidMessages = {};
   const classes = options.topMessagesClass.split(" ").join(".");
@@ -549,7 +556,7 @@ export function setMessage(
   language: Lang,
   valid_invalid: boolean,
   validator: Validator
-) {
+): void {
   if (
     options.invalidMessagesPosition == "inline" ||
     options.validMessagesPosition == "inline"
@@ -579,7 +586,7 @@ export function setMessage(
  * @param {HTMLFormElement} form The validated fields parent form
  * @param {Options} options Validation options
  */
-export function formReset(form: HTMLFormElement, options: Options) {
+export function formReset(form: HTMLFormElement, options: Options): void {
   let fields = form.querySelectorAll<ValidationField>(
     'textarea, select, input:not([type="submit"],[type="button"],[type="reset"])'
   );
@@ -602,7 +609,7 @@ export function toggleHelpMessage(
   form: HTMLFormElement,
   options: Options,
   show: boolean
-) {
+): void {
   if (options.showHelpMessagesOnFocus) {
     let name = field.getAttribute("name") ?? "",
       span = form.querySelector<HTMLSpanElement>(
@@ -622,7 +629,7 @@ export function toggleHelpMessage(
 export function addValidStyleInAllFields(
   form: HTMLFormElement,
   options: Options
-) {
+): void {
   if (!options.addValidClassOnAll) return;
   let fields = form.querySelectorAll<ValidationField>(
     `textarea:not(.${options.validClass}, .${options.invalidClass}), input:not(.${options.validClass}, .${options.invalidClass}), select:not(.${options.validClass}, .${options.invalidClass})`

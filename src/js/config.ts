@@ -47,6 +47,7 @@ export const options: Options = {
   lengthRestrictAttribute: "data-fv-text-length",
   lengthRestrictInfo: "count",
   passwordSpecialChars: /(\x21\x40\x23\x24\x25\x5E\x26\x2A\x5F\x2D\x2B\x3D)/,
+  addPasswordInfo: true,
   passwordInfoClass: "card",
 };
 

@@ -10,6 +10,7 @@ import {
   toggleHelpMessage,
   addValidStyleInAllFields,
   fieldHelpMessage,
+  passwordInfo,
 } from "./dom";
 import { escapeRegExp, notAccept } from "./utils";
 
@@ -258,13 +259,15 @@ class FormValidate {
       return;
     if (field instanceof HTMLInputElement) {
       if (options.addSuggestions) {
-        let suggestions = field.getAttribute(options.suggestionAttribute);
-        if (suggestions)
-          inputSuggestion(
-            field,
-            suggestions.split(/[,|-]+\s*|\s+/),
-            options.suggestionConfig
-          );
+        let suggestions = field.getAttribute(options.suggestionAttribute) ?? "";
+        inputSuggestion(
+          field,
+          suggestions.split(/[,|-]+\s*|\s+/),
+          options.suggestionConfig
+        );
+      }
+      if (options.addPasswordInfo) {
+        passwordInfo(field, options);
       }
     }
     if (field instanceof HTMLTextAreaElement) {

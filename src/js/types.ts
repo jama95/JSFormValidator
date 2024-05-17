@@ -75,6 +75,8 @@ export type Options = {
   lengthRestrictInfo: string;
   /** Regex for admitted password special characters @default /(\x21\x40\x23\x24\x25\x5E\x26\x2A\x5F\x2D\x2B\x3D)/ */
   passwordSpecialChars: RegExp;
+  /** Shows password info on inputs type password @default true */
+  addPasswordInfo: boolean;
   /** Password info container additional class @default card */
   passwordInfoClass: string;
 };
