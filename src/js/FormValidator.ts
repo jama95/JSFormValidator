@@ -43,33 +43,32 @@ class FormValidate {
     const validatorsList = field.getAttribute(options.fieldValidateAttribute),
       list = !validatorsList ? [] : validatorsList.split(/[,|-]+\s*|\s+/),
       value = field.value;
-    let valid_invalid: boolean | null = null;
-    list.forEach((validator) => {
+    let valid_invalid: boolean[] = [];
+    for (const validator of list) {
       if (this.conf.validators[validator]) {
-        valid_invalid = this.conf.validators[validator].validatorFunction(
+        const r = this.conf.validators[validator].validatorFunction(
           value,
           form,
           field,
           options,
           this.lang
         );
-        if (valid_invalid != null) {
-          removeStyles(field, form, options);
-          setStyles(field, form, options, valid_invalid);
-          setMessage(
-            field,
-            form,
-            options,
-            this.conf,
-            this.lang,
-            valid_invalid,
-            this.conf.validators[validator]
-          );
-        }
+        valid_invalid.push(r);
+        removeStyles(field, form, options);
+        setStyles(field, form, options, r);
+        setMessage(
+          field,
+          form,
+          options,
+          this.conf,
+          this.lang,
+          r,
+          this.conf.validators[validator]
+        );
       }
-      if (!valid_invalid) return false;
-    });
-    return valid_invalid ?? false;
+      if (valid_invalid.includes(false)) break;
+    }
+    return valid_invalid.includes(false);
   }
 
   /**
@@ -132,6 +131,75 @@ class FormValidate {
   }
 
   /**
+   * Set the dependant validation
+   * @param {HTMLFormElement} form Form to search target field
+   * @param {ValidationField} field Field to check if it must be dependant
+   * @param {Options} options Validation options
+   */
+  private setDependantValidation(
+    form: HTMLFormElement,
+    field: ValidationField,
+    options: Options
+  ): void {
+    const depending = field.getAttribute("data-fv-depends-on") ?? "";
+    const target = form.querySelector<ValidationField>(`[name=${depending}]`);
+    if (target) {
+      field.setAttribute("data-fv-skip", "true");
+      let validators = field.getAttribute(options.fieldValidateAttribute) ?? "";
+      if (!validators.includes("required"))
+        field.setAttribute(
+          options.fieldValidateAttribute,
+          validators + "required"
+        );
+      target.setAttribute("data-fv-dependant", depending);
+      const fEvent = field instanceof HTMLSelectElement ? "change" : "input";
+      const value = field.getAttribute("data-fv-depends-on-value");
+      field.addEventListener(fEvent, function () {
+        field.setAttribute("data-fv-skip", "true");
+        if (target.value.trim().length > 0)
+          field.setAttribute("data-fv-skip", "false");
+        if (value)
+          if (value.includes(target.value.trim()))
+            field.setAttribute("data-fv-skip", "false");
+          else field.setAttribute("data-fv-skip", "true");
+      });
+      const tEvent = field instanceof HTMLSelectElement ? "change" : "input";
+      const _self = this;
+      target.addEventListener(tEvent, function () {
+        if (
+          field.classList.contains(options.validClass) ||
+          field.classList.contains(options.invalidClass)
+        )
+          _self.validateField(field, form, options);
+      });
+    }
+  }
+
+  /**
+   * Set the optional validation
+   * @param {ValidationField} field Field to check if it must be optional
+   */
+  private setOptionalValidation(field: ValidationField): void {
+    if (field.hasAttribute("data-fv-depends-on")) return;
+    const optional = field.getAttribute("data-fv-optional") ?? "";
+    if (optional == "true") {
+      field.setAttribute("data-fv-skip", "true");
+      let validators = field.getAttribute(options.fieldValidateAttribute) ?? "";
+      if (!validators.includes("required"))
+        field.setAttribute(
+          options.fieldValidateAttribute,
+          validators + "required"
+        );
+      const event = field instanceof HTMLSelectElement ? "change" : "input";
+      field.addEventListener(event, function () {
+        if (field.value.trim().length > 0)
+          field.setAttribute("data-fv-skip", "false");
+        else field.setAttribute("data-fv-skip", "true");
+      });
+    }
+  }
+
+  /**
    * Controls if the field could be validated
    * @param {ValidationField} field Field to check the type
    * @param {string} event Event to check if must be triggered
@@ -143,8 +211,9 @@ class FormValidate {
     event: string,
     options: Options
   ): boolean {
-    const isIgnored = field.getAttribute("fv-ignored") ?? "false";
-    if (isIgnored == "true") return false;
+    const isIgnored = field.getAttribute("data-fv-ignored") ?? "false";
+    const isSkipped = field.getAttribute("data-fv-skip") ?? "false";
+    if (isIgnored == "true" || isSkipped == "true") return false;
     const isCheckOrRadio =
       field instanceof HTMLInputElement &&
       ["checkbox", "radio"].includes(field.type);
@@ -242,11 +311,11 @@ class FormValidate {
       list = options.ignoredFieldsNames.split(/[,|-]+\s*|\s+/);
     }
     if (list.indexOf(name) > -1) {
-      field.setAttribute("fv-ignored", "true");
+      field.setAttribute("data-fv-ignored", "true");
     } else {
-      field.setAttribute("fv-ignored", "false");
+      field.setAttribute("data-fv-ignored", "false");
     }
-    field.setAttribute("fv-skipped", "false");
+    field.setAttribute("data-fv-skip", "false");
   }
 
   /**
@@ -287,16 +356,15 @@ class FormValidate {
           this.validateField(field, form, options);
       }
     });
-    field.addEventListener("input", () => {
-      if (
-        field instanceof HTMLInputElement ||
-        field instanceof HTMLTextAreaElement
-      ) {
+    if (
+      field instanceof HTMLInputElement ||
+      field instanceof HTMLTextAreaElement
+    )
+      field.addEventListener("input", () => {
         this.modifyField(field, form, "input", options);
         if (this.validateFieldController(field, "input", options))
           this.validateField(field, form, options);
-      }
-    });
+      });
     if (field instanceof HTMLSelectElement)
       field.addEventListener("change", () => {
         this.validateField(field, form, options);
@@ -349,6 +417,8 @@ class FormValidate {
       fields.forEach((field) => {
         this.domFieldsFeatures(form, field, options);
         this.ignoreField(form, field, options);
+        this.setDependantValidation(form, field, options);
+        this.setOptionalValidation(field);
         this.addEventListenersToFormFields(form, field, options);
       });
     });
