@@ -460,7 +460,3 @@ export function sizeStringToBytes(size: string): number {
     return parseInt(size, 10);
   }
 }
-
-export function dependantValidation() {}
-
-export function optionalValidation() {}
