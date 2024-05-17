@@ -1,4 +1,4 @@
-import type { Lang, FV, Options, ValidationField } from "./types";
+import type { Lang, FV, Options, ValidationField, Suggestion } from "./types";
 import { options, language, configuration } from "./config";
 import {
   formReset,
@@ -425,6 +425,78 @@ class FormValidate {
         this.addEventListenersToFormFields(form, field, options);
       });
     });
+  }
+
+  /**
+   * Set suggestions to the specified input
+   * @param {HTMLInputElement} input Input element or input name
+   * @param {string[]} words Array of words to suggest
+   * @param {?Suggestion} [config] Suggestion list config
+   */
+  public setSuggestions(
+    input: string | HTMLInputElement,
+    words: string[],
+    config?: Suggestion
+  ): void {
+    let i: HTMLInputElement | null = null;
+    if (!(input instanceof HTMLInputElement)) {
+      i = document.querySelector<HTMLInputElement>(`[name=${input}]`);
+      if (i) input = i;
+      else {
+        console.error(
+          `FormValidator: Failed to set the suggestions, the input named '${input}' does not exist.`
+        );
+        return;
+      }
+    }
+    if (!config) config = this.opt.suggestionConfig;
+    inputSuggestion(input, words, config);
+  }
+
+  /**
+   * Set the text length restriction to the specified textarea
+   * @param {(string | HTMLTextAreaElement)} TextArea Textarea element or textarea name
+   * @param {number} max Text max length
+   * @param {?string} [info] Type of info to show (count, both, remaining)
+   */
+  public setTextAreaLengthRestriction(
+    TextArea: string | HTMLTextAreaElement,
+    max: number,
+    info?: string
+  ): void {
+    let t: HTMLTextAreaElement | null = null;
+    if (!(TextArea instanceof HTMLTextAreaElement)) {
+      t = document.querySelector<HTMLTextAreaElement>(`[name=${TextArea}]`);
+      if (t) TextArea = t;
+      else {
+        console.error(
+          `FormValidator: Failed to set the text length restriction, the textarea named '${TextArea}' does not exist.`
+        );
+        return;
+      }
+    }
+    if (!info) info = "count";
+    if (!["count", "both", "remaining"].includes(info)) return;
+    textAreaLengthRestriction(TextArea, max, info);
+  }
+
+  /**
+   * Set the password info to the input type password
+   * @param {(string | HTMLInputElement)} input Input element or input name
+   */
+  setPasswordInfo(input: string | HTMLInputElement): void {
+    let i: HTMLInputElement | null = null;
+    if (!(input instanceof HTMLInputElement)) {
+      i = document.querySelector<HTMLInputElement>(`[name=${input}]`);
+      if (i) input = i;
+      else {
+        console.error(
+          `FormValidator: Failed to set the password info, the input named '${input}' does not exist.`
+        );
+        return;
+      }
+    }
+    passwordInfo(input, this.opt);
   }
 
   /**
