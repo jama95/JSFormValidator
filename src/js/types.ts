@@ -120,75 +120,75 @@ export type Lang = {
   /** Value not confirmed */
   notConfirmed: string;
   /** Required field message */
-  required: string;
+  inv_required: string;
   /** Invalid date message */
-  invalidDate: string;
+  inv_date: string;
   /** Invalid time message */
-  invalidTime: string;
+  inv_time: string;
   /** Invalid telephone number message */
-  invalidTelephone: string;
+  inv_telephone: string;
   /** Invalid IPv4 address */
-  invalidIPv4: string;
+  inv_ipv4: string;
   /** Invalid IPv6 address */
-  invalidIPv6: string;
+  inv_ipv6: string;
   /** Invalid domain message */
-  invalidDomain: string;
+  inv_domain: string;
   /** Invalid email message */
-  invalidEmail: string;
+  inv_email: string;
   /** Invalid url message */
-  invalidUrl: string;
+  inv_url: string;
   /** Invalid number type message */
-  invalidNumber: string;
+  inv_numbers: string;
   /** Invalid number, max value exceeded message */
-  invalidNumberMax: string;
+  inv_numberMax: string;
   /** Invalid number, min value exceeded message */
-  invalidNumberMin: string;
+  inv_numberMin: string;
   /** Invalid number, out of range message */
-  invalidNumberRange: string;
+  inv_numberRange: string;
   /** Invalid number, not equal message */
-  invalidNumberEqual: string;
+  inv_numberEqual: string;
   /** Invalid number, out of step message */
-  invalidNumberStep: string;
+  inv_numberStep: string;
   /** Invalid length, too long value message (text|files|options) */
-  invalidLengthMax: string;
+  inv_lengthMax: string;
   /** Invalid length, too short value message (text|files|options) */
-  invalidLengthMin: string;
+  inv_lengthMin: string;
   /** Invalid length, too long or too short value message (text|files|options) */
-  invalidLengthRange: string;
+  inv_lengthRange: string;
   /** Invalid length, not equal value message (text|files|options) */
-  invalidLengthEqual: string;
+  inv_lengthEqual: string;
   /** Invalid letters and/or allowed values message */
-  invalidLetters: string;
+  inv_letters: string;
   /** Invalid custom value message */
-  invalidCustomVal: string;
+  inv_regexp: string;
   /** Invalid alphanumeric value message */
-  invalidAlphaNumeric: string;
+  inv_alphanumeric: string;
   /** Invalid color */
-  invalidColor: string;
+  inv_color: string;
   /** Invalid file size message */
-  invalidFileSize: string;
+  inv_file_size: string;
   /** Invalid file type message */
-  invalidFileType: string;
+  inv_file_type: string;
   /** Invalid file extension message */
-  invalidFileExtension: string;
+  inv_file_extension: string;
   /** Invalid image dimensions message */
-  invalidImageDim: string;
+  inv_image_dimension: string;
   /** Invalid image height message */
-  invalidImageHeigh: string;
+  inv_image_heigh: string;
   /** Invalid image width message */
-  invalidImageWidth: string;
+  inv_image_width: string;
   /** Invalid image ratio message */
-  invalidImageRatio: string;
+  inv_image_ratio: string;
   /** Invalid credit card number message*/
-  invalidCreditCardNumber: string;
+  inv_credit_card: string;
   /** Invalid credit card cvv number message */
-  invalidCVV: string;
+  inv_cvv: string;
   /** Invalid confirmation value message */
-  invalidConfirmationValue: string;
+  inv_confirmation: string;
   /** Invalid  security answer message */
-  invalidSecurityAnswer: string;
+  inv_security_answer: string;
   /** Insecure password message */
-  invalidStrength: string;
+  inv_strength: string;
   /** Title for secure password conditions */
   passwordConditionsTitle: string;
   /** Password requires upper case letters */
