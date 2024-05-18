@@ -1,4 +1,11 @@
-import type { Lang, FV, Options, ValidationField, Suggestion } from "./types";
+import type {
+  Lang,
+  FV,
+  Options,
+  ValidationField,
+  Suggestion,
+  JSONConfig,
+} from "./types";
 import { options, language, configuration } from "./config";
 import {
   formReset,
@@ -66,6 +73,10 @@ class FormValidate {
           r,
           this.conf.validators[validator]
         );
+      } else {
+        console.error(
+          `FormValidator: Failed to trigger the validator: ${validator}, can not be found.`
+        );
       }
       if (valid_invalid.includes(false)) break;
     }
@@ -126,6 +137,10 @@ class FormValidate {
           options,
           this.lang
         );
+      } else {
+        console.error(
+          `FormValidator: Failed to trigger the modifier: ${modifier}, can not be found.`
+        );
       }
     });
     field.value = value;
@@ -173,6 +188,10 @@ class FormValidate {
         )
           _self.validateField(field, form, options);
       });
+    } else {
+      console.error(
+        `FormValidator: Failed to set the dependant validation on ${field.name}, the target field ${depending} can not be found.`
+      );
     }
   }
 
@@ -444,7 +463,7 @@ class FormValidate {
       if (i) input = i;
       else {
         console.error(
-          `FormValidator: Failed to set the suggestions, the input named '${input}' does not exist.`
+          `FormValidator: Failed to set the suggestions, the input '${input}' can not be found.`
         );
         return;
       }
@@ -470,7 +489,7 @@ class FormValidate {
       if (t) TextArea = t;
       else {
         console.error(
-          `FormValidator: Failed to set the text length restriction, the textarea named '${TextArea}' does not exist.`
+          `FormValidator: Failed to set the text length restriction, the textarea '${TextArea}' can not be found.`
         );
         return;
       }
@@ -491,7 +510,7 @@ class FormValidate {
       if (i) input = i;
       else {
         console.error(
-          `FormValidator: Failed to set the password info, the input named '${input}' does not exist.`
+          `FormValidator: Failed to set the password info, the input '${input}' can not be found.`
         );
         return;
       }
@@ -519,6 +538,48 @@ class FormValidate {
   }
 
   /**
+   * Sets the validation attributes on the form's fields then validates
+   * @param {JSONConfig} json Form's Validation configuration
+   * @param {?Options} [options] Validation options
+   */
+  public fromJSON(json: JSONConfig, options?: Options): void {
+    const forms = Object.keys(json);
+    if (forms.length == 0) return;
+    const frm = json[0];
+    if (!frm) return;
+    const form = document.querySelector<HTMLFormElement>(Object.keys(json)[0]);
+    if (!form) {
+      console.error(
+        `FormValidator: Failed to set the validation config on the from, '${
+          Object.keys(json)[0]
+        }' can not be found.`
+      );
+      return;
+    }
+    let opt = { ...this.opt, ...options };
+    opt.form = Object.keys(json)[0];
+    for (const fld in frm) {
+      const field = form.querySelector<ValidationField>(fld);
+      if (!field) {
+        console.error(
+          `FormValidator: Failed to set the validation on the field, '${fld}' can not be found.`
+        );
+        continue;
+      }
+      const element = frm[fld];
+      if (element.validators)
+        field.setAttribute(opt.fieldValidateAttribute, element.validators);
+      if (element.modifiers)
+        field.setAttribute(opt.fieldModifyAttribute, element.modifiers);
+      for (const dt in element.dataFV) {
+        const data = element.dataFV[dt];
+        field.setAttribute(dt, data);
+      }
+    }
+    this.setUpFV(opt);
+  }
+
+  /**
    * Restricts typed characters of the input
    * @param {(string | HTMLInputElement)} input Input element or input name to restrict
    * @param {string} type Accepted types of characters (numbers, letters, text, all, none)
@@ -537,7 +598,7 @@ class FormValidate {
       if (i) input = i;
       else {
         console.error(
-          `FormValidator: Failed to set the restriction, the input named '${input}' does not exist.`
+          `FormValidator: Failed to set the characters restriction on the input, '${input}' can not be found.`
         );
         return;
       }

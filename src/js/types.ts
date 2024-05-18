@@ -303,8 +303,11 @@ export type TelephoneFormats = {
 
 export type CardInfo = {
   [key: string]: {
+    /** Fixed first numbers */
     first: number[];
+    /** Number length */
     length: { min: number; max: number };
+    /** CVV length */
     cvv: number;
   };
 };
@@ -312,4 +315,16 @@ export type CardInfo = {
 export type Country = {
   country: string;
   capital: string;
+};
+
+export type JSONConfig = {
+  [key: string]: {
+    [key: string]: {
+      validators?: string;
+      modifiers?: string;
+      dataFV?: {
+        [key: string]: string;
+      };
+    };
+  };
 };
