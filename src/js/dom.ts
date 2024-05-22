@@ -483,19 +483,25 @@ function setTopMessage(
     validView.replace("{valid_invalid}", options.validMessagesClass);
     message = getValidMessage(field, validator, options);
     configuration.validMessages[fieldName] = message;
+    if (configuration.invalidMessages[fieldName])
+      delete configuration.invalidMessages[fieldName];
   } else {
     invalidView.replace("{title}", language.invalidTitle);
     invalidView.replace("{valid_invalid}", options.invalidMessagesClass);
     message = getInvalidMessage(field, validator, options, language);
     configuration.invalidMessages[fieldName] = message;
+    if (configuration.validMessages[fieldName])
+      delete configuration.validMessages[fieldName];
   }
   let validMessages = "",
     invalidMessages = "";
   for (const key in configuration.validMessages) {
-    validMessages += `<li><strong>${key}</strong>: ${configuration.validMessages[key]}</li>`;
+    if (configuration.validMessages[key].trim().length > 0)
+      validMessages += `<li><strong>${key}</strong>: ${configuration.validMessages[key]}</li>`;
   }
   for (const key in configuration.invalidMessages) {
-    invalidMessages += `<li><strong>${key}</strong>: ${configuration.invalidMessages[key]}</li>`;
+    if (configuration.invalidMessages[key].length > 0)
+      invalidMessages += `<li><strong>${key}</strong>: ${configuration.invalidMessages[key]}</li>`;
   }
   if (validMessages.length > 0) {
     validView.replace("{fields&messagesList}", validMessages);
