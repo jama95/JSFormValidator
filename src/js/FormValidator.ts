@@ -573,7 +573,8 @@ class FormValidate {
         field.setAttribute(opt.fieldModifyAttribute, element.modifiers);
       for (const dt in element.dataFV) {
         const data = element.dataFV[dt];
-        field.setAttribute(dt, data);
+        const dt_fv = dt.includes("data-fv-") ? dt : `data-fv-${dt}`;
+        field.setAttribute(dt_fv, data);
       }
     }
     this.setUpFV(opt);

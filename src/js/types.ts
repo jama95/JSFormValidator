@@ -318,10 +318,15 @@ export type Country = {
 };
 
 export type JSONConfig = {
+  /** Form selector */
   [key: string]: {
+    /** Field selector */
     [key: string]: {
+      /** Validators list */
       validators?: string;
+      /** Modifiers list */
       modifiers?: string;
+      /** optional data attributes (data-fv-)  */
       dataFV?: {
         [key: string]: string;
       };
