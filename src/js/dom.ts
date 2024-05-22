@@ -380,8 +380,10 @@ export function setStyles(
     parentClass = options.invalidParentClass;
     parentRemove = options.validParentClass;
   }
-  field.classList.remove(fieldRemove);
-  field.classList.add(fieldClass);
+  document.querySelectorAll(field.name).forEach((f) => {
+    f.classList.remove(fieldRemove);
+    f.classList.add(fieldClass);
+  });
   if (parent) {
     parent.classList.remove(parentRemove);
     parent.classList.add(parentClass);
@@ -400,11 +402,13 @@ export function removeStyles(
   options: Options
 ): void {
   let parent = getFieldParent(field, form, options);
-  field.classList.remove(options.invalidClass ?? "invalid");
-  field.classList.remove(options.validClass ?? "valid");
+  document.querySelectorAll(field.name).forEach((f) => {
+    f.classList.remove(options.invalidClass);
+    f.classList.remove(options.validClass);
+  });
   if (parent) {
-    parent.classList.remove(options.validParentClass ?? "isValid");
-    parent.classList.remove(options.invalidParentClass ?? "isInvalid");
+    parent.classList.remove(options.validParentClass);
+    parent.classList.remove(options.invalidParentClass);
   }
 }
 

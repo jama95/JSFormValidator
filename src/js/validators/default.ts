@@ -71,6 +71,11 @@ configuration.validators["length"] = {
       file = true;
       val = field.files.length;
     }
+    if (field instanceof HTMLInputElement && field.type == "checkbox") {
+      val = document.querySelectorAll(
+        `input[name=${field.name}]:checked`
+      ).length;
+    }
     if (field instanceof HTMLSelectElement && field.hasAttribute("multiple")) {
       multiple = true;
       val = field.selectedOptions.length;
