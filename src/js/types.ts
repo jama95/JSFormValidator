@@ -88,7 +88,7 @@ export type Configuration = {
   modifiers: { [key: string]: Modifier };
   /** Stops all the validations @default false */
   stopValidation: boolean;
-  /** Event triggered when a field is going to be validated */
+  /** Event triggered when a field is going to be validated @default {} */
   onBeforeValidate: { [field: string]: ValidatorEvent[] };
   /** Event triggered when a field is valid   @default {} */
   onValid: { [field: string]: ValidatorEvent[] };
@@ -96,11 +96,11 @@ export type Configuration = {
   onInvalid: { [field: string]: ValidatorEvent[] };
   /** Event triggered when a field has been validated @default {} */
   onAfterValidate: { [field: string]: ValidatorEvent[] };
-  /** Top messages when valid */
+  /** Top messages when valid @default {} */
   validMessages: { [key: string]: string };
-  /** Top messages when invalid */
+  /** Top messages when invalid @default {} */
   invalidMessages: { [key: string]: string };
-  /** Messages language */
+  /** Messages language @default en */
   language: Lang;
 };
 
@@ -257,7 +257,7 @@ export type Modifier = {
     value: string,
     /** Parent form */
     form: HTMLFormElement,
-    /** Field element (Input, Select or TextArea) */
+    /** Field element (Input or TextArea) */
     field: HTMLInputElement | HTMLTextAreaElement,
     /** Validator options */
     options: Options,
