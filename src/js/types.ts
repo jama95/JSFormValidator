@@ -89,13 +89,13 @@ export type Configuration = {
   /** Stops all the validations @default false */
   stopValidation: boolean;
   /** Event triggered when a field is going to be validated */
-  onBeforeValidate: ValidatorEvent | undefined;
-  /** Event triggered when a field is valid   @default undefined */
-  onValid: ValidatorEvent | undefined;
-  /** Event triggered when a field is invalid @default undefined */
-  onInvalid: ValidatorEvent | undefined;
-  /** Event triggered when a field has been validated @default undefined */
-  onAfterValidate: ValidatorEvent | undefined;
+  onBeforeValidate: { [field: string]: ValidatorEvent[] };
+  /** Event triggered when a field is valid   @default {} */
+  onValid: { [field: string]: ValidatorEvent[] };
+  /** Event triggered when a field is invalid @default {} */
+  onInvalid: { [field: string]: ValidatorEvent[] };
+  /** Event triggered when a field has been validated @default {} */
+  onAfterValidate: { [field: string]: ValidatorEvent[] };
   /** Top messages when valid */
   validMessages: { [key: string]: string };
   /** Top messages when invalid */
@@ -281,7 +281,7 @@ export type ValidatorEvent = (
   /** Parent form */
   form: HTMLFormElement,
   /** Field element (Input, Select or TextArea) */
-  field: HTMLInputElement | HTMLTextAreaElement,
+  field: ValidationField,
   /** Validation state (false: invalid, true: valid) */
   state: boolean,
   /** Form Validator options */

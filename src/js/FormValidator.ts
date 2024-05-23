@@ -5,6 +5,7 @@ import type {
   ValidationField,
   Suggestion,
   JSONConfig,
+  ValidatorEvent,
 } from "./types";
 import { options, language, configuration } from "./config";
 import {
@@ -37,6 +38,41 @@ class FormValidate {
   }
 
   /**
+   * Triggers the FormValidator events of the fields
+   * @param {string} event Event name
+   * @param {HTMLFormElement} form  Parent form
+   * @param {ValidationField} field Validating field
+   * @param {boolean} state Validation result (false in event beforeValidation or afterValidation)
+   * @param {Options} options Validation options
+   */
+  private triggerEvent(
+    event: string,
+    form: HTMLFormElement,
+    field: ValidationField,
+    state: boolean,
+    options: Options
+  ): void {
+    let fns: ValidatorEvent[] = [];
+    switch (event) {
+      case "beforeValidate":
+        fns = configuration.onBeforeValidate[field.name];
+        break;
+      case "valid":
+        fns = configuration.onValid[field.name];
+        break;
+      case "invalid":
+        fns = configuration.onInvalid[field.name];
+        break;
+      case "afterValidate":
+        fns = configuration.onAfterValidate[field.name];
+        break;
+    }
+    fns.forEach((fn) => {
+      fn(form, field, state, options);
+    });
+  }
+
+  /**
    * Triggers all validators set in the fields
    * @param {ValidationField} field Field to validate
    * @param {HTMLFormElement} form Parent form
@@ -52,6 +88,7 @@ class FormValidate {
       list = !validatorsList ? [] : validatorsList.split(/[,|-]+\s*|\s+/),
       value = field.value;
     let valid_invalid: boolean[] = [];
+    this.triggerEvent("beforeValidate", form, field, false, options);
     for (const validator of list) {
       if (this.conf.validators[validator]) {
         const r = this.conf.validators[validator].validatorFunction(
@@ -61,6 +98,8 @@ class FormValidate {
           options,
           this.lang
         );
+        if (r) this.triggerEvent("valid", form, field, true, options);
+        else this.triggerEvent("invalid", form, field, false, options);
         valid_invalid.push(r);
         removeStyles(field, form, options);
         setStyles(field, form, options, r);
@@ -80,7 +119,14 @@ class FormValidate {
       }
       if (valid_invalid.includes(false)) break;
     }
-    return valid_invalid.includes(false);
+    this.triggerEvent(
+      "afterValidate",
+      form,
+      field,
+      !valid_invalid.includes(false),
+      options
+    );
+    return !valid_invalid.includes(false);
   }
 
   /**
@@ -578,6 +624,39 @@ class FormValidate {
       }
     }
     this.setUpFV(opt);
+  }
+
+  public addFormValidationEvent(
+    event: string,
+    field: string,
+    eventFunction: ValidatorEvent
+  ): void {
+    const element = document.querySelector<ValidationField>(`[name=${field}]`);
+    if (element) {
+      switch (event) {
+        case "beforeValidate":
+          configuration.onBeforeValidate[element.name].push(eventFunction);
+          break;
+        case "valid":
+          configuration.onValid[element.name].push(eventFunction);
+          break;
+        case "invalid":
+          configuration.onInvalid[element.name].push(eventFunction);
+          break;
+        case "afterValidate":
+          configuration.onAfterValidate[element.name].push(eventFunction);
+          break;
+        default:
+          console.error(
+            `FormValidator: Failed to add the event, '${event}' is not a valid event.`
+          );
+          break;
+      }
+    } else {
+      console.error(
+        `FormValidator: Failed to add the event,  the field named '${field}' cant not be found.`
+      );
+    }
   }
 
   /**
