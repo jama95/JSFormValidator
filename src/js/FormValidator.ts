@@ -626,6 +626,12 @@ class FormValidate {
     this.setUpFV(opt);
   }
 
+  /**
+   * Adds an Form Validator event to the field
+   * @param {string} event Event name
+   * @param {string} field Field name
+   * @param {ValidatorEvent} eventFunction Event function
+   */
   public addFormValidationEvent(
     event: string,
     field: string,
