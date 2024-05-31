@@ -460,3 +460,24 @@ export function sizeStringToBytes(size: string): number {
     return parseInt(size, 10);
   }
 }
+
+/**
+ * Returns the image dimensions
+ * @param {File} file Image file
+ * @returns {Promise<number[]>} Number array Promise of the dimensions (width, height)
+ */
+export function getImageDimensions(file: File): Promise<number[]> {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = function (e) {
+      if (e.target) {
+        const image = new Image();
+        image.src = e.target.result as string;
+        image.onload = function () {
+          resolve([image.width, image.height]);
+        };
+      } else resolve([0, 0]);
+    };
+  });
+}
