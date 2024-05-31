@@ -84,6 +84,8 @@ export type Options = {
 export type Configuration = {
   /** Validators list @default {} */
   validators: { [key: string]: Validator };
+  /** Async Validators list @default {} */
+  asyncValidators: { [key: string]: AsyncValidator };
   /** Modifiers list @default {} */
   modifiers: { [key: string]: Modifier };
   /** Stops all the validations @default false */
@@ -236,6 +238,34 @@ export type Validator = {
     /** Validator language */
     lang: Lang
   ) => boolean;
+  /** Message on invalid validation */
+  invalidMessage: string;
+  /** Invalid message attribute key */
+  invalidMessageKey: string;
+  /** Message on valid validation */
+  validMessage?: string;
+  /** Valid message attribute key */
+  validMessageKey?: string;
+  /** Indicates whether validation is triggered on each Input event */
+  validateOnInput?: boolean;
+};
+
+export type AsyncValidator = {
+  /** Validator name */
+  name: string;
+  /** Validator async function @returns {Promise<boolean>} Returns true promise if the field pass the validation*/
+  validatorFunction: (
+    /** Field value */
+    value: string,
+    /** Form element (parent of the field) */
+    form: HTMLFormElement,
+    /** Field element (Input, Select or TextArea) */
+    field: ValidationField,
+    /** Validator options */
+    options: Options,
+    /** Validator language */
+    lang: Lang
+  ) => Promise<boolean>;
   /** Message on invalid validation */
   invalidMessage: string;
   /** Invalid message attribute key */

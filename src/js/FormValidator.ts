@@ -130,6 +130,63 @@ class FormValidate {
   }
 
   /**
+   * Triggers all async validators set in the fields
+   * @param {ValidationField} field Field to validate
+   * @param {HTMLFormElement} form Parent form
+   * @param {Options} options Validation options
+   * @returns {Promise<boolean>} Returns a true promise only if pass all validations
+   */
+  private async validateFieldAsync(
+    field: ValidationField,
+    form: HTMLFormElement,
+    options: Options
+  ): Promise<boolean> {
+    const validatorsList = field.getAttribute("data-fv-async"),
+      list = !validatorsList ? [] : validatorsList.split(/[,|-]+\s*|\s+/),
+      value = field.value;
+    let valid_invalid: boolean[] = [];
+    this.triggerEvent("beforeValidate", form, field, false, options);
+    for (const validator of list) {
+      if (this.conf.asyncValidators[validator]) {
+        const r = await this.conf.asyncValidators[validator].validatorFunction(
+          value,
+          form,
+          field,
+          options,
+          this.lang
+        );
+        if (r) this.triggerEvent("valid", form, field, true, options);
+        else this.triggerEvent("invalid", form, field, false, options);
+        valid_invalid.push(r);
+        removeStyles(field, form, options);
+        setStyles(field, form, options, r);
+        setMessage(
+          field,
+          form,
+          options,
+          this.conf,
+          this.lang,
+          r,
+          this.conf.validators[validator]
+        );
+      } else {
+        console.error(
+          `FormValidator: Failed to trigger the validator: ${validator}, can not be found.`
+        );
+      }
+      if (valid_invalid.includes(false)) break;
+    }
+    this.triggerEvent(
+      "afterValidate",
+      form,
+      field,
+      !valid_invalid.includes(false),
+      options
+    );
+    return !valid_invalid.includes(false);
+  }
+
+  /**
    * Triggers all validators set in the fields
    * @param {HTMLFormElement} form Parent form
    * @param {string} not List of inputs attributes not to be validated
@@ -149,6 +206,31 @@ class FormValidate {
       if (this.validateFieldController(field, "submit", options))
         valid.push(this.validateField(field, form, options));
     });
+    if (valid.length == 0) valid.push(true);
+    return !valid.includes(false);
+  }
+
+  /**
+   * Triggers all async validators set in the fields
+   * @param {HTMLFormElement} form Parent form
+   * @param {string} not List of inputs attributes not to be validated
+   * @param {Options} options Validation options
+   * @returns {Promise<boolean>} Returns a true promise only if pass all validations
+   */
+  private async validateAllFieldsAsync(
+    form: HTMLFormElement,
+    not: string,
+    options: Options
+  ): Promise<boolean> {
+    let fields = form.querySelectorAll<ValidationField>(
+      `textarea, select, input:not(${not})`
+    );
+    let valid: boolean[] = [];
+    for (const element of Array.from(fields)) {
+      const field = element;
+      if (this.validateFieldController(field, "submit", options))
+        valid.push(await this.validateFieldAsync(field, form, options));
+    }
     if (valid.length == 0) valid.push(true);
     return !valid.includes(false);
   }
@@ -387,6 +469,21 @@ class FormValidate {
   }
 
   /**
+   * Search for async validators in the validator list of the field
+   * @param {ValidationField} field Target field
+   * @param {Options} options Validation options
+   */
+  private searchAsyncValidator(field: ValidationField, options: Options): void {
+    const asyncValidators = Object.keys(this.conf.asyncValidators),
+      validatorsList = field.getAttribute(options.fieldValidateAttribute),
+      list = !validatorsList ? [] : validatorsList.split(/[,|-]+\s*|\s+/);
+    const r = asyncValidators.filter((asyncValidator) =>
+      list.includes(asyncValidator)
+    );
+    field.setAttribute("data-fv-async", r.join(","));
+  }
+
+  /**
    * Adds the event listeners to the field
    * @param {HTMLFormElement} form Parent form
    * @param {ValidationField} field Target field
@@ -408,34 +505,41 @@ class FormValidate {
     field.addEventListener("focus", () => {
       toggleHelpMessage(field, form, options, true);
     });
-    field.addEventListener("click", () => {
+    field.addEventListener("click", async () => {
       toggleHelpMessage(field, form, options, true);
-      if (this.validateFieldController(field, "click", options))
+      if (this.validateFieldController(field, "click", options)) {
         this.validateField(field, form, options);
+        await this.validateFieldAsync(field, form, options);
+      }
     });
-    field.addEventListener("blur", () => {
+    field.addEventListener("blur", async () => {
       toggleHelpMessage(field, form, options, false);
       if (
         field instanceof HTMLInputElement ||
         field instanceof HTMLTextAreaElement
       ) {
         this.modifyField(field, form, "blur", options);
-        if (this.validateFieldController(field, "blur", options))
+        if (this.validateFieldController(field, "blur", options)) {
           this.validateField(field, form, options);
+          await this.validateFieldAsync(field, form, options);
+        }
       }
     });
     if (
       field instanceof HTMLInputElement ||
       field instanceof HTMLTextAreaElement
     )
-      field.addEventListener("input", () => {
+      field.addEventListener("input", async () => {
         this.modifyField(field, form, "input", options);
-        if (this.validateFieldController(field, "input", options))
+        if (this.validateFieldController(field, "input", options)) {
           this.validateField(field, form, options);
+          await this.validateFieldAsync(field, form, options);
+        }
       });
     if (field instanceof HTMLSelectElement)
-      field.addEventListener("change", () => {
+      field.addEventListener("change", async () => {
         this.validateField(field, form, options);
+        await this.validateFieldAsync(field, form, options);
       });
   }
 
@@ -448,18 +552,24 @@ class FormValidate {
     form: HTMLFormElement,
     options: Options
   ): void {
-    form.addEventListener("submit", (e) => {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
       let isValid = this.validateAllFields(
         form,
         notAccept(options.validateHiddenFields, false),
         options
       );
+      if (isValid)
+        isValid = await this.validateAllFieldsAsync(
+          form,
+          notAccept(options.validateHiddenFields, false),
+          options
+        );
       form.setAttribute("valid-state", isValid ? "validForm" : "invalidForm");
       if (!isValid) {
         if (options.scrollToTopOnInvalid)
           form.scrollIntoView({ behavior: "smooth" });
         e.stopImmediatePropagation();
-        e.preventDefault();
       }
       addValidStyleInAllFields(form, options);
     });
@@ -487,6 +597,7 @@ class FormValidate {
         this.ignoreField(form, field, options);
         this.setDependantValidation(form, field, options);
         this.setOptionalValidation(field);
+        this.searchAsyncValidator(field, options);
         this.addEventListenersToFormFields(form, field, options);
       });
     });

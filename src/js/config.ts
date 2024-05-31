@@ -114,6 +114,7 @@ export const language: Lang = {
 
 export const configuration: Configuration = {
   validators: {},
+  asyncValidators: {},
   modifiers: {},
   stopValidation: false,
   onBeforeValidate: {},
