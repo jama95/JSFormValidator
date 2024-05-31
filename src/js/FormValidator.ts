@@ -6,6 +6,8 @@ import type {
   Suggestion,
   JSONConfig,
   ValidatorEvent,
+  Validator,
+  Modifier,
 } from "./types";
 import { options, language, configuration } from "./config";
 import {
@@ -774,6 +776,22 @@ class FormValidate {
         `FormValidator: Failed to add the event,  the field named '${field}' cant not be found.`
       );
     }
+  }
+
+  /**
+   * Adds a validator to the global config
+   * @param {Validator} validator Validator config
+   */
+  public addValidator(validator: Validator): void {
+    this.conf.validators[validator.name] = validator;
+  }
+
+  /**
+   * Adds a modifier to the global config
+   * @param {Modifier} modifier Modifier config
+   */
+  public addModifier(modifier: Modifier): void {
+    this.conf.modifiers[modifier.name] = modifier;
   }
 
   /**
