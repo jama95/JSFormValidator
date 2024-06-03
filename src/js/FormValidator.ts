@@ -144,11 +144,10 @@ class FormValidate {
     form: HTMLFormElement,
     options: Options
   ): Promise<boolean> {
-    const validatorsList = field.getAttribute("data-fv-async"),
-      list = !validatorsList ? [] : validatorsList.split(/[,|-]+\s*|\s+/),
+    this.triggerEvent("beforeValidate", form, field, false, options);
+    const list = this.searchAsyncValidator(field, options),
       value = field.value;
     let valid_invalid: boolean[] = [];
-    this.triggerEvent("beforeValidate", form, field, false, options);
     for (const validator of list) {
       if (this.conf.asyncValidators[validator]) {
         const r = await this.conf.asyncValidators[validator].validatorFunction(
@@ -475,15 +474,18 @@ class FormValidate {
    * Search for async validators in the validator list of the field
    * @param {ValidationField} field Target field
    * @param {Options} options Validation options
+   * @returns {string[]} Async validators list
    */
-  private searchAsyncValidator(field: ValidationField, options: Options): void {
+  private searchAsyncValidator(
+    field: ValidationField,
+    options: Options
+  ): string[] {
     const asyncValidators = Object.keys(this.conf.asyncValidators),
       validatorsList = field.getAttribute(options.fieldValidateAttribute),
       list = !validatorsList ? [] : validatorsList.split(/[,|-]+\s*|\s+/);
-    const r = asyncValidators.filter((asyncValidator) =>
+    return asyncValidators.filter((asyncValidator) =>
       list.includes(asyncValidator)
     );
-    field.setAttribute("data-fv-async", r.join(","));
   }
 
   /**
@@ -600,7 +602,6 @@ class FormValidate {
         this.ignoreField(form, field, options);
         this.setDependantValidation(form, field, options);
         this.setOptionalValidation(field);
-        this.searchAsyncValidator(field, options);
         this.addEventListenersToFormFields(form, field, options);
       });
     });
