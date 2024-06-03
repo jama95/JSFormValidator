@@ -7,6 +7,7 @@ import type {
   JSONConfig,
   ValidatorEvent,
   Validator,
+  AsyncValidator,
   Modifier,
 } from "./types";
 import { options, language, configuration } from "./config";
@@ -783,7 +784,29 @@ class FormValidate {
    * @param {Validator} validator Validator config
    */
   public addValidator(validator: Validator): void {
+    const list = Object.keys(this.conf.validators);
+    if (list.includes(validator.name)) {
+      console.error(
+        `FormValidator: Failed to add the validator, the name '${validator.name}' is already in use.`
+      );
+      return;
+    }
     this.conf.validators[validator.name] = validator;
+  }
+
+  /**
+   * Adds an async validator to the global config
+   * @param {AsyncValidator} validator Validator config
+   */
+  public addAsyncValidator(validator: AsyncValidator): void {
+    const list = Object.keys(this.conf.asyncValidators);
+    if (list.includes(validator.name)) {
+      console.error(
+        `FormValidator: Failed to add the validator, the name '${validator.name}' is already in use.`
+      );
+      return;
+    }
+    this.conf.asyncValidators[validator.name] = validator;
   }
 
   /**
@@ -791,6 +814,13 @@ class FormValidate {
    * @param {Modifier} modifier Modifier config
    */
   public addModifier(modifier: Modifier): void {
+    const list = Object.keys(this.conf.modifiers);
+    if (list.includes(modifier.name)) {
+      console.error(
+        `FormValidator: Failed to add the modifier, the name '${modifier.name}' is already in use.`
+      );
+      return;
+    }
     this.conf.modifiers[modifier.name] = modifier;
   }
 
