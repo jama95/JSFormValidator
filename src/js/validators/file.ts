@@ -13,7 +13,7 @@ configuration.validators["file_size"] = {
         const sizeSTR = field.getAttribute("data-fv-file_max_size") || "5MB";
         const maxSize = sizeStringToBytes(sizeSTR);
         let check = true;
-        for (const file of files) {
+        for (const file of Array.from(files)) {
           if (file.size > maxSize) {
             check = false;
             break;
@@ -130,7 +130,7 @@ configuration.asyncValidators["image_dimension"] = {
     if (!files) return false;
     const [width, height] = dimension.split("x").map(Number);
     let check = false;
-    for (const file of files) {
+    for (const file of Array.from(files)) {
       const dim = await getImageDimensions(file);
       check = dim[0] == width && dim[1] == height;
       if (!check) {
@@ -177,7 +177,7 @@ configuration.asyncValidators["image_width"] = {
     const files = field.files;
     if (!files) return false;
     let check = false;
-    for (const file of files) {
+    for (const file of Array.from(files)) {
       const dim = await getImageDimensions(file);
       check = dim[0] > parseFloat(width);
       if (!check) {
@@ -224,7 +224,7 @@ configuration.asyncValidators["image_width"] = {
     const files = field.files;
     if (!files) return false;
     let check = false;
-    for (const file of files) {
+    for (const file of Array.from(files)) {
       const dim = await getImageDimensions(file);
       check = dim[0] > parseFloat(width);
       if (!check) {
