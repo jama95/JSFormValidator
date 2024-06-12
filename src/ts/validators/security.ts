@@ -6,12 +6,12 @@ import { checkPasswordStrength, luhn } from "../utils";
 configuration.validators["password"] = {
   name: "password",
   validatorFunction: function (value, form, field, options, lang) {
-    const min = parseInt(field.getAttribute("data-fv-min_strength") || "5", 10);
+    const min = parseInt(field.getAttribute("data-fv-min_strength") ?? "5", 10);
     const strength = checkPasswordStrength(value).strength;
     if (strength >= min) return true;
     return false;
   },
-  invalidMessage: language.invalidStrength,
+  invalidMessage: language.inv_strength,
   invalidMessageKey: "inv_password",
   validMessageKey: "val_password",
 };
@@ -25,12 +25,9 @@ let confirmationMessage = language.notConfirmed;
  */
 function setConfirmationMessage(custom: string, lang: Lang): void {
   if (custom.length > 0) {
-    confirmationMessage = lang.invalidConfirmationValue.replace(
-      /\x5B.+\x5D/,
-      custom
-    );
+    confirmationMessage = lang.inv_confirmation.replace(/\x5B.+\x5D/, custom);
   } else {
-    confirmationMessage = lang.invalidConfirmationValue
+    confirmationMessage = lang.inv_confirmation
       .replace("[", "")
       .replace("]", "");
   }
@@ -40,9 +37,9 @@ function setConfirmationMessage(custom: string, lang: Lang): void {
 configuration.validators["confirmation"] = {
   name: "confirmation",
   validatorFunction: function (value, form, field, options, lang) {
-    const target = field.getAttribute("data-fv-target") || "";
+    const target = field.getAttribute("data-fv-target") ?? "";
     if (target.trim() === "") return false;
-    const custom = field.getAttribute("data-fv-custom_value_message") || "";
+    const custom = field.getAttribute("data-fv-custom_value_message") ?? "";
     const targetValue = document.querySelector<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >(target)?.value;
@@ -66,7 +63,7 @@ configuration.validators["credit_card"] = {
     let min = 16;
     let max = 19;
     const allowing = (
-      field.getAttribute("data-fv-allowed_cards") ||
+      field.getAttribute("data-fv-allowed_cards") ??
       Object.keys(cardInfo).join(",")
     ).split(/[,|-]+\s*|\s+/);
     allowing.filter((c) => Object.keys(cardInfo).includes(c.toUpperCase()));
@@ -86,7 +83,7 @@ configuration.validators["credit_card"] = {
     if (digits.length < min || digits.length > max) return false;
     return luhn(digits) === 0;
   },
-  invalidMessage: language.invalidCreditCardNumber,
+  invalidMessage: language.inv_credit_card,
   invalidMessageKey: "inv_credit_card",
   validMessageKey: "val_credit_card",
 };
@@ -96,7 +93,7 @@ configuration.validators["cvv"] = {
   name: "cvv",
   validatorFunction: function (value, form, field, options, lang) {
     if (/\D/.test(value)) return false;
-    const target = field.getAttribute("data-fv-target") || "";
+    const target = field.getAttribute("data-fv-target") ?? "";
     if (target.trim() === "") return false;
     const creditCard = document
       .querySelector<
@@ -110,7 +107,7 @@ configuration.validators["cvv"] = {
       return value.length < 3 || value.length > 4;
     }
   },
-  invalidMessage: language.invalidCVV,
+  invalidMessage: language.inv_cvv,
   invalidMessageKey: "inv_cvv",
   validMessageKey: "val_cvv",
 };

@@ -10,7 +10,7 @@ configuration.validators["file_size"] = {
     if (field instanceof HTMLInputElement && field.type == "file") {
       const files = field.files;
       if (files) {
-        const sizeSTR = field.getAttribute("data-fv-file_max_size") || "5MB";
+        const sizeSTR = field.getAttribute("data-fv-file_max_size") ?? "5MB";
         const maxSize = sizeStringToBytes(sizeSTR);
         let check = true;
         for (const file of Array.from(files)) {
@@ -20,7 +20,7 @@ configuration.validators["file_size"] = {
           }
         }
         if (!check) {
-          sizeFileMessage = lang.invalidFileSize.replace("{max}", sizeSTR);
+          sizeFileMessage = lang.inv_file_size.replace("{max}", sizeSTR);
         }
         return check;
       }
@@ -41,14 +41,14 @@ configuration.validators["file_type"] = {
     if (field instanceof HTMLInputElement && field.type === "file") {
       const files = field.files;
       if (files) {
-        let typeList = (field.getAttribute("data-fv-file_type") || "").split(
+        let typeList = (field.getAttribute("data-fv-file_type") ?? "").split(
           /[,|-]+\s*|\s+/
         );
         let check = Array.from(files).every((file) =>
           typeList.includes(file.type)
         );
         if (!check) {
-          typeFileMessage = lang.invalidFileType.replace(
+          typeFileMessage = lang.inv_file_type.replace(
             "{type}",
             `(${typeList.join(", ")})`
           );
@@ -73,7 +73,7 @@ configuration.validators["file_extension"] = {
       const files = field.files;
       if (files) {
         let extensionList = (
-          field.getAttribute("data-fv-file_extension") || ""
+          field.getAttribute("data-fv-file_extension") ?? ""
         ).split(/[,|-]+\s*|\s+/);
         let check = Array.from(files).every((file) =>
           extensionList.includes(
@@ -81,7 +81,7 @@ configuration.validators["file_extension"] = {
           )
         );
         if (!check) {
-          extensionFileMessage = lang.invalidFileExtension.replace(
+          extensionFileMessage = lang.inv_file_extension.replace(
             "{extension}",
             `(${extensionList.join(", ")})`
           );
@@ -92,8 +92,8 @@ configuration.validators["file_extension"] = {
     return false;
   },
   invalidMessage: extensionFileMessage,
-  invalidMessageKey: "inv_image_dimension",
-  validMessageKey: "val_image_dimension",
+  invalidMessageKey: "inv_file_extension",
+  validMessageKey: "val_file_extension",
 };
 
 let dimensionImageMessage = language.notConfirmed;
@@ -105,7 +105,7 @@ configuration.asyncValidators["image_dimension"] = {
     dimensionImageMessage = language.notConfirmed;
     if (!(field instanceof HTMLInputElement && field.type === "file"))
       return false;
-    const dimension = field.getAttribute("data-fv-image_dimension") || "";
+    const dimension = field.getAttribute("data-fv-image_dimension") ?? "";
     if (dimension.trim().length === 0) return false;
     let bck = "";
     if (field.hasAttribute("data-fv-file_type"))
@@ -147,13 +147,13 @@ configuration.asyncValidators["image_dimension"] = {
 
 let heightImageMessage = language.notConfirmed;
 
-configuration.asyncValidators["image_width"] = {
-  name: "image_width",
+configuration.asyncValidators["image_height"] = {
+  name: "image_height",
   validatorFunction: async function (value, form, field, options, lang) {
     heightImageMessage = language.notConfirmed;
     if (!(field instanceof HTMLInputElement && field.type === "file"))
       return false;
-    const width = field.getAttribute("data-fv-image_dimension") || "";
+    const width = field.getAttribute("data-fv-image_dimension") ?? "";
     if (width.trim().length === 0) return false;
     let bck = "";
     if (field.hasAttribute("data-fv-file_type"))
@@ -188,8 +188,8 @@ configuration.asyncValidators["image_width"] = {
     return check;
   },
   invalidMessage: heightImageMessage,
-  invalidMessageKey: "inv_image_width",
-  validMessageKey: "val_image_width",
+  invalidMessageKey: "inv_image_height",
+  validMessageKey: "val_image_height",
 };
 
 let widthImageMessage = language.notConfirmed;
@@ -200,7 +200,7 @@ configuration.asyncValidators["image_width"] = {
     widthImageMessage = language.notConfirmed;
     if (!(field instanceof HTMLInputElement && field.type === "file"))
       return false;
-    const width = field.getAttribute("data-fv-image_dimension") || "";
+    const width = field.getAttribute("data-fv-image_dimension") ?? "";
     if (width.trim().length === 0) return false;
     let bck = "";
     if (field.hasAttribute("data-fv-file_type"))

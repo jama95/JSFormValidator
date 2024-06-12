@@ -43,8 +43,8 @@ configuration.modifiers["currency"] = {
   name: "currency",
   modifierFunction: function (value, input) {
     const d = input.getAttribute("data-fm-decimals");
-    const locale = input.getAttribute("data-fm-locale") || undefined,
-      currency = input.getAttribute("data-fm-currency") || undefined,
+    const locale = input.getAttribute("data-fm-locale") ?? undefined,
+      currency = input.getAttribute("data-fm-currency") ?? undefined,
       decimals = d ? parseInt(d) : undefined;
     if (/[^\d.]/.test(value)) return value;
     return currencyFormat(value, language, locale, currency, decimals);

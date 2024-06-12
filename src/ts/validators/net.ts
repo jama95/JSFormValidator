@@ -14,7 +14,7 @@ configuration.validators["ipv4"] = {
     if (regex.test(value)) return true;
     return false;
   },
-  invalidMessage: language.invalidIPv4,
+  invalidMessage: language.inv_ipv4,
   invalidMessageKey: "inv_ipv4",
   validMessageKey: "val_ipv4",
 };
@@ -74,7 +74,7 @@ configuration.validators["ipv6"] = {
     }
     return false;
   },
-  invalidMessage: language.invalidIPv6,
+  invalidMessage: language.inv_ipv6,
   invalidMessageKey: "inv_ipv6",
   validMessageKey: "val_ipv6",
 };
@@ -107,7 +107,7 @@ configuration.validators["domain"] = {
     }
     return !equal;
   },
-  invalidMessage: language.invalidDomain,
+  invalidMessage: language.inv_domain,
   invalidMessageKey: "inv_domain",
   validMessageKey: "val_domain",
 };
@@ -137,7 +137,7 @@ configuration.validators["email"] = {
     if (value.endsWith(".")) return false;
     if (value.length > 254) return false;
     const regex = new RegExp(`^${emailRegex}$`, "i");
-    const email = value.match(regex);
+    const email = RegExp(regex).exec(value);
     if (!email) return false;
     const parts = [...email];
     const localPart = parts[1];
@@ -157,7 +157,7 @@ configuration.validators["email"] = {
         return false;
     return true;
   },
-  invalidMessage: language.invalidEmail,
+  invalidMessage: language.inv_email,
   invalidMessageKey: "inv_email",
   validMessageKey: "val_email",
 };
@@ -184,7 +184,7 @@ configuration.validators["url"] = {
     if (!regex.test(value)) return false;
     return true;
   },
-  invalidMessage: language.invalidUrl,
+  invalidMessage: language.inv_url,
   invalidMessageKey: "inv_url",
   validMessageKey: "val_url",
 };

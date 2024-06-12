@@ -9,7 +9,8 @@ import type { Lang, Options, ValidationField } from "./types";
  */
 function validateDateFormat(format: string, separator: string): boolean {
   if (/[A-Z0-9]/.test(separator)) return false;
-  const count = (format.match(new RegExp(`\\${separator}`)) ?? []).length;
+  const count = (RegExp(new RegExp(`\\${separator}`)).exec(format) ?? [])
+    .length;
   if (format.replace(separator, "").length != format.length - count)
     return false;
   if (new RegExp(`[^YMD${separator}]`).test(format)) return false;
@@ -151,9 +152,9 @@ export function checkTimeFormat(time: string, format: string): string {
 function checkNumberRange(value: number, range: string): string[] {
   if (range.includes("::") && (range.includes("max") || range.includes("min")))
     return ["no"];
-  const match = range.match(
+  const match = RegExp(
     /^(min|max)?((?:-?)\d+(?:\x2E\d+)?)(?:\x3A\x3A((?:-?)\d+(?:\x2E\d+)?))?$/
-  );
+  ).exec(range);
   if (!match) return ["no"];
   const [, minOrMax, num1, num2] = match,
     min = minOrMax === "min",
@@ -240,7 +241,7 @@ export function checkRangeStep(
 export function checkStringLength(value: number, range: string): string[] {
   if (range.includes("::") && (range.includes("max") || range.includes("min")))
     return ["no"];
-  const match = range.match(/^(min|max)?(\\d+)(?:\x3A\x3A(\\d+))?$/);
+  const match = RegExp(/^(min|max)?(\\d+)(?:\x3A\x3A(\\d+))?$/).exec(range);
   if (!match) return ["no"];
   const [, minOrMax, num1, , num2] = match,
     min = minOrMax === "min",
@@ -384,7 +385,7 @@ export function checkPasswordStrength(password: string): {
   check: string[];
 } {
   let strength: number = 0,
-    check = [];
+    check: string[] = [];
   if (/[A-Z]/.test(password)) {
     strength++;
     check.push("UC");
@@ -415,13 +416,16 @@ export function checkPasswordStrength(password: string): {
  */
 export function luhn(digits: number[]): number {
   let sum = 0;
-  digits.reverse().forEach((digit, i) => {
-    if (i % 2 == 0) {
-      digit *= 2;
-      if (digit > 9) digit -= 9;
-    }
-    sum += digit;
-  });
+  digits
+    .slice()
+    .reverse()
+    .forEach((digit, i) => {
+      if (i % 2 == 0) {
+        digit *= 2;
+        if (digit > 9) digit -= 9;
+      }
+      sum += digit;
+    });
   return sum % 10;
 }
 
@@ -433,11 +437,14 @@ export function luhn(digits: number[]): number {
 export function module11(digits: number[]): number {
   let sum = 0;
   let factor = 2;
-  digits.reverse().forEach((digit) => {
-    sum += digit * factor;
-    factor++;
-    if (factor > 7) factor = 2;
-  });
+  digits
+    .slice()
+    .reverse()
+    .forEach((digit) => {
+      sum += digit * factor;
+      factor++;
+      if (factor > 7) factor = 2;
+    });
   return sum % 11;
 }
 
@@ -448,13 +455,13 @@ export function module11(digits: number[]): number {
  */
 export function sizeStringToBytes(size: string): number {
   size = size.toUpperCase();
-  if (size.slice(-2) === "GB") {
+  if (size.endsWith("GB")) {
     return parseInt(size.slice(0, -2), 10) * 1024 * 1024 * 1024;
-  } else if (size.slice(-2) === "MB") {
+  } else if (size.endsWith("MB")) {
     return parseInt(size.slice(0, -2), 10) * 1024 * 1024;
-  } else if (size.slice(-2) === "KB") {
+  } else if (size.endsWith("KB")) {
     return parseInt(size.slice(0, -2), 10) * 1024;
-  } else if (size.slice(-1) === "B") {
+  } else if (size.endsWith("B")) {
     return parseInt(size.slice(0, -1), 10);
   } else {
     return parseInt(size, 10);

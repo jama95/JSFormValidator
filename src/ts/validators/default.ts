@@ -18,7 +18,7 @@ configuration.validators["required"] = {
       return value.trim().length > 0;
     }
   },
-  invalidMessage: language.required,
+  invalidMessage: language.inv_required,
   invalidMessageKey: "inv_required",
   validMessageKey: "val_required",
 };
@@ -83,21 +83,21 @@ configuration.validators["length"] = {
     const check = checkStringLength(val, length);
     switch (check[0]) {
       case "max":
-        lengthMessage = lang.invalidLengthMax.replace("{max}", check[1]);
+        lengthMessage = lang.inv_lengthMax.replace("{max}", check[1]);
         setLengthMessage(file, multiple);
         return false;
       case "min":
-        lengthMessage = lang.invalidLengthMin.replace("{min}", check[1]);
+        lengthMessage = lang.inv_lengthMin.replace("{min}", check[1]);
         setLengthMessage(file, multiple);
         return false;
       case "range":
-        lengthMessage = lang.invalidLengthRange
+        lengthMessage = lang.inv_lengthRange
           .replace("{max}", check[1])
           .replace("{min}", check[2]);
         setLengthMessage(file, multiple);
         return false;
       case "equal":
-        lengthMessage = lang.invalidLengthEqual.replace("{equal}", check[1]);
+        lengthMessage = lang.inv_lengthEqual.replace("{equal}", check[1]);
         setLengthMessage(file, multiple);
         return false;
       case "no":
@@ -111,7 +111,7 @@ configuration.validators["length"] = {
   validMessageKey: "val_length",
 };
 
-let numberMessage = language.invalidNumber;
+let numberMessage = language.inv_numbers;
 
 /**
  * Set the invalid number message
@@ -121,22 +121,22 @@ let numberMessage = language.invalidNumber;
 function setNumberMessage(check: string[], lang: Lang): void {
   switch (check[0]) {
     case "max":
-      numberMessage = lang.invalidNumberMax.replace("{max}", check[1]);
+      numberMessage = lang.inv_numberMax.replace("{max}", check[1]);
       break;
     case "min":
-      numberMessage = lang.invalidNumberMin.replace("{min}", check[1]);
+      numberMessage = lang.inv_numberMin.replace("{min}", check[1]);
       break;
     case "range":
-      numberMessage = lang.invalidNumberMax.replace(
+      numberMessage = lang.inv_numberRange.replace(
         "{range}",
         `${check[1]}:${check[2]}`
       );
       break;
     case "equal":
-      numberMessage = lang.invalidNumberEqual.replace("{equal}", check[1]);
+      numberMessage = lang.inv_numberEqual.replace("{equal}", check[1]);
       break;
     case "step":
-      numberMessage = lang.invalidNumberStep.replace("{step}", check[1]);
+      numberMessage = lang.inv_numberStep.replace("{step}", check[1]);
       break;
     default:
       numberMessage = lang.notConfirmed;
@@ -148,15 +148,15 @@ function setNumberMessage(check: string[], lang: Lang): void {
 configuration.validators["numbers"] = {
   name: "numbers",
   validatorFunction: function (value, form, field, options, lang) {
-    const allow = (field.getAttribute("data-fv-numbers_allow") || "").split(
+    const allow = (field.getAttribute("data-fv-numbers_allow") ?? "").split(
       /[,|-]+\s*|\s+/
     );
     if (allow.includes("noPositive") && !value.includes("-")) return false;
     if (!allow.includes("negative") && value.includes("-")) return false;
     if (!allow.includes("decimal") && value.includes(".")) return false;
     if (/^-?\d+(\x2E\d+)?$/.test(value)) {
-      const range = field.getAttribute("data-fv-numbers_range") || "",
-        step = field.getAttribute("data-fv-numbers_step") || "",
+      const range = field.getAttribute("data-fv-numbers_range") ?? "",
+        step = field.getAttribute("data-fv-numbers_step") ?? "",
         check = checkRangeStep(allow, parseFloat(value), range, step);
       if (check[0][0] && check[0][0] != "ok") {
         setNumberMessage(check[0], lang);
@@ -174,15 +174,15 @@ configuration.validators["numbers"] = {
   validMessageKey: "val_numbers",
 };
 
-let lettersMessage = language.invalidLetters;
+let lettersMessage = language.inv_letters;
 
 /* Checks if the field value has only letters and/or the allowed characters */
 configuration.validators["letters"] = {
   name: "letters",
   validatorFunction: function (value, form, field, options, lang) {
-    const allow = field.getAttribute("data-fv-letters_allow") || "";
+    const allow = field.getAttribute("data-fv-letters_allow") ?? "";
     const regex = new RegExp(`[a-z${escapeRegExp(allow)}]`, "i");
-    if (/\d/.test(value) || !regex.test(value)) {
+    if (/\d/.test(value) ?? !regex.test(value)) {
       if (allow.length == 0)
         lettersMessage = lettersMessage.replace(/\x5B.+\x5D/, "");
       else
@@ -199,7 +199,7 @@ configuration.validators["letters"] = {
   validMessageKey: "val_letters",
 };
 
-let alphanumericMessage = language.invalidAlphaNumeric;
+let alphanumericMessage = language.inv_alphanumeric;
 
 /**
  * Set the invalid alphanumeric message
@@ -219,7 +219,7 @@ function setAlphanumericMessage(allow: string) {
 configuration.validators["alphanumeric"] = {
   name: "alphanumeric",
   validatorFunction: function (value, form, field, options, lang) {
-    const allow = field.getAttribute("data-fv-letters_allow") || "";
+    const allow = field.getAttribute("data-fv-letters_allow") ?? "";
     const regex = new RegExp(`[a-z\\d${escapeRegExp(allow)}]`, "i");
     if (!regex.test(value)) {
       setAlphanumericMessage(allow);
@@ -236,12 +236,12 @@ configuration.validators["alphanumeric"] = {
 configuration.validators["regex"] = {
   name: "regex",
   validatorFunction: function (value, form, field, options, lang) {
-    const regex = field.getAttribute("data-fv-regex") || "";
-    const flags = field.getAttribute("data-fv-flags") || undefined;
+    const regex = field.getAttribute("data-fv-regex") ?? "";
+    const flags = field.getAttribute("data-fv-flags") ?? undefined;
     if (!regex) return false;
     return new RegExp(regex, flags).test(value);
   },
-  invalidMessage: language.invalidCustomVal,
+  invalidMessage: language.inv_regexp,
   invalidMessageKey: "inv_regexp",
   validMessageKey: "val_regexp",
 };
@@ -250,12 +250,12 @@ configuration.validators["regex"] = {
 configuration.validators["telephone"] = {
   name: "telephone",
   validatorFunction: function (value, form, field, options, lang) {
-    const format = field.getAttribute("data-fv-telephone_format") || "EC";
+    const format = field.getAttribute("data-fv-telephone_format") ?? "EC";
     if (telephoneFormats[format])
       return new RegExp(telephoneFormats[format].join("|")).test(value);
     return false;
   },
-  invalidMessage: language.invalidTelephone,
+  invalidMessage: language.inv_telephone,
   invalidMessageKey: "inv_telephone",
   validMessageKey: "val_telephone",
 };
@@ -278,7 +278,7 @@ const HEX =
 configuration.validators["color"] = {
   name: "color",
   validatorFunction: function (value, form, field, options, lang) {
-    const colors = field.getAttribute("data-fv-colors") || "";
+    const colors = field.getAttribute("data-fv-colors") ?? "";
     let regex: string[] = [];
     if (colors.trim().length == 0)
       regex.push(`^${RGB}$|^${RGBA}$|^${HSL}$|^${HSLA}$|^${CMYK}$|^${HEX}$`);
@@ -292,7 +292,7 @@ configuration.validators["color"] = {
       return true;
     return false;
   },
-  invalidMessage: language.color,
+  invalidMessage: language.inv_color,
   invalidMessageKey: "inv_color",
   validMessageKey: "val_color",
 };

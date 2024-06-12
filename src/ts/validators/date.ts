@@ -1,20 +1,20 @@
 import { language, configuration } from "../config";
 import { checkDateFormat, checkTimeFormat } from "../utils";
 
-let dateMessage = language.invalidDate;
+let dateMessage = language.inv_date;
 
 /* Checks if the field value match with the specified date format */
 configuration.validators["date"] = {
   name: "date",
   validatorFunction: function (value, form, field, options, lang) {
-    const format = field.getAttribute("data-fv-date_format") || lang.dateFormat;
+    const format = field.getAttribute("data-fv-date_format") ?? lang.dateFormat;
     const check = checkDateFormat(value, format);
     if (check == "no") {
       dateMessage = lang.notConfirmed;
       return false;
     }
     if (check == "invalid") {
-      dateMessage = lang.invalidDate;
+      dateMessage = lang.inv_date;
       return false;
     }
     return true;
@@ -30,14 +30,14 @@ let timeMessage = language.invalidTime;
 configuration.validators["time"] = {
   name: "time",
   validatorFunction: function (value, form, field, options, lang) {
-    const format = field.getAttribute("data-fv-time_format") || lang.timeFormat;
+    const format = field.getAttribute("data-fv-time_format") ?? lang.timeFormat;
     const check = checkTimeFormat(value, format);
     if (check == "no") {
       timeMessage = lang.notConfirmed;
       return false;
     }
     if (check == "invalid") {
-      timeMessage = lang.invalidTime;
+      timeMessage = lang.inv_time;
       return false;
     }
     return true;
