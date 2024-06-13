@@ -915,8 +915,6 @@ class FormValidate {
  * @param {?Lang} [lang] Form validation language messages
  * @returns {FormValidate} Form validation
  */
-function FormValidator(options?: Options, lang?: Lang): FormValidate {
+export function FormValidator(options?: Options, lang?: Lang): FormValidate {
   return new FormValidate(options, lang);
 }
-
-export default FormValidator;
