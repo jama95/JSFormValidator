@@ -6,7 +6,7 @@ import { checkRangeStep, checkStringLength, escapeRegExp } from "../utils";
 configuration.validators["required"] = {
   name: "required",
   validatorFunction: function (value, form, field, options, lang) {
-    let name = field.getAttribute("name");
+    const name = field.getAttribute("name");
     if (field instanceof HTMLInputElement && field.type == "checkbox") {
       return field.checked;
     } else if (field instanceof HTMLInputElement && field.type == "radio") {
@@ -279,7 +279,7 @@ configuration.validators["color"] = {
   name: "color",
   validatorFunction: function (value, form, field, options, lang) {
     const colors = field.getAttribute("data-fv-colors") ?? "";
-    let regex: string[] = [];
+    const regex: string[] = [];
     if (colors.trim().length == 0)
       regex.push(`^${RGB}$|^${RGBA}$|^${HSL}$|^${HSLA}$|^${CMYK}$|^${HEX}$`);
     else {
@@ -288,8 +288,11 @@ configuration.validators["color"] = {
       if (colors.search(/CMYK/i)) regex.push(`^${CMYK}$`);
       if (colors.search(/(?:hex)|#/i)) regex.push(`^${HEX}$`);
     }
-    if (new RegExp(regex.length > 1 ? regex.join("|") : regex[0], "i"))
-      return true;
+    const check = new RegExp(
+      regex.length > 1 ? regex.join("|") : regex[0],
+      "i"
+    );
+    if (check.test(value)) return true;
     return false;
   },
   invalidMessage: language.inv_color,

@@ -90,7 +90,7 @@ class FormValidate {
     const validatorsList = field.getAttribute(options.fieldValidateAttribute),
       list = !validatorsList ? [] : validatorsList.split(/[,|-]+\s*|\s+/),
       value = field.value;
-    let valid_invalid: boolean[] = [];
+    const valid_invalid: boolean[] = [];
     this.triggerEvent("beforeValidate", form, field, false, options);
     for (const validator of list) {
       if (this.conf.validators[validator]) {
@@ -147,7 +147,7 @@ class FormValidate {
     this.triggerEvent("beforeValidate", form, field, false, options);
     const list = this.searchAsyncValidator(field, options),
       value = field.value;
-    let valid_invalid: boolean[] = [];
+    const valid_invalid: boolean[] = [];
     for (const validator of list) {
       if (this.conf.asyncValidators[validator]) {
         const r = await this.conf.asyncValidators[validator].validatorFunction(
@@ -200,10 +200,10 @@ class FormValidate {
     not: string,
     options: Options
   ): boolean {
-    let fields = form.querySelectorAll<ValidationField>(
-      `textarea, select, input:not(${not})`
-    );
-    let valid: boolean[] = [];
+    const fields = form.querySelectorAll<ValidationField>(
+        `textarea, select, input:not(${not})`
+      ),
+      valid: boolean[] = [];
     fields.forEach((field) => {
       if (this.validateFieldController(field, "submit", options))
         valid.push(this.validateField(field, form, options));
@@ -224,10 +224,10 @@ class FormValidate {
     not: string,
     options: Options
   ): Promise<boolean> {
-    let fields = form.querySelectorAll<ValidationField>(
-      `textarea, select, input:not(${not})`
-    );
-    let valid: boolean[] = [];
+    const fields = form.querySelectorAll<ValidationField>(
+        `textarea, select, input:not(${not})`
+      ),
+      valid: boolean[] = [];
     for (const element of Array.from(fields)) {
       const field = element;
       if (this.validateFieldController(field, "submit", options))
@@ -291,7 +291,8 @@ class FormValidate {
     const target = form.querySelector<ValidationField>(`[name=${depending}]`);
     if (target) {
       field.setAttribute("data-fv-skip", "true");
-      let validators = field.getAttribute(options.fieldValidateAttribute) ?? "";
+      const validators =
+        field.getAttribute(options.fieldValidateAttribute) ?? "";
       if (!validators.includes("required"))
         field.setAttribute(
           options.fieldValidateAttribute,
@@ -334,7 +335,8 @@ class FormValidate {
     const optional = field.getAttribute("data-fv-optional") ?? "";
     if (optional == "true") {
       field.setAttribute("data-fv-skip", "true");
-      let validators = field.getAttribute(options.fieldValidateAttribute) ?? "";
+      const validators =
+        field.getAttribute(options.fieldValidateAttribute) ?? "";
       if (!validators.includes("required"))
         field.setAttribute(
           options.fieldValidateAttribute,
@@ -398,7 +400,7 @@ class FormValidate {
     field: ValidationField,
     options: Options
   ): void {
-    let fieldsToIgnore = form.querySelectorAll<HTMLInputElement>(
+    const fieldsToIgnore = form.querySelectorAll<HTMLInputElement>(
       `input:not(${notAccept(false, false)})`
     );
     if (
@@ -408,7 +410,8 @@ class FormValidate {
       return;
     if (field instanceof HTMLInputElement) {
       if (options.addSuggestions) {
-        let suggestions = field.getAttribute(options.suggestionAttribute) ?? "";
+        const suggestions =
+          field.getAttribute(options.suggestionAttribute) ?? "";
         inputSuggestion(
           field,
           suggestions.split(/[,|-]+\s*|\s+/),
@@ -420,7 +423,7 @@ class FormValidate {
       }
     }
     if (field instanceof HTMLTextAreaElement) {
-      let restriction = field.getAttribute(options.lengthRestrictAttribute);
+      const restriction = field.getAttribute(options.lengthRestrictAttribute);
       if (restriction)
         textAreaLengthRestriction(
           field,
@@ -429,7 +432,7 @@ class FormValidate {
         );
     }
     if (options.showHelpMessagesOnFocus) {
-      let message = field.getAttribute(options.fieldHelpMessageAttribute);
+      const message = field.getAttribute(options.fieldHelpMessageAttribute);
       if (message) {
         fieldHelpMessage(field, message);
       }
@@ -447,7 +450,7 @@ class FormValidate {
     field: ValidationField,
     options: Options
   ): void {
-    let fieldsToIgnore = form.querySelectorAll<HTMLInputElement>(
+    const fieldsToIgnore = form.querySelectorAll<HTMLInputElement>(
       `input:not(${notAccept(false, false)})`
     );
     if (
@@ -455,8 +458,8 @@ class FormValidate {
       Array.from(fieldsToIgnore).includes(field)
     )
       return;
-    let list: string[] = [],
-      name = field.getAttribute("name") ?? "";
+    let list: string[] = [];
+    const name = field.getAttribute("name") ?? "";
     if (Array.isArray(options.ignoredFieldsNames)) {
       list = options.ignoredFieldsNames;
     } else if (typeof options.ignoredFieldsNames == "string") {
@@ -499,7 +502,7 @@ class FormValidate {
     field: ValidationField,
     options: Options
   ): void {
-    let fieldsToIgnore = form.querySelectorAll<HTMLInputElement>(
+    const fieldsToIgnore = form.querySelectorAll<HTMLInputElement>(
       `input:not(${notAccept(options.validateHiddenFields, false)})`
     );
     if (
@@ -685,7 +688,7 @@ class FormValidate {
    * @param {?Options} [options] Validation options
    */
   public validate(form?: string, options?: Options): void {
-    let opt = { ...this.opt, ...options };
+    const opt = { ...this.opt, ...options };
     let f: string;
     if (!form) {
       f = opt.form;
@@ -717,7 +720,7 @@ class FormValidate {
       );
       return;
     }
-    let opt = { ...this.opt, ...options };
+    const opt = { ...this.opt, ...options };
     opt.form = Object.keys(json)[0];
     for (const fld in frm) {
       const field = form.querySelector<ValidationField>(fld);
@@ -851,7 +854,7 @@ class FormValidate {
     }
     if (reject) reject = escapeRegExp(reject);
     if (accept) accept = escapeRegExp(accept);
-    let acceptRegexp: RegExp, rejectRegexp: RegExp;
+    let acceptRegexp: RegExp;
     switch (type) {
       case "numbers":
         acceptRegexp = new RegExp(`[0-9${accept ?? ""}]`);
@@ -887,7 +890,7 @@ class FormValidate {
       "PageUp",
       "PageDown",
     ];
-    rejectRegexp = new RegExp(`[${reject}]`);
+    const rejectRegexp = new RegExp(`[${reject}]`);
     input.addEventListener("keydown", function (e) {
       if (
         !acceptDefault.includes(e.key) &&

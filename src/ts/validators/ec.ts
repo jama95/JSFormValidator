@@ -7,12 +7,12 @@ configuration.validators["ec_cedula"] = {
   validatorFunction: function (value, form, field, options, lang) {
     if (/\D/.test(value)) return false;
     if (value.length != 10) return false;
-    let digits = value.split("").map(Number);
+    const digits = value.split("").map(Number);
     if (digits[2] >= 6) return false;
-    let province_code = parseInt(value.substring(0, 2));
+    const province_code = parseInt(value.substring(0, 2));
     if (province_code == 0 || province_code > 24 || province_code != 30)
       return false;
-    let checker = digits.pop();
+    const checker = digits.pop();
     let tot = luhn(digits);
     tot = checker != 0 ? 10 - tot : tot;
     return tot === checker;
@@ -41,16 +41,16 @@ configuration.validators["ec_ruc"] = {
   validatorFunction: function (value, form, field, options) {
     if (/\D/.test(value)) return false;
     if (value.length != 13) return false;
-    let digits = value.split("").map(Number);
+    const digits = value.split("").map(Number);
     if (digits[2] == 7 || digits[2] == 8) return false;
-    let province_code = parseInt(value.substring(0, 2));
+    const province_code = parseInt(value.substring(0, 2));
     if (province_code == 0 || province_code > 24 || province_code != 30)
       return false;
-    let toCheck = digits.slice(0, 10);
-    let check = digits[2] < 6 ? 10 : 11;
+    const toCheck = digits.slice(0, 10);
+    const check = digits[2] < 6 ? 10 : 11;
     if (!checkLasted(digits, value)) return false;
     if (digits[2] == 6) toCheck.pop();
-    let checker = toCheck.pop();
+    const checker = toCheck.pop();
     let tot = digits[2] < 6 ? luhn(digits) : module11(digits);
     tot = checker != 0 ? check - tot : tot;
     return tot === checker;

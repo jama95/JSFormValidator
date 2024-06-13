@@ -86,7 +86,7 @@ export function inputSuggestion(
   const fillDatalist = function (words: string[]) {
     currentFocus = -1;
     while (datalist.firstChild) datalist.removeChild(datalist.firstChild);
-    for (let word of words) {
+    for (const word of words) {
       const option = document.createElement("option");
       option.value = word;
       option.innerText = word;
@@ -106,7 +106,7 @@ export function inputSuggestion(
   };
   // Hide the datalist when it is not focused
   input.addEventListener("blur", function () {
-    let no = document.querySelector<HTMLDataListElement>(
+    const no = document.querySelector<HTMLDataListElement>(
       `datalist.fv-suggestions[target="#${input.id}"] option:hover`
     );
     if (no) return;
@@ -152,7 +152,7 @@ export function inputSuggestion(
   });
   // Select an option with the keyboard
   const addActive = function () {
-    let selected = document.querySelector<HTMLDataListElement>(
+    const selected = document.querySelector<HTMLDataListElement>(
       "datalist.fv-suggestions option.active"
     );
     if (selected) selected.classList.remove("active");
@@ -168,7 +168,7 @@ export function inputSuggestion(
       currentFocus > datalist.options.length - 1
         ? datalist.options.length - 1
         : currentFocus;
-    let c = Math.floor(
+    const c = Math.floor(
       parseInt(datalist.style.maxHeight, 10) / datalist.options[0].offsetHeight
     );
     datalist.scrollTo(
@@ -191,7 +191,7 @@ export function inputSuggestion(
 export function passwordInfo(input: HTMLInputElement, options: Options): void {
   if (input.type != "password") return;
   const container = document.createElement("div");
-  let additionalClass = options.passwordInfoClass ?? "";
+  const additionalClass = options.passwordInfoClass ?? "";
   container.classList.add("fv-password", additionalClass);
   container.style.display = "none";
   const content = `<div class="tittle">${language.passwordConditionsTitle}</div>
@@ -204,7 +204,7 @@ export function passwordInfo(input: HTMLInputElement, options: Options): void {
 <div class="strength-bar"></div>`;
   container.innerHTML = content;
   input.after(container);
-  let strengthBar = document.querySelector<HTMLDivElement>(
+  const strengthBar = document.querySelector<HTMLDivElement>(
       "div.fv-password div.strength-bar"
     ) as HTMLDivElement,
     strength = document.querySelector<HTMLDivElement>(
@@ -298,7 +298,7 @@ function getFieldParent(
   options: Options
 ): HTMLElement | null {
   let parent: HTMLElement | null = null;
-  let p = form.querySelectorAll<HTMLElement>(options.parentField.trim());
+  const p = form.querySelectorAll<HTMLElement>(options.parentField.trim());
   if (p) parent = p[0] ?? field.parentElement;
   if (parent?.nodeName == "FORM") parent = null;
   return parent;
@@ -366,9 +366,9 @@ export function setStyles(
 ): void {
   let fieldClass: string,
     fieldRemove: string,
-    parent = getFieldParent(field, form, options),
     parentClass: string,
     parentRemove: string;
+  const parent = getFieldParent(field, form, options);
   if (valid_invalid) {
     fieldClass = options.validClass;
     fieldRemove = options.invalidClass;
@@ -401,7 +401,7 @@ export function removeStyles(
   form: HTMLFormElement,
   options: Options
 ): void {
-  let parent = getFieldParent(field, form, options);
+  const parent = getFieldParent(field, form, options);
   document.querySelectorAll(field.name).forEach((f) => {
     f.classList.remove(options.invalidClass);
     f.classList.remove(options.validClass);
@@ -429,9 +429,9 @@ function setInlineMessage(
   valid_invalid: boolean,
   validator: Validator
 ): void {
-  const span = document.createElement("span");
-  let parent = getFieldParent(field, form, options),
-    fieldName =
+  const span = document.createElement("span"),
+    parent = getFieldParent(field, form, options);
+  let fieldName =
       form.querySelector<HTMLLabelElement>(`label[for="${field.name}"]`)
         ?.textContent ?? "",
     message: string;
@@ -474,11 +474,11 @@ function setTopMessage(
   validator: Validator
 ): void {
   let message: string,
-    validView = options.topMessagesTemplate,
-    invalidView = options.topMessagesTemplate,
     fieldName =
       form.querySelector<HTMLLabelElement>(`label[for="${field.name}"]`)
         ?.textContent ?? "";
+  const validView = options.topMessagesTemplate,
+    invalidView = options.topMessagesTemplate;
   if (!fieldName) fieldName = field.name;
   validView.replace("{topMessageClass}", options.topMessagesClass);
   invalidView.replace("{topMessageClass}", options.topMessagesClass);
@@ -527,7 +527,7 @@ function removeInlineMessages(
   field: ValidationField,
   form: HTMLFormElement
 ): void {
-  let span = form.querySelector<HTMLSpanElement>(
+  const span = form.querySelector<HTMLSpanElement>(
     `span[for-field="${field.name}"]`
   );
   if (span) span.remove();
@@ -542,7 +542,7 @@ function removeTopMessage(form: HTMLFormElement, options: Options): void {
   options.validMessages = {};
   options.invalidMessages = {};
   const classes = options.topMessagesClass.split(" ").join(".");
-  let ul = form.querySelector<HTMLUListElement>(
+  const ul = form.querySelector<HTMLUListElement>(
     `.fv-top-messages.${classes} ul`
   );
   if (ul) ul.innerHTML = "";
@@ -597,7 +597,7 @@ export function setMessage(
  * @param {Options} options Validation options
  */
 export function formReset(form: HTMLFormElement, options: Options): void {
-  let fields = form.querySelectorAll<ValidationField>(
+  const fields = form.querySelectorAll<ValidationField>(
     'textarea, select, input:not([type="submit"],[type="button"],[type="reset"])'
   );
   fields.forEach((field) => {
@@ -621,7 +621,7 @@ export function toggleHelpMessage(
   show: boolean
 ): void {
   if (options.showHelpMessagesOnFocus) {
-    let name = field.getAttribute("name") ?? "",
+    const name = field.getAttribute("name") ?? "",
       span = form.querySelector<HTMLSpanElement>(
         `span.fv-help_message[for="${name}"]`
       );
@@ -641,7 +641,7 @@ export function addValidStyleInAllFields(
   options: Options
 ): void {
   if (!options.addValidClassOnAll) return;
-  let fields = form.querySelectorAll<ValidationField>(
+  const fields = form.querySelectorAll<ValidationField>(
     `textarea:not(.${options.validClass}, .${options.invalidClass}), input:not(.${options.validClass}, .${options.invalidClass}), select:not(.${options.validClass}, .${options.invalidClass})`
   );
   fields.forEach((field) => setStyles(field, form, options, true));

@@ -41,10 +41,10 @@ configuration.validators["file_type"] = {
     if (field instanceof HTMLInputElement && field.type === "file") {
       const files = field.files;
       if (files) {
-        let typeList = (field.getAttribute("data-fv-file_type") ?? "").split(
+        const typeList = (field.getAttribute("data-fv-file_type") ?? "").split(
           /[,|-]+\s*|\s+/
         );
-        let check = Array.from(files).every((file) =>
+        const check = Array.from(files).every((file) =>
           typeList.includes(file.type)
         );
         if (!check) {
@@ -72,10 +72,10 @@ configuration.validators["file_extension"] = {
     if (field instanceof HTMLInputElement && field.type === "file") {
       const files = field.files;
       if (files) {
-        let extensionList = (
+        const extensionList = (
           field.getAttribute("data-fv-file_extension") ?? ""
         ).split(/[,|-]+\s*|\s+/);
-        let check = Array.from(files).every((file) =>
+        const check = Array.from(files).every((file) =>
           extensionList.includes(
             file.name.slice(file.name.lastIndexOf(".") + 1)
           )

@@ -10,7 +10,7 @@ const IPv4Complete = `${IPv4Regex}${IPv4Prefix}`;
 configuration.validators["ipv4"] = {
   name: "ipv4",
   validatorFunction: function (value, form, field, options, lang) {
-    let regex = new RegExp(`^${IPv4Complete}$`);
+    const regex = new RegExp(`^${IPv4Complete}$`);
     if (regex.test(value)) return true;
     return false;
   },
@@ -62,8 +62,8 @@ function zeros(ip: string): boolean {
 configuration.validators["ipv6"] = {
   name: "ipv6",
   validatorFunction: function (value, form, field, options, lang) {
-    let zerosRule = field.getAttribute("data-fv-IPv6_zeros") == "true";
-    let regex = new RegExp(`${IPv6Full}`);
+    const zerosRule = field.getAttribute("data-fv-IPv6_zeros") == "true";
+    const regex = new RegExp(`${IPv6Full}`);
     if (regex.test(value)) {
       if (!new RegExp(IPv4Regex).test(value)) {
         value = value.replace(new RegExp(IPv6Prefix.slice(0, -1)), "");

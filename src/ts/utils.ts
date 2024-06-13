@@ -90,8 +90,8 @@ export function checkDateFormat(date: string, format: string): string {
  * @returns {string[]} [HH,mm,ss,sss?]
  */
 function splitTime(tf: string): string[] {
-  let ms = tf.split(".");
-  let r = [...ms[0].split(":")];
+  const ms = tf.split("."),
+    r = [...ms[0].split(":")];
   if (ms[1]) r.push(ms[1]);
   return r;
 }
@@ -274,10 +274,10 @@ export function currencyFormat(
 ): string {
   if (!/^\d+(\.\d+)?$/.test(value)) return value;
   if (!decimals) {
-    let prt = value.split(".");
+    const prt = value.split(".");
     if (prt.length > 1) decimals = parseInt(prt[1]);
   }
-  let num = parseFloat(value).toFixed(decimals);
+  const num = parseFloat(value).toFixed(decimals);
   locale = !locale ? lang.locale : locale;
   currency = !currency ? lang.currencyCode : currency;
   try {
@@ -384,8 +384,8 @@ export function checkPasswordStrength(password: string): {
   strength: number;
   check: string[];
 } {
-  let strength: number = 0,
-    check: string[] = [];
+  let strength: number = 0;
+  const check: string[] = [];
   if (/[A-Z]/.test(password)) {
     strength++;
     check.push("UC");
