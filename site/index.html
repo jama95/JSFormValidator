@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="es">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Validator</title>
+    <link rel="stylesheet" type="text/css" href="css/FormValidator.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  </head>
+
+  <body data-bs-theme="dark">
+    <div class="container-fluid" style="padding-bottom: 500px;">
+      <form id="f">
+        <div class="row">
+          <h1>Default Validators</h1>
+          <div class="col-4">
+            <div>
+              <label class="form-label" for="lg">Length</label>
+              <input type="text" name="lg" id="lg" class="form-control" data-fv-validators="required length" data-fv-length="3::4">
+            </div>
+            <div>
+              <label class="form-label" for="nb1">Numbers (only positive)</label>
+              <input type="text" name="nb1" id="nb1" class="form-control" data-fv-validators="required numbers" data-fv-numbers_allow="decimal range step" data-fv-numbers_range="2::10" data-fv-numbers_step="2">
+            </div>
+            <div>
+              <label class="form-label" for="nb2">Numbers (only negative)</label>
+              <input type="text" name="nb2" id="nb2" class="form-control" data-fv-validators="required numbers" data-fv-numbers_allow="decimal noPositive range step" data-fv-numbers_range="-10::-2" data-fv-numbers_step="-2">
+            </div>
+            <div>
+              <label class="form-label" for="lt1">Letters</label>
+              <input type="text" name="lt1" id="lt1" class="form-control" data-fv-validators="required letters">
+            </div>
+            <div>
+              <label class="form-label" for="lt2">Letters and spanish letters</label>
+              <input type="text" name="lt2" id="lt2" class="form-control" data-fv-validators="required letters" data-fv-letters_allow="ñáéíóúü">
+              <div>
+                <label class="form-label" for="an1">alphanumeric</label>
+                <input type="text" name="an1" id="an1" class="form-control" data-fv-validators="required alphanumeric">
+              </div>
+            </div>
+
+          </div>
+          <div class="col-4">
+            <div>
+              <label class="form-label" for="an2">alphanumeric and spanish letters</label>
+              <input type="text" name="an2" id="an2" class="form-control" data-fv-validators="required alphanumeric" data-fv-letters_allow="ñáéíóúü">
+            </div>
+            <div>
+              <label class="form-label" for="rx1">regex (must start with a)</label>
+              <input type="text" name="rx1" id="rx1" class="form-control" data-fv-validators="required regex" data-fv-regex="^a[a-z]+$">
+            </div>
+            <div>
+              <label class="form-label" for="rx2">regex with flag i (must start with a)</label>
+              <input type="text" name="rx2" id="rx2" class="form-control" data-fv-validators="required regex" data-fv-regex="^a[a-z]+$" data-fv-flags="i">
+            </div>
+            <div>
+              <label class="form-label" for="tl">telephone</label>
+              <input type="text" name="tl" id="tl" class="form-control" data-fv-validators="required telephone" data-fv-telephone_format="EC" data-fv-valid-msg-telephone="Es un número de teléfono ecuatoriano válido">
+            </div>
+            <div>
+              <label class="form-label" for="cl">color</label>
+              <input type="text" name="cl" id="cl" class="form-control" data-fv-validators="required color" data-fv-colors="">
+            </div>
+            <div class="row">
+              <div class="col-6">
+                <div>
+                  <label for="c1">Checkbox</label><br>
+                  <label class="form-check-label" for="c1">Check</label>
+                  <input type="checkbox" name="c" id="c1" class="form-check-input" data-fv-validators="required">
+                </div>
+              </div>
+              <div class="col-6">
+                <div>
+                  <label for="r1">Radiobutton</label><br>
+                  <label class="form-check-label" for="r1">Radio</label>
+                  <input type="radio" name="r" id="r1" class="form-check-input" data-fv-validators="required">
+                </div>
+                <div>
+                  <label class="form-check-label" for="r2">Radio</label>
+                  <input type="radio" name="r" id="r2" class="form-check-input" data-fv-validators="required">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-4">
+            <label for="chk">Checkbox length</label>
+            <div>
+              <label class="form-check-label" for="chk1">Check</label>
+              <input type="checkbox" name="chk" id="chk1" class="form-check-input" data-fv-validators="length" data-fv-length="2">
+            </div>
+            <div>
+              <label class="form-check-label" for="chk2">Check</label>
+              <input type="checkbox" name="chk" id="chk2" class="form-check-input" data-fv-validators="length" data-fv-length="2">
+            </div>
+            <div>
+              <label class="form-check-label" for="chk3">Check</label>
+              <input type="checkbox" name="chk" id="chk3" class="form-check-input" data-fv-validators="length" data-fv-length="2">
+            </div>
+
+            <div>
+              <label for="s1">Select</label>
+              <select name="s1" id="s1" class="form-select" data-fv-validators="required">
+                <option value="" disable></option>
+                <option value="op1">OP1</option>
+                <option value="op2">OP2</option>
+                <option value="op3">OP3</option>
+                <option value="op4">OP4</option>
+                <option value="op5">OP5</option>
+                <option value="op6">OP6</option>
+              </select>
+            </div>
+            <div>
+              <label for="s3">Select Multiple</label>
+              <select name="s3" id="s3" class="form-select" multiple data-fv-validators="required">
+                <option value="op1">OP1</option>
+                <option value="op2">OP2</option>
+                <option value="op3">OP3</option>
+                <option value="op4">OP4</option>
+                <option value="op5">OP5</option>
+                <option value="op6">OP6</option>
+              </select>
+            </div>
+            <div>
+              <label for="s4">Select</label>
+              <select name="s4" id="s4" class="form-select" multiple data-fv-validators="required length" data-fv-length="1::3">
+                <option value="op1">OP1</option>
+                <option value="op2">OP2</option>
+                <option value="op3">OP3</option>
+                <option value="op4">OP4</option>
+                <option value="op5">OP5</option>
+                <option value="op6">OP6</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <h1>Time Validators</h1>
+          <div class="col-4">
+            <div>
+              <label class="form-label" for="dt">date format</label>
+              <input type="text" name="dt" id="dt" class="form-control" data-fv-validators="required date" data-fv-date_format="DD/MM/YYYY">
+            </div>
+          </div>
+          <div class="col-4">
+            <div>
+              <label class="form-label" for="tm">time format</label>
+              <input type="text" name="tm" id="tm" class="form-control" data-fv-validators="required time" data-fv-time_format="HH:mm">
+            </div>
+
+          </div>
+        </div>
+        <div class="row">
+          <h1>Net Validators</h1>
+          <div class="col-4">
+            <div>
+              <label class="form-label" for="ipv4">ipv4</label>
+              <input type="text" name="ipv4" id="ipv4" class="form-control" data-fv-validators="required ipv4">
+            </div>
+            <div>
+              <label class="form-label" for="ipv6">ipv6</label>
+              <input type="text" name="ipv6" id="ipv6" class="form-control" data-fv-validators="required ipv6">
+            </div>
+          </div>
+          <div class="col-4">
+            <div>
+              <label class="form-label" for="dm">domain</label>
+              <input type="text" name="dm" id="dm" class="form-control" data-fv-validators="required domain">
+            </div>
+            <div>
+              <label class="form-label" for="em">email</label>
+              <input type="text" name="em" id="em" class="form-control" data-fv-validators="required email">
+            </div>
+          </div>
+          <div class="col-4">
+            <div>
+              <label class="form-label" for="url">url</label>
+              <input type="text" name="url" id="url" class="form-control" data-fv-validators="required url">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <h1>Security Validators</h1>
+          <div class="col-4">
+            <div>
+              <label class="form-label" for="pss">password strength</label>
+              <input type="text" name="pss" id="pss" class="form-control" data-fv-validators="required password">
+            </div>
+            <div>
+              <label class="form-label" for="co">confirmation</label>
+              <input type="text" name="co" id="co" class="form-control" data-fv-validators="required confirmation" data-fv-target="#pss" data-fv-custom_value_message="passwords">
+            </div>
+          </div>
+          <div class="col-4">
+            <div>
+              <label class="form-label" for="cc">credit card</label>
+              <input type="text" name="cc" id="cc" class="form-control" data-fv-validators="required credit_card">
+            </div>
+            <div>
+              <label class="form-label" for="cvv">cvv</label>
+              <input type="text" name="cvv" id="cvv" class="form-control" data-fv-validators="required cvv" data-fv-target="#cc">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <h1>File Validators</h1>
+          <div class="col-4">
+            <div>
+              <label class="form-label" for="fll">file length</label>
+              <input type="file" name="fll" id="fll" class="form-control" data-fv-validators="required length" data-fv-length="max2" multiple>
+            </div>
+            <div>
+              <label class="form-label" for="flz">file size</label>
+              <input type="file" name="flz" id="flz" class="form-control" data-fv-validators="required file_size" data-fv-file_max_size="2mb" multiple>
+            </div>
+          </div>
+          <div class="col-4">
+            <div>
+              <label class="form-label" for="flt">file type</label>
+              <input type="file" name="flt" id="flt" class="form-control" data-fv-validators="required file_type" data-fv-file_type="image/jpeg" multiple>
+            </div>
+            <div>
+              <label class="form-label" for="fle">file extension</label>
+              <input type="file" name="fle" id="fle" class="form-control" data-fv-validators="required file_extension" data-fv-file_extension="jpg" multiple>
+            </div>
+          </div>
+          <div class="col-4">
+            <div>
+              <label class="form-label" for="imd">image dimensions</label>
+              <input type="file" name="imd" id="imd" class="form-control" data-fv-validators="required image_dimension" data-fv-image_dimension="64x64" multiple>
+            </div>
+            <div>
+              <label class="form-label" for="imh">image height</label>
+              <input type="file" name="imh" id="imh" class="form-control" data-fv-validators="required image_height" data-fv-image_height="64" multiple>
+            </div>
+            <div>
+              <label class="form-label" for="imw">image width</label>
+              <input type="file" name="imw" id="imw" class="form-control" data-fv-validators="required image_width" data-fv-image_width="64" multiple>
+            </div>
+          </div>
+
+        </div>
+        <div class="row">
+          <h1>Modifiers</h1>
+          <div class="col-4">
+            <div>
+              <label class="form-label" for="cp">capital</label>
+              <input type="text" name="cp" id="cp" class="form-control" data-fv-modifiers="capital">
+            </div>
+            <div>
+              <label class="form-label" for="st">sentence</label>
+              <input type="text" name="st" id="st" class="form-control" data-fv-modifiers="sentence">
+            </div>
+            <div>
+              <label class="form-label" for="cm">camel</label>
+              <input type="text" name="cm" id="cm" class="form-control" data-fv-modifiers="camel">
+            </div>
+          </div>
+          <div class="col-4">
+            <div>
+              <label class="form-label" for="pc">pascal</label>
+              <input type="text" name="pc" id="pc" class="form-control" data-fv-modifiers="pascal">
+            </div>
+            <div>
+              <label class="form-label" for="cy">currency</label>
+              <input type="text" name="cy" id="cy" class="form-control" data-fv-modifiers="currency" data-fm-decimals="4" data-fm-currency="EUR">
+            </div>
+            <div>
+              <label class="form-label" for="tr">trim</label>
+              <input type="text" name="tr" id="tr" class="form-control" data-fv-modifiers="trim">
+            </div>
+          </div>
+          <div class="col-4">
+            <div>
+              <label class="form-label" for="trl">trim left</label>
+              <input type="text" name="trl" id="trl" class="form-control" data-fv-modifiers="trim_left">
+            </div>
+            <div>
+              <label class="form-label" for="trr">trim right</label>
+              <input type="text" name="trr" id="trr" class="form-control" data-fv-modifiers="trim_right">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <h1>Logic Validation</h1>
+          <div class="col-4">
+            <div>
+              <label class="form-label" for="trg1">Target</label>
+              <input type="text" name="trg1" id="trg1" class="form-control">
+            </div>
+            <div>
+              <label class="form-label" for="dp1">Dependant (validated if target has any value)</label>
+              <input type="text" name="dp1" id="dp1" class="form-control" data-fv-depends-on="trg1" data-fv-validators="required">
+            </div>
+          </div>
+          <div class="col-4">
+            <div>
+              <label class="form-label" for="trg2">Target (specific value: jama)</label>
+              <input type="text" name="trg2" id="trg2" class="form-control">
+            </div>
+            <div>
+              <label class="form-label" for="dp2">Dependant (validated if target has an specific value)</label>
+              <input type="text" name="dp2" id="dp2" class="form-control" data-fv-depends-on="trg2" data-fv-depends-on-value="jama" data-fv-validators="required">
+            </div>
+          </div>
+          <div class="col-4">
+            <div>
+              <label class="form-label" for="op">Optional (validated only if has a value)</label>
+              <input type="text" name="op" id="op" class="form-control" data-fv-optional="true">
+            </div>
+          </div>
+        </div>
+        <br>
+        <button type="submit" class="btn btn-info">OK</button>
+      </form>
+      <div class="row">
+        <h1>Functions working outside the form</h1>
+        <div class="col-4">
+          <div>
+            <label class="form-label" for="rsl1">Restriction (only letters)</label>
+            <input type="text" name="rsl1" id="rsl1" class="form-control">
+          </div>
+          <div>
+            <label class="form-label" for="rsl2">Restriction (only letters and space)</label>
+            <input type="text" name="rsl2" id="rsl2" class="form-control">
+          </div>
+
+        </div>
+        <div class="col-4">
+          <div>
+            <label class="form-label" for="rsn1">Restriction (only numbers)</label>
+            <input type="text" name="rsn1" id="rsn1" class="form-control">
+          </div>
+          <div>
+            <label class="form-label" for="rsn2">Restriction (only numbers and decimal dot)</label>
+            <input type="text" name="rsn2" id="rsn2" class="form-control">
+          </div>
+        </div>
+        <div class="col-4">
+          <div>
+            <label class="form-label" for="pass">Contraseña:</label>
+            <input type="password" name="pass" id="pass" class="form-control">
+          </div>
+          <div>
+            <label class="form-label" for="city">Suggestions</label>
+            <input type="text" name="city" id="city" class="form-control">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div>
+            <label class="form-label" for="t1">Textarea</label>
+            <textarea name="t1" id="t1" class="form-control" rows="5"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <h1>Login form</h1>
+        <div class="col-4">
+          <form id="login">
+            <div class="fv-group">
+              <label for="user" class="form-label">Usuario</label>
+              <input type="text" name="user" id="user" class="form-control" placeholder="Escriba su usuario." data-fv-validators="required" data-fv-help-msg="Tu nombre de usuario o correo electrónico." data-fv-invalid-msg-required="No soy adivino, debes decirme quien eres." data-fv-valid-msg=":)">
+            </div>
+            <div class="fv-group">
+              <label for="psw" class="form-label">Contraseña</label>
+              <input type="password" name="psw" id="psw" class="form-control" placeholder="Escriba su contraseña." data-fv-validators="required" data-fv-help-msg="Elige una contraseña segura." data-fv-invalid-msg="Yo no la sé, si tu no la sabes, entonces nadie la sabe.">
+            </div>
+            <div class="fv-group">
+              <label for="remember" class="form-check-label">Recordarme</label>
+              <input type="checkbox" name="remember" id="remember" class="form-check-input" data-fv-validators="required" data-fv-valid-msg-required="Tus datos se guardaran en el navegador.">
+            </div>
+            <div class="fv-group">
+              <label for="nv" class="form-label">Sin validadores</label>
+              <input type="text" name="nv" id="nv" class="form-control" placeholder="Sin validadores.">
+            </div>
+            <div class="fv-group">
+              <label for="ig" class="form-label">Ignorado</label>
+              <input type="text" name="ig" id="ig" class="form-control" placeholder="No lo valida" data-fv-validators="required">
+            </div>
+            <div class="fv-group">
+              <label for="oc" class="d-none">Oculto</label>
+              <input type="hidden" name="oc" id="oc" class="form-control" data-fv-validators="required">
+            </div>
+            <br>
+            <button type="submit" class="btn btn-info">OK</button>
+            <button type="reset" class="btn btn-secondary">Reset</button>
+          </form>
+        </div>
+
+        <div class="col-4">
+          <p id="log" style="max-height:560px;overflow-y:auto;"></p>
+        </div>
+      </div>
+    </div>
+    <script src="js/FormValidator.js" type="text/javascript"></script>
+    <script src="js/lang/es.js" type="text/javascript"></script>
+    <script src="index.js" type="text/javascript"></script>
+  </body>
+
+</html>
