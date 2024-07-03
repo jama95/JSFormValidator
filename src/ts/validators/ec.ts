@@ -18,8 +18,7 @@ configuration.validators["ec_cedula"] = {
     return tot === checker;
   },
   invalidMessage: "El número de cédula no es válido.",
-  invalidMessageKey: "inv_ec_cedula",
-  validMessageKey: "val_ec_cedula",
+  messageKey: "ec_cedula",
 };
 
 /**
@@ -56,6 +55,5 @@ configuration.validators["ec_ruc"] = {
     return tot === checker;
   },
   invalidMessage: "El número de ruc no es válido",
-  invalidMessageKey: "inv_ec_ruc",
-  validMessageKey: "val_ec_ruc",
+  messageKey: "ec_ruc",
 };

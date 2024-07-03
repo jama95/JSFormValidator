@@ -1,8 +1,6 @@
 import { language, configuration } from "../config";
 import { getImageDimensions, sizeStringToBytes } from "../utils";
 
-let sizeFileMessage = language.notConfirmed;
-
 /* Checks if the selected files size has the correct size  */
 configuration.validators["file_size"] = {
   name: "file_size",
@@ -20,19 +18,16 @@ configuration.validators["file_size"] = {
           }
         }
         if (!check) {
-          sizeFileMessage = lang.inv_file_size.replace("{max}", sizeSTR);
+          this.invalidMessage = lang.inv_file_size.replace("{max}", sizeSTR);
         }
         return check;
       }
     }
     return false;
   },
-  invalidMessage: sizeFileMessage,
-  invalidMessageKey: "inv_file_size",
-  validMessage: "val_file_size",
+  invalidMessage: language.notConfirmed,
+  messageKey: "file_size",
 };
-
-let typeFileMessage = language.notConfirmed;
 
 /* Checks if the selected files has the correct type (mime) */
 configuration.validators["file_type"] = {
@@ -48,7 +43,7 @@ configuration.validators["file_type"] = {
           typeList.includes(file.type)
         );
         if (!check) {
-          typeFileMessage = lang.inv_file_type.replace(
+          this.invalidMessage = lang.inv_file_type.replace(
             "{type}",
             `(${typeList.join(", ")})`
           );
@@ -58,12 +53,9 @@ configuration.validators["file_type"] = {
     }
     return false;
   },
-  invalidMessage: typeFileMessage,
-  invalidMessageKey: "inv_file_type",
-  validMessageKey: "val_file_type",
+  invalidMessage: language.notConfirmed,
+  messageKey: "file_type",
 };
-
-let extensionFileMessage = language.notConfirmed;
 
 /* Checks if the selected files has the correct extension */
 configuration.validators["file_extension"] = {
@@ -81,7 +73,7 @@ configuration.validators["file_extension"] = {
           )
         );
         if (!check) {
-          extensionFileMessage = lang.inv_file_extension.replace(
+          this.invalidMessage = lang.inv_file_extension.replace(
             "{extension}",
             `(${extensionList.join(", ")})`
           );
@@ -91,150 +83,95 @@ configuration.validators["file_extension"] = {
     }
     return false;
   },
-  invalidMessage: extensionFileMessage,
-  invalidMessageKey: "inv_file_extension",
-  validMessageKey: "val_file_extension",
+  invalidMessage: language.notConfirmed,
+  messageKey: "file_extension",
 };
-
-let dimensionImageMessage = language.notConfirmed;
 
 /* Checks if the selected images has the correct dimension */
 configuration.asyncValidators["image_dimension"] = {
   name: "image_dimension",
   validatorFunction: async function (value, form, field, options, lang) {
-    dimensionImageMessage = language.notConfirmed;
     if (!(field instanceof HTMLInputElement && field.type === "file"))
       return false;
     const dimension = field.getAttribute("data-fv-image_dimension") ?? "";
     if (dimension.trim().length === 0) return false;
-    let bck = "";
-    if (field.hasAttribute("data-fv-file_type"))
-      bck = field.getAttribute("data-fv-file_type") as string;
-    field.setAttribute("data-fv-file_type", "image/jpeg, image/png, image/gif");
-    const isImage = configuration.validators["image_type"].validatorFunction(
-      value,
-      form,
-      field,
-      options,
-      lang
-    );
-    if (!isImage) {
-      dimensionImageMessage = lang.inv_file_type.replace(
-        "{type}",
-        "image/jpeg, image/png, image/gif"
-      );
-      return false;
-    }
-    field.setAttribute("data-fv-file_type", bck);
     const files = field.files;
     if (!files) return false;
     const [width, height] = dimension.split("x").map(Number);
     let check = false;
     for (const file of Array.from(files)) {
+      if (!file.type.includes("image")) {
+        this.invalidMessage = lang.inv_file_type.replace("{type}", "image/*");
+        check = false;
+        break;
+      }
       const dim = await getImageDimensions(file);
       check = dim[0] == width && dim[1] == height;
       if (!check) {
-        dimensionImageMessage = lang.inv_image_dimension;
+        this.invalidMessage = lang.inv_image_dimension;
         break;
       }
     }
     return check;
   },
-  invalidMessage: dimensionImageMessage,
-  invalidMessageKey: "inv_image_dimension",
-  validMessageKey: "val_image_dimension",
+  invalidMessage: language.notConfirmed,
+  messageKey: "image_dimension",
 };
-
-let heightImageMessage = language.notConfirmed;
 
 configuration.asyncValidators["image_height"] = {
   name: "image_height",
   validatorFunction: async function (value, form, field, options, lang) {
-    heightImageMessage = language.notConfirmed;
     if (!(field instanceof HTMLInputElement && field.type === "file"))
       return false;
-    const width = field.getAttribute("data-fv-image_dimension") ?? "";
-    if (width.trim().length === 0) return false;
-    let bck = "";
-    if (field.hasAttribute("data-fv-file_type"))
-      bck = field.getAttribute("data-fv-file_type") as string;
-    field.setAttribute("data-fv-file_type", "image/jpeg, image/png, image/gif");
-    const isImage = configuration.validators["image_type"].validatorFunction(
-      value,
-      form,
-      field,
-      options,
-      lang
-    );
-    if (!isImage) {
-      heightImageMessage = lang.inv_file_type.replace(
-        "{type}",
-        "image/jpeg, image/png, image/gif"
-      );
-      return false;
-    }
-    field.setAttribute("data-fv-file_type", bck);
+    const height = field.getAttribute("data-fv-image_height") ?? "";
+    if (height.trim().length === 0) return false;
     const files = field.files;
     if (!files) return false;
     let check = false;
     for (const file of Array.from(files)) {
+      if (!file.type.includes("image")) {
+        this.invalidMessage = lang.inv_file_type.replace("{type}", "image/*");
+        check = false;
+        break;
+      }
       const dim = await getImageDimensions(file);
-      check = dim[0] > parseFloat(width);
+      check = dim[0] <= parseFloat(height);
       if (!check) {
-        heightImageMessage = lang.inv_image_heigh;
+        this.invalidMessage = lang.inv_image_heigh.replace("{max}", height);
         break;
       }
     }
     return check;
   },
-  invalidMessage: heightImageMessage,
-  invalidMessageKey: "inv_image_height",
-  validMessageKey: "val_image_height",
+  invalidMessage: language.notConfirmed,
+  messageKey: "image_height",
 };
-
-let widthImageMessage = language.notConfirmed;
 
 configuration.asyncValidators["image_width"] = {
   name: "image_width",
   validatorFunction: async function (value, form, field, options, lang) {
-    widthImageMessage = language.notConfirmed;
     if (!(field instanceof HTMLInputElement && field.type === "file"))
       return false;
-    const width = field.getAttribute("data-fv-image_dimension") ?? "";
+    const width = field.getAttribute("data-fv-image_width") ?? "";
     if (width.trim().length === 0) return false;
-    let bck = "";
-    if (field.hasAttribute("data-fv-file_type"))
-      bck = field.getAttribute("data-fv-file_type") as string;
-    field.setAttribute("data-fv-file_type", "image/jpeg, image/png, image/gif");
-    const isImage = configuration.validators["image_type"].validatorFunction(
-      value,
-      form,
-      field,
-      options,
-      lang
-    );
-    if (!isImage) {
-      widthImageMessage = lang.inv_file_type.replace(
-        "{type}",
-        "image/jpeg, image/png, image/gif"
-      );
-      return false;
-    }
-    field.setAttribute("data-fv-file_type", bck);
     const files = field.files;
     if (!files) return false;
     let check = false;
     for (const file of Array.from(files)) {
+      if (!file.type.includes("image")) {
+        this.invalidMessage = lang.inv_file_type.replace("{type}", "image/*");
+        check = false;
+        break;
+      }
       const dim = await getImageDimensions(file);
-      check = dim[0] > parseFloat(width);
+      check = dim[0] <= parseFloat(width);
       if (!check) {
-        widthImageMessage = lang.inv_image_width;
+        this.invalidMessage = lang.inv_image_width.replace("{max}", width);
         break;
       }
     }
     return check;
   },
-  invalidMessage: widthImageMessage,
-  invalidMessageKey: "inv_image_width",
-  validMessageKey: "val_image_width",
+  invalidMessage: language.notConfirmed,
+  messageKey: "image_width",
 };

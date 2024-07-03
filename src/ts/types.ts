@@ -1,5 +1,3 @@
-export type FV = Options & Configuration;
-
 export type Options = {
   /* Signature symbol */
   [key: string]: unknown;
@@ -29,7 +27,7 @@ export type Options = {
   validMessagesPosition: string;
   /** Invalid message position (Available positions: inline & top) @default 'inline' */
   invalidMessagesPosition: string;
-  /** Top messages HTML template (values with {} are mandatory) @default '<div class="{topMessagesClass} {iv-MessageClass}"><h4>{title}</h4><ul>{fields&messagesList}</ul></div>' */
+  /** Top messages HTML template (values with {} are mandatory) @default '<div class="{topMessagesClass} {iv-MessageClass}" target="#{formID}" data-fv-top-{vi}><h4>{title}</h4><ul>{fields&messagesList}</ul></div>' */
   topMessagesTemplate: string;
   /** Scrolls the page up to the top messages position on submit event @default false */
   scrollToTopOnInvalid: boolean;
@@ -55,6 +53,8 @@ export type Options = {
   fieldValidMessageAttribute: string;
   /** Data attribute of the field to show help messages @default 'data-fv-help-msg' */
   fieldHelpMessageAttribute: string;
+  /** Triggers modifiers on field's input event @default true */
+  modifyOnInput: boolean;
   /** Triggers validations on field's input event @default false */
   validateOnInput: boolean;
   /** Triggers validation on field's blur event @default true */
@@ -73,7 +73,7 @@ export type Options = {
   lengthRestrictAttribute: string;
   /** Length restriction info to show (Available options: both, count, remaining) @default 'count' @example count: 100/5000 ; remaining: 4900/5000 ; both: 100(4900)/5000*/
   lengthRestrictInfo: string;
-  /** Regex for admitted password special characters @default /(\x21\x40\x23\x24\x25\x5E\x26\x2A\x5F\x2D\x2B\x3D)/ */
+  /** Regex for admitted password special characters @default /[\x21\x40\x23\x24\x25\x5E\x26\x2A\x5F\x2D\x2B\x3D]/ */
   passwordSpecialChars: RegExp;
   /** Shows password info on inputs type password @default true */
   addPasswordInfo: boolean;
@@ -99,9 +99,9 @@ export type Configuration = {
   /** Event triggered when a field has been validated @default {} */
   onAfterValidate: { [field: string]: ValidatorEvent[] };
   /** Top messages when valid @default {} */
-  validMessages: { [key: string]: string };
+  validMessages: { [key: string]: { [key: string]: string } };
   /** Top messages when invalid @default {} */
-  invalidMessages: { [key: string]: string };
+  invalidMessages: { [key: string]: { [key: string]: string } };
   /** Messages language @default en */
   language: Lang;
 };
@@ -240,13 +240,11 @@ export type Validator = {
   ) => boolean;
   /** Message on invalid validation */
   invalidMessage: string;
-  /** Invalid message attribute key */
-  invalidMessageKey: string;
+  /** Message attribute key */
+  messageKey?: string;
   /** Message on valid validation */
   validMessage?: string;
-  /** Valid message attribute key */
-  validMessageKey?: string;
-  /** Indicates whether validation is triggered on each Input event */
+  /** Indicates whether validation is triggered on each Input event (default: false) */
   validateOnInput?: boolean;
 };
 
@@ -268,13 +266,11 @@ export type AsyncValidator = {
   ) => Promise<boolean>;
   /** Message on invalid validation */
   invalidMessage: string;
-  /** Invalid message attribute key */
-  invalidMessageKey: string;
+  /** Message attribute key */
+  messageKey?: string;
   /** Message on valid validation */
   validMessage?: string;
-  /** Valid message attribute key */
-  validMessageKey?: string;
-  /** Indicates whether validation is triggered on each Input event */
+  /** Indicates whether validation is triggered on each Input event (default: false) */
   validateOnInput?: boolean;
 };
 
@@ -294,6 +290,8 @@ export type Modifier = {
     /** Validator language */
     lang: Lang
   ) => string;
+  /** Indicates whether modifier is triggered on each Input event (default: false) */
+  modifyOnInput?: boolean;
 };
 
 export type MessageCallback = (

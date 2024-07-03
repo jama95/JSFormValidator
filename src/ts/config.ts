@@ -20,7 +20,7 @@ export const options: Options = {
   invalidMessagesClass: "alert-danger",
   validMessagesPosition: "inline",
   invalidMessagesPosition: "inline",
-  topMessagesTemplate: `<div class="fv-top-messages {topMessagesClass} {valid_invalid}"><h4>{title}</h4><ul>{fields&messagesList}</ul></div>`,
+  topMessagesTemplate: `<div class="{topMessagesClass} {valid_invalid}" target="#{formID}" data-fv-top-{vi}><h4>{title}</h4><ul>{fields&messagesList}</ul></div>`,
   scrollToTopOnInvalid: false,
   addValidClassOnAll: false,
   validateHiddenFields: false,
@@ -33,6 +33,7 @@ export const options: Options = {
   fieldInvalidMessageAttribute: "data-fv-invalid-msg",
   fieldValidMessageAttribute: "data-fv-valid-msg",
   fieldHelpMessageAttribute: "data-fv-help-msg",
+  modifyOnInput: true,
   validateOnInput: false,
   validateOnBlur: true,
   validateCheckboxRadioOnClick: true,
@@ -46,7 +47,7 @@ export const options: Options = {
   suggestionAttribute: "data-fv-suggestions",
   lengthRestrictAttribute: "data-fv-text-length",
   lengthRestrictInfo: "count",
-  passwordSpecialChars: /(\x21\x40\x23\x24\x25\x5E\x26\x2A\x5F\x2D\x2B\x3D)/,
+  passwordSpecialChars: /[\x21\x40\x23\x24\x25\x5E\x26\x2A\x5F\x2D\x2B\x3D]/,
   addPasswordInfo: true,
   passwordInfoClass: "card",
 };
@@ -56,8 +57,8 @@ export const language: Lang = {
   currencyCode: "USD",
   dateFormat: "YYYY-MM-DD",
   timeFormat: "HH:mm:ss",
-  validTitle: "Valid form!",
-  invalidTitle: "Invalid form!",
+  validTitle: "Valid form data!",
+  invalidTitle: "Invalid form data!",
   notConfirmed: "Could not be validated.",
   inv_required: "Is required.",
   inv_date: "Is not a valid date.",
@@ -70,7 +71,7 @@ export const language: Lang = {
   inv_url: "Is not a valid URL.",
   inv_numbers: "Is not a valid number.",
   inv_numberMax: "Must be less than or equal to {max}.",
-  inv_numberMin: "Must be greater than or equal to {mix}.",
+  inv_numberMin: "Must be greater than or equal to {min}.",
   inv_numberRange: "Must match the range {range}.",
   inv_numberEqual: "Must be equal to {equal}.",
   inv_numberStep: "Must increase by {step}.",
@@ -88,10 +89,10 @@ export const language: Lang = {
     "Can only contain letters and numbers.[ Also can contain {extra}]",
   inv_color: "Is not a valid color format.",
   inv_file_size: "File(s) size is too large (max: {max}).",
-  inv_file_type: "File(S) type must be: {type}.",
+  inv_file_type: "File(s) type must be: {type}.",
   inv_file_extension: "File(s) extension must be: {extension}.",
   inv_image_dimension: "Image(s) dimensions are not valid.",
-  inv_image_heigh: "Image(S) heigh must not exceed: {max}px.",
+  inv_image_heigh: "Image(s) heigh must not exceed: {max}px.",
   inv_image_width: "Image(s) width must not exceed: {max}px.",
   inv_image_ratio: "Image aspect ratio is not valid.",
   inv_credit_card: "Credit card number is not valid.",
@@ -128,7 +129,8 @@ export const configuration: Configuration = {
 
 export const telephoneFormats: TelephoneFormats = {
   EC: [
-    /^(?:0|\x2B593\s)(?:(?:[2-7]\s)?|(?:\d{2}(?:\s|-)?))\d{3}(?:\s|-)?\d{4}$/,
+    /^(?:0|\x2B593\s?)(?:\d{2}(?:\s|-)?)\d{3}(?:\s|-)?\d{4}$/,
+    /^(?:(?:0|\x2B593\s?)[2-7]\s?)?\d{7}$/,
   ],
 };
 

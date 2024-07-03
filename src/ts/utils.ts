@@ -65,7 +65,7 @@ function dateRegex(format: string, separator: string): string {
  * @returns {string} Returns invalid, ok if is valid or no if the format is incorrect
  */
 export function checkDateFormat(date: string, format: string): string {
-  const separator = format.toUpperCase().replace(/[DMY]/, "").charAt(0);
+  const separator = format.toUpperCase().replace(/[DMY]/g, "").charAt(0);
   if (!validateDateFormat(format.toUpperCase(), separator)) return "no";
   const regex = dateRegex(format.toUpperCase(), separator);
   if (!new RegExp(regex).test(date)) return "invalid";
@@ -185,6 +185,45 @@ function checkNumberStep(value: number, step: string): string[] {
 }
 
 /**
+ * Checks if the range value matches with the allowed numbers
+ * @param {string[]} allow Allowed numbers options
+ * @param {string} rangeVal Range value
+ * @returns {string[]} Returns no if no match
+ */
+function checkRangeAllowed(allow: string[], rangeVal: string): string[] {
+  let r: string[] = ["ok"];
+  if (allow.includes("noPositive") && !rangeVal.includes("-")) r = ["no"];
+  if (
+    !allow.includes("negative") &&
+    !allow.includes("noPositive") &&
+    rangeVal.includes("-")
+  )
+    r = ["no"];
+  if (!allow.includes("decimal") && rangeVal.includes(".")) r = ["no"];
+  return r;
+}
+
+/**
+ * Checks if the step value matches with the allowed numbers
+ * @param {string[]} allow Allowed numbers options
+ * @param {string} stepVal Step value
+ * @returns {string[]} Returns no if no match
+ */
+function checkStepAllowed(allow: string[], stepVal: string): string[] {
+  let s: string[] = ["ok"];
+  if (allow.includes("noPositive") && !stepVal.includes("-")) s = ["no"];
+
+  if (
+    !allow.includes("negative") &&
+    !allow.includes("noPositive") &&
+    stepVal.includes("-")
+  )
+    s = ["no"];
+  if (!allow.includes("decimal") && stepVal.includes(".")) s = ["no"];
+  return s;
+}
+
+/**
  * Check if the number match the range or the step
  * @param {string[]} allow Allowed numbers options
  * @param {number} value Number to check
@@ -199,34 +238,15 @@ export function checkRangeStep(
   stepVal: string
 ): string[][] {
   let check: string[][] = [],
-    r: string[] = [],
-    s: string[] = [];
-  if (
-    (allow.includes("noPositive") && !stepVal.includes("-")) ||
-    !rangeVal.includes("-")
-  ) {
-    r = ["no"];
-    s = ["no"];
+    r: string[] = ["ok"],
+    s: string[] = ["ok"];
+  if (allow.includes("range")) {
+    r = checkRangeAllowed(allow, rangeVal);
+    if (r[0] == "ok") r = checkNumberRange(value, rangeVal);
   }
-  if (
-    (!allow.includes("negative") && stepVal.includes("-")) ||
-    rangeVal.includes("-")
-  ) {
-    r = ["no"];
-    s = ["no"];
-  }
-  if (
-    (!allow.includes("decimal") && stepVal.includes(".")) ||
-    rangeVal.includes(".")
-  ) {
-    r = ["no"];
-    s = ["no"];
-  }
-  if (allow.includes("range") && r[0] != "no") {
-    r = checkNumberRange(value, rangeVal);
-  }
-  if (allow.includes("steps") && s[0] != "no") {
-    s = checkNumberStep(value, stepVal);
+  if (allow.includes("step")) {
+    s = checkStepAllowed(allow, stepVal);
+    if (s[0] == "ok") s = checkNumberStep(value, stepVal);
   }
   check = [[...r], [...s]];
   return check;
@@ -241,9 +261,9 @@ export function checkRangeStep(
 export function checkStringLength(value: number, range: string): string[] {
   if (range.includes("::") && (range.includes("max") || range.includes("min")))
     return ["no"];
-  const match = RegExp(/^(min|max)?(\\d+)(?:\x3A\x3A(\\d+))?$/).exec(range);
+  const match = RegExp(/^(min|max)?(\d+)(?:\x3A\x3A(\d+))?$/).exec(range);
   if (!match) return ["no"];
-  const [, minOrMax, num1, , num2] = match,
+  const [, minOrMax, num1, num2] = match,
     min = minOrMax === "min",
     max = minOrMax === "max",
     number1 = parseInt(num1, 10),
@@ -275,18 +295,18 @@ export function currencyFormat(
   if (!/^\d+(\.\d+)?$/.test(value)) return value;
   if (!decimals) {
     const prt = value.split(".");
-    if (prt.length > 1) decimals = parseInt(prt[1]);
+    decimals = prt.length;
   }
-  const num = parseFloat(value).toFixed(decimals);
   locale = !locale ? lang.locale : locale;
   currency = !currency ? lang.currencyCode : currency;
   try {
-    return parseFloat(num).toLocaleString(locale, {
+    return parseFloat(value).toLocaleString(locale, {
       style: "currency",
       currency: currency,
+      minimumFractionDigits: decimals,
     });
   } catch {
-    return parseFloat(num).toFixed(decimals);
+    return parseFloat(value).toFixed(decimals);
   }
 }
 
@@ -319,7 +339,7 @@ export function capitalizedWords(str: string): string {
  */
 export function camel_pascal(str: string, p: boolean): string {
   str = capitalizedWords(str).replace(/\s/g, "");
-  if (!p) str.slice(0, 1).toLocaleLowerCase();
+  if (!p) str = str.charAt(0).toLocaleLowerCase() + str.slice(1);
   return str;
 }
 
@@ -333,7 +353,7 @@ export function notAccept(
   acceptHidden: boolean,
   acceptIgnored: boolean
 ): string {
-  const hidden = ',[type:"hidden"]',
+  const hidden = ',[type="hidden"]',
     ignore = ',[ignored="true"]',
     notAccept = '[type="image"],[type="submit"],[type="button"],[type="reset"]';
   let not = notAccept;

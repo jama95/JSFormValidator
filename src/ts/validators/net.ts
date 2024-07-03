@@ -15,8 +15,7 @@ configuration.validators["ipv4"] = {
     return false;
   },
   invalidMessage: language.inv_ipv4,
-  invalidMessageKey: "inv_ipv4",
-  validMessageKey: "val_ipv4",
+  messageKey: "ipv4",
 };
 
 // Regex according to RFC4291, RFC4007 and RFC5952, compatible with "test" and "match"
@@ -62,7 +61,7 @@ function zeros(ip: string): boolean {
 configuration.validators["ipv6"] = {
   name: "ipv6",
   validatorFunction: function (value, form, field, options, lang) {
-    const zerosRule = field.getAttribute("data-fv-IPv6_zeros") == "true";
+    const zerosRule = field.getAttribute("data-fv-ipv6_zeros") == "true";
     const regex = new RegExp(`${IPv6Full}`);
     if (regex.test(value)) {
       if (!new RegExp(IPv4Regex).test(value)) {
@@ -75,8 +74,7 @@ configuration.validators["ipv6"] = {
     return false;
   },
   invalidMessage: language.inv_ipv6,
-  invalidMessageKey: "inv_ipv6",
-  validMessageKey: "val_ipv6",
+  messageKey: "ipv6",
 };
 
 // Regex according to RFC1034, RFC1035 and RFC3696, compatible with "test" and "match"
@@ -88,19 +86,19 @@ configuration.validators["domain"] = {
   name: "domain",
   validatorFunction: function (value, form, field, options, lang) {
     if (value.length > 253) return false;
-    if (/\x2D{2,}/.test(value)) return false;
+    if (/\x2D{2,}/g.test(value)) return false;
     const regex = new RegExp(`^${domainRegex}$`, "i");
     if (!regex.test(value)) return false;
     if (value.endsWith(".")) value = value.slice(0, -1);
-    const labels = value.toUpperCase().split(".");
+    const labels = value.split(".");
     const TLD = labels.pop();
     if (TLD?.search(/[^A-Z]/)) return false;
     const subdomains = labels;
     subdomains.filter((s) => /\x2D{2,}/.test(s));
-    if (subdomains.length > 0) return false;
+    if (subdomains.length != labels.length) return false;
     let equal = false;
     for (let i = 0; i <= labels.length - 2; i++) {
-      if (labels[i] == labels[i + 1]) {
+      if (labels[i].toUpperCase() == labels[i + 1].toUpperCase()) {
         equal = true;
         break;
       }
@@ -108,8 +106,7 @@ configuration.validators["domain"] = {
     return !equal;
   },
   invalidMessage: language.inv_domain,
-  invalidMessageKey: "inv_domain",
-  validMessageKey: "val_domain",
+  messageKey: "domain",
 };
 
 const Ipv4NoGroups = IPv4Regex.replace("((?:", "(?:(?:");
@@ -140,8 +137,8 @@ configuration.validators["email"] = {
     const email = RegExp(regex).exec(value);
     if (!email) return false;
     const parts = [...email];
-    const localPart = parts[1];
-    const domainPart = parts[2];
+    const localPart = parts[2];
+    const domainPart = parts[3];
     if (localPart.length > 64) return false;
     if (localPart.endsWith(".") || localPart.includes("..")) return false;
     if (!domainPart.includes("["))
@@ -158,8 +155,7 @@ configuration.validators["email"] = {
     return true;
   },
   invalidMessage: language.inv_email,
-  invalidMessageKey: "inv_email",
-  validMessageKey: "val_email",
+  messageKey: "email",
 };
 
 const IPv6ZoneNoGroupsURL = IPv6Zone.replace("(\\x25", "(?:\\x2525");
@@ -185,6 +181,5 @@ configuration.validators["url"] = {
     return true;
   },
   invalidMessage: language.inv_url,
-  invalidMessageKey: "inv_url",
-  validMessageKey: "val_url",
+  messageKey: "url",
 };

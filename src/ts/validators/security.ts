@@ -12,24 +12,20 @@ configuration.validators["password"] = {
     return false;
   },
   invalidMessage: language.inv_strength,
-  invalidMessageKey: "inv_password",
-  validMessageKey: "val_password",
+  messageKey: "password",
 };
-
-let confirmationMessage = language.notConfirmed;
 
 /**
  * Set the invalid confirmation value message
  * @param {string} custom Custom value name
  * @param {Lang} lang Language
+ * @returns {string} Confirmation message
  */
-function setConfirmationMessage(custom: string, lang: Lang): void {
+function setConfirmationMessage(custom: string, lang: Lang): string {
   if (custom.length > 0) {
-    confirmationMessage = lang.inv_confirmation.replace(/\x5B.+\x5D/, custom);
+    return lang.inv_confirmation.replace(/\x5B.+\x5D/g, custom);
   } else {
-    confirmationMessage = lang.inv_confirmation
-      .replace("[", "")
-      .replace("]", "");
+    return lang.inv_confirmation.replace("[", "").replace("]", "");
   }
 }
 
@@ -44,14 +40,13 @@ configuration.validators["confirmation"] = {
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >(target)?.value;
     if (targetValue !== value) {
-      setConfirmationMessage(custom, lang);
+      this.invalidMessage = setConfirmationMessage(custom, lang);
       return false;
     }
     return true;
   },
-  invalidMessage: confirmationMessage,
-  invalidMessageKey: "inv_confirmation",
-  validMessageKey: "val_confirmation",
+  invalidMessage: language.notConfirmed,
+  messageKey: "confirmation",
 };
 
 /* Checks if the field value has a valid credit/debit card number */
@@ -84,8 +79,7 @@ configuration.validators["credit_card"] = {
     return luhn(digits) === 0;
   },
   invalidMessage: language.inv_credit_card,
-  invalidMessageKey: "inv_credit_card",
-  validMessageKey: "val_credit_card",
+  messageKey: "credit_card",
 };
 
 /* Checks if the field value has a valid CVV number */
@@ -108,6 +102,5 @@ configuration.validators["cvv"] = {
     }
   },
   invalidMessage: language.inv_cvv,
-  invalidMessageKey: "inv_cvv",
-  validMessageKey: "val_cvv",
+  messageKey: "cvv",
 };
