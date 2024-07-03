@@ -10,17 +10,6 @@ const browserSync = require("browser-sync").create();
 const gulpModifier = require("gulp-modifier");
 const concat = require("gulp-concat-process");
 
-function copy_html() {
-  return gulp
-    .src("./index.html")
-    .pipe(
-      gulpModifier(function (contents, path) {
-        return contents.replace("./dist", "");
-      })
-    )
-    .pipe(gulp.dest("./dist"));
-}
-
 function buildJS() {
   return gulp
     .src([
@@ -60,12 +49,21 @@ function buildJS() {
             "@babel/plugin-transform-modules-umd",
             {
               globals: {
-                all: "FV",
+                all: "FormValidator",
               },
               exactGlobals: true,
             },
           ],
         ],
+      })
+    )
+    .pipe(
+      gulpModifier(function (contents, path) {
+        let newContents = contents.replace(
+          "global.FormValidator = mod.exports",
+          "global.FormValidator = mod.exports.FormValidator"
+        );
+        return newContents.trim();
       })
     )
     .pipe(rename({ basename: "FormValidator" }))
@@ -117,7 +115,7 @@ function miniLocales() {
 
 function buildCSS() {
   return gulp
-    .src("./src/css/FormValidator.scss")
+    .src("./src/sass/FormValidator.scss")
     .pipe(sourcemaps.init())
     .pipe(sass.sync().on("error", sass.logError))
     .pipe(sourcemaps.write("."))
@@ -143,32 +141,27 @@ function miniCSS() {
     .pipe(gulp.dest("./dist/css"));
 }
 
-function reload() {
-  browserSync.reload();
-}
-
 function server(done) {
   browserSync.init({
     server: {
-      baseDir: "./dist",
+      baseDir: "./site",
+      routes: { "/css": "./dist/css", "/js": "./dist/js" },
     },
     open: false,
-  });
-  gulp.watch(
-    [
-      "./dist/index.html",
-      "./dist/js/FormValidator.js",
+    cors: true,
+    files: [
+      "./site/index.html",
+      "./site/index.js",
       "./dist/css/FormValidator.css",
+      "./dist/js/FormValidator.js",
     ],
-    reload
-  );
+  });
 }
 
 function watch() {
-  gulp.watch("./index.html", copy_html);
   gulp.watch(["./src/ts/*.ts", "./src/ts/validators/*.ts"], buildJS);
   gulp.watch("./src/ts/lang/*.ts", buildLocales);
-  gulp.watch("./src/css/FormValidator.scss", gulp.series(buildCSS, postCSS));
+  gulp.watch("./src/sass/FormValidator.scss", gulp.series(buildCSS, postCSS));
 }
 
 gulp.task(
