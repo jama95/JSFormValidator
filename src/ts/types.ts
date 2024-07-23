@@ -340,9 +340,21 @@ export type CardInfo = {
   };
 };
 
-export type Country = {
-  country: string;
-  capital: string;
+export type iso3166 = {
+  /** Country/Territory name */
+  CTname: string;
+  /** Capital */
+  Capital: string;
+  /** Continent */
+  Continent: string;
+
+  ONU: string;
+  "3166-1a2": string;
+  "3166-2a3": string;
+  "3166-3": string;
+  Flag: string;
+  Currency: string;
+  ISO4217: string;
 };
 
 export type JSONConfig = {
