@@ -1,7 +1,7 @@
 {
-  "name": "form-validator",
+  "name": "js-form-validator",
   "version": "1.0.0",
-  "description": "form input validation",
+  "description": "A JavaScript library for validating data from HTML forms.",
   "homepage": "",
   "author": "Jordi Miño <joralmiga@hotmail.com> (https://github.com/jama95)",
   "keywords": [
