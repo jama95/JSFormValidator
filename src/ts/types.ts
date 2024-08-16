@@ -3,29 +3,29 @@ export type Options = {
   [key: string]: unknown;
   /** List of fields names that will not be validated @default []*/
   ignoredFieldsNames: string[] | string;
-  /** Valid inline message class @default 'valid-feedback' */
+  /** Valid class for the inline messages @default 'valid-feedback' */
   validMessageClass: string;
-  /** Invalid inline message class @default 'invalid-feedback' */
+  /** Invalid class for the inline messages @default 'invalid-feedback' */
   invalidMessageClass: string;
-  /** Valid field class @default 'is-valid' */
+  /** Valid class for the field @default 'is-valid' */
   validClass: string;
-  /** Invalid field class @default 'is-invalid' */
+  /** Invalid class for the field @default 'is-invalid' */
   invalidClass: string;
-  /** Valid class for parent's field @default 'Valid' */
+  /** Valid class for the parent container of the field @default 'Valid' */
   validParentClass: string;
-  /** Invalid class for parent's field @default 'Invalid' */
+  /** Invalid class for the parent container of the field @default 'Invalid' */
   invalidParentClass: string;
-  /** Inline message class @default 'fv-msg' */
+  /** Class for the inline messages @default 'fv-msg' */
   inlineMessageClass: string;
-  /** Top message class @default 'alert' */
+  /** Class for the top messages @default 'alert' */
   topMessagesClass: string;
-  /** Valid class for the top container messages @default 'alert-success' */
+  /** Valid class for the top messages @default 'alert-success' */
   validMessagesClass: string;
-  /** Invalid class for the top container messages @default 'alert-danger' */
+  /** Invalid class for the top messages @default 'alert-danger' */
   invalidMessagesClass: string;
-  /** Valid message position (Available positions: inline & top) @default 'inline' */
+  /** Position for the valid messages (Available positions: inline & top) @default 'inline' */
   validMessagesPosition: string;
-  /** Invalid message position (Available positions: inline & top) @default 'inline' */
+  /** Position for the invalid messages (Available positions: inline & top) @default 'inline' */
   invalidMessagesPosition: string;
   /** Top messages HTML template (values with {} are mandatory) @default '<div class="{topMessagesClass} {iv-MessageClass}" target="#{formID}" data-fv-top-{vi}><h4>{title}</h4><ul>{fields&messagesList}</ul></div>' */
   topMessagesTemplate: string;
@@ -39,7 +39,7 @@ export type Options = {
   validMessageCallback: MessageCallback | undefined;
   /** Function triggered when invalid messages are shown @default undefined */
   invalidMessageCallback: MessageCallback | undefined;
-  /** List of forms selectors (comma separated) @default 'form' */
+  /** List of forms selectors @default 'form' */
   form: string;
   /** Parent selector for all form fields @default 'fv-group' */
   parentField: string;
@@ -51,21 +51,21 @@ export type Options = {
   fieldInvalidMessageAttribute: string;
   /** Data attribute of the field to overwrite valid messages @default 'data-fv-valid-msg' */
   fieldValidMessageAttribute: string;
-  /** Data attribute of the field to show help messages @default 'data-fv-help-msg' */
+  /** Data attribute of the field to set help messages @default 'data-fv-help-msg' */
   fieldHelpMessageAttribute: string;
-  /** Triggers modifiers on field's input event @default true */
+  /** Triggers modifiers on field input event @default true */
   modifyOnInput: boolean;
-  /** Triggers validations on field's input event @default false */
+  /** Triggers validations on field input event @default false */
   validateOnInput: boolean;
-  /** Triggers validation on field's blur event @default true */
+  /** Triggers validation on field blur event @default true */
   validateOnBlur: boolean;
-  /** Triggers validation when click a checkbox or radio button @default true */
+  /** Triggers validation on checkbox or radio button click event @default true */
   validateCheckboxRadioOnClick: boolean;
-  /** Shows help messages on fields's focus event @default true */
+  /** Shows help messages on field focus event @default true */
   showHelpMessagesOnFocus: boolean;
-  /** Shows input's suggestion @default true */
+  /** Shows the suggestions of the input @default true */
   addSuggestions: boolean;
-  /** Datalist style options */
+  /** Style options of the datalist */
   suggestionConfig: Suggestion;
   /** Data attribute of the input to list the words to be suggested @default 'data-fv-suggestions'*/
   suggestionAttribute: string;
@@ -117,9 +117,9 @@ export type Lang = {
   dateFormat: string;
   /** Default time format */
   timeFormat: string;
-  /** Valid top messages title */
+  /** Title for top valid messages */
   validTitle: string;
-  /** Invalid top messages title */
+  /** Title for top invalid messages */
   invalidTitle: string;
   /** Value not confirmed */
   notConfirmed: string;
@@ -141,7 +141,7 @@ export type Lang = {
   inv_email: string;
   /** Invalid url message */
   inv_url: string;
-  /** Invalid number type message */
+  /** Invalid number message */
   inv_numbers: string;
   /** Invalid number, max value exceeded message */
   inv_numberMax: string;
@@ -203,7 +203,7 @@ export type Lang = {
   passwordConditionSpecialChars: string;
   /** Password requires numbers */
   passwordConditionNumericChars: string;
-  /** Password requires min  and max length */
+  /** Password requires min and max length */
   passwordConditionLength: string;
   /** Password strength very weak */
   passwordStrengthVeryWeak: string;
@@ -231,18 +231,18 @@ export type Validator = {
     value: string,
     /** Form element (parent of the field) */
     form: HTMLFormElement,
-    /** Field element (Input, Select or TextArea) */
+    /** Field element */
     field: ValidationField,
     /** Validator options */
     options: Options,
     /** Validator language */
     lang: Lang
   ) => boolean;
-  /** Message on invalid validation */
+  /** Default message on invalid validation */
   invalidMessage: string;
-  /** Message attribute key */
+  /** Message attribute key to set custom messages */
   messageKey?: string;
-  /** Message on valid validation */
+  /** Default message on valid validation */
   validMessage?: string;
   /** Indicates whether validation is triggered on each Input event (default: false) */
   validateOnInput?: boolean;
@@ -257,18 +257,18 @@ export type AsyncValidator = {
     value: string,
     /** Form element (parent of the field) */
     form: HTMLFormElement,
-    /** Field element (Input, Select or TextArea) */
+    /** Field element */
     field: ValidationField,
     /** Validator options */
     options: Options,
     /** Validator language */
     lang: Lang
   ) => Promise<boolean>;
-  /** Message on invalid validation */
+  /** Default message on invalid validation */
   invalidMessage: string;
-  /** Message attribute key */
+  /** Message attribute key to set custom messages */
   messageKey?: string;
-  /** Message on valid validation */
+  /** Default message on valid validation */
   validMessage?: string;
   /** Indicates whether validation is triggered on each Input event (default: false) */
   validateOnInput?: boolean;
@@ -283,7 +283,7 @@ export type Modifier = {
     value: string,
     /** Parent form */
     form: HTMLFormElement,
-    /** Field element (Input or TextArea) */
+    /** Field element */
     field: HTMLInputElement | HTMLTextAreaElement,
     /** Validator options */
     options: Options,
@@ -297,7 +297,7 @@ export type Modifier = {
 export type MessageCallback = (
   /** Parent form */
   form: HTMLFormElement,
-  /** Field element (Input, Select or TextArea) */
+  /** Field element */
   field: ValidationField,
   /** Validation message */
   message: string,
@@ -308,7 +308,7 @@ export type MessageCallback = (
 export type ValidatorEvent = (
   /** Parent form */
   form: HTMLFormElement,
-  /** Field element (Input, Select or TextArea) */
+  /** Field element */
   field: ValidationField,
   /** Validation state (false: invalid, true: valid) */
   state: boolean,
@@ -331,29 +331,40 @@ export type TelephoneFormats = {
 
 export type CardInfo = {
   [key: string]: {
-    /** Fixed first numbers */
+    /** First fixed numbers of the credit card */
     first: number[];
-    /** Number length */
-    length: { min: number; max: number };
-    /** CVV length */
+    /** Credit card number length */
+    length: {
+      /** Credit card number min length */
+      min: number;
+      /** Credit card number max length */
+      max: number;
+    };
+    /** Credit card CVV code length */
     cvv: number;
   };
 };
 
 export type iso3166 = {
-  /** Country/Territory name */
+  /** ISO 3166 Country/Territory name */
   CTname: string;
-  /** Capital */
+  /** Capital name */
   Capital: string;
-  /** Continent */
+  /** Continent name */
   Continent: string;
-
+  /** ONU affiliation */
   ONU: string;
+  /** ISO 3166-1 alpha 2 tag */
   "3166-1a2": string;
+  /** ISO 3166-2 alpha3 tag */
   "3166-2a3": string;
+  /** ISO 3166-3 tag */
   "3166-3": string;
+  /** Unicode flag code as HTML entity */
   Flag: string;
+  /** ISO 4217 currency name */
   Currency: string;
+  /** ISO 4217 currency tag */
   ISO4217: string;
 };
 

@@ -1030,7 +1030,7 @@ class FormValidate {
 /**
  * Validates form field contents before submission.
  * @param {?Options} [options] Form validation options
- * @param {?Lang} [lang] Form validation language messages
+ * @param {?Lang} [lang] Form validation language options
  * @returns {FormValidate} Form validation
  */
 export function FormValidator(options?: Options, lang?: Lang): FormValidate {
