@@ -11,10 +11,10 @@ export type Options = {
   validClass: string;
   /** Invalid class for the field @default 'is-invalid' */
   invalidClass: string;
-  /** Valid class for the parent container of the field @default 'Valid' */
-  validParentClass: string;
-  /** Invalid class for the parent container of the field @default 'Invalid' */
-  invalidParentClass: string;
+  /** Valid class for the label of the field @default 'text-success' */
+  validLabelClass: string;
+  /** Invalid class for the label of the field @default 'text-danger' */
+  invalidLabelClass: string;
   /** Class for the inline messages @default 'fv-msg' */
   inlineMessageClass: string;
   /** Class for the top messages @default 'alert' */

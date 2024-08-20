@@ -1,5 +1,10 @@
 $valid: #198754;
 $invalid: #dc3545;
+$very-weak: #dc3545;
+$weak: #fd7e14;
+$normal: #ffc107;
+$strong: #198754;
+$very-strong: #198754;
 $sgBorderWidth: 1px !default;
 $sgBorderRadius: 0.375rem !default;
 $sgActiveBG: #1f64a5 !default;
@@ -8,6 +13,11 @@ $lengthRestrictColor: #808080 !default;
 :root {
   --valid: #{$valid};
   --invalid: #{$invalid};
+  --very-weak: #{$very-weak};
+  --weak: #{$weak};
+  --normal: #{$normal};
+  --strong: #{$strong};
+  --very-strong: #{$very-strong};
   --sgBorderWidth: #{$sgBorderWidth};
   --sgBorderRadius: #{$sgBorderRadius};
   --sgActiveBG: #{$sgActiveBG};
@@ -16,19 +26,13 @@ $lengthRestrictColor: #808080 !default;
 }
 
 form.fv {
+  // Optional class to group fields and labels
   .fv-group {
     margin-bottom: 10px;
   }
+  // Inline validation messages style
   div input ~ span[for-field] {
     margin-left: 10px;
-  }
-  // Label valid styles (only works if a parent is found)
-  .Valid label {
-    color: var(--valid);
-  }
-  // Label invalid styles (only works if a parent is found)
-  .Invalid label {
-    color: var(--invalid);
   }
   // Top messages tittle style
   div.fv-top-messages {
@@ -44,7 +48,6 @@ datalist.fv-suggestions {
   cursor: pointer;
   overflow-x: hidden;
   overflow-y: auto;
-  // Optional datalist styles
   &.fv-suggestion_container {
     margin-top: 5px;
     border-width: var(--sgBorderWidth);
@@ -55,7 +58,6 @@ datalist.fv-suggestions {
   option {
     user-select: none;
   }
-  // Optional options styles
   option.fv-suggestion_option {
     font-size: 1rem;
     font-weight: 400;
@@ -86,7 +88,7 @@ div.fv-textAreaLength {
   font-size: small;
   font-weight: bold;
 }
-// Password requirements
+// Password requirements styles
 div.fv-password {
   position: absolute;
   padding: 0.375rem;
@@ -126,23 +128,23 @@ div.fv-password {
     margin-bottom: 5px;
   }
   div.strength-bar.very-weak {
-    background-color: #dc3545;
+    background-color: var(--very-weak);
     width: 20%;
   }
   div.strength-bar.weak {
-    background-color: #fd7e14;
+    background-color: var(--weak);
     width: 40%;
   }
   div.strength-bar.normal {
-    background-color: #ffc107;
+    background-color: var(--normal);
     width: 60%;
   }
   div.strength-bar.strong {
-    background-color: #198754;
+    background-color: var(--strong);
     width: 80%;
   }
   div.strength-bar.very-strong {
-    background-color: #198754;
+    background-color: var(--very-strong);
     width: 100%;
   }
 }

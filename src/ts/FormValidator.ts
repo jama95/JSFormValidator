@@ -977,8 +977,8 @@ class FormValidate {
       case "letters":
         acceptRegexp = new RegExp(`[a-zA-Z${accept ?? ""}]`);
         break;
-      case "alphanumeric":
-        acceptRegexp = new RegExp(`[a-zA-Z0-9${accept ?? ""}]`);
+      case "text":
+        acceptRegexp = new RegExp(`[a-zA-Z0-9\\s\\,\\;\\.${accept ?? ""}]`);
         break;
       case "none":
         acceptRegexp = new RegExp(`[${accept ?? ""}]`);

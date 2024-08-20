@@ -406,17 +406,23 @@ export function setStyles(
   let fieldClass: string,
     fieldRemove: string,
     parentClass: string,
-    parentRemove: string;
+    parentRemove: string,
+    labelClass: string,
+    labelRemove: string;
   if (valid_invalid) {
     fieldClass = options.validClass;
     fieldRemove = options.invalidClass;
-    parentClass = options.validParentClass;
-    parentRemove = options.invalidParentClass;
+    parentClass = "Valid";
+    parentRemove = "Invalid";
+    labelClass = options.validLabelClass;
+    labelRemove = options.invalidLabelClass;
   } else {
     fieldClass = options.invalidClass;
     fieldRemove = options.validClass;
-    parentClass = options.invalidParentClass;
-    parentRemove = options.validParentClass;
+    parentClass = "Invalid";
+    parentRemove = "Valid";
+    labelClass = options.invalidLabelClass;
+    labelRemove = options.validLabelClass;
   }
   document
     .querySelectorAll<ValidationField>(`[name=${field.name}]`)
@@ -427,6 +433,14 @@ export function setStyles(
       if (parent) {
         parent.classList.remove(parentRemove);
         parent.classList.add(parentClass);
+      }
+      const name = ["checkbox", "radio"].includes(field.type)
+        ? field.id
+        : field.name;
+      const label = document.querySelector(`label[for=${name}]`);
+      if (label) {
+        label.classList.remove(labelRemove);
+        label.classList.add(labelClass);
       }
     });
 }
@@ -449,8 +463,16 @@ export function removeStyles(
       f.classList.remove(options.validClass);
       const parent = getFieldParent(f, form, options);
       if (parent) {
-        parent.classList.remove(options.validParentClass);
-        parent.classList.remove(options.invalidParentClass);
+        parent.classList.remove("Valid");
+        parent.classList.remove("Invalid");
+      }
+      const name = ["checkbox", "radio"].includes(field.type)
+        ? field.id
+        : field.name;
+      const label = document.querySelector(`label[for=${name}]`);
+      if (label) {
+        label.classList.remove(options.validLabelClass);
+        label.classList.remove(options.invalidLabelClass);
       }
     });
 }
