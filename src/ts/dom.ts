@@ -334,8 +334,8 @@ function getFieldParent(
   options: Options
 ): HTMLElement | null {
   let parent: HTMLElement | null = null;
-  const p = form.querySelectorAll<HTMLElement>(options.parentField.trim());
-  if (p) parent = p[0] ?? field.parentElement;
+  const p = form.querySelector<HTMLElement>(options.parentField.trim());
+  if (p) parent = p ?? field.parentElement;
   if (parent?.nodeName == "FORM") parent = null;
   return parent;
 }

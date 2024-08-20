@@ -41,7 +41,7 @@ export type Options = {
   invalidMessageCallback: MessageCallback | undefined;
   /** List of forms selectors @default 'form' */
   form: string;
-  /** Parent selector for all form fields @default 'fv-group' */
+  /** Parent selector for all form fields @default '.fv-group' */
   parentField: string;
   /** Data attribute of the field to list modifiers @default 'data-fv-modifiers' */
   fieldModifyAttribute: string;

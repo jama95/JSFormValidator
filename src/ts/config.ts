@@ -27,7 +27,7 @@ export const options: Options = {
   validMessageCallback: undefined,
   invalidMessageCallback: undefined,
   form: "form",
-  parentField: "fv-group",
+  parentField: ".fv-group",
   fieldModifyAttribute: "data-fv-modifiers",
   fieldValidateAttribute: "data-fv-validators",
   fieldInvalidMessageAttribute: "data-fv-invalid-msg",
