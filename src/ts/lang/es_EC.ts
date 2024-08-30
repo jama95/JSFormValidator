@@ -1,6 +1,6 @@
 import { iso3166, Lang } from "../types";
 
-const es: Lang = {
+const es_ec: Lang = {
   locale: "es-EC",
   currencyCode: "USD",
   dateFormat: "YYYY-MM-DD",
