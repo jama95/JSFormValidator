@@ -29,7 +29,7 @@ const IPv6Complete = `(${IPv6Regex}${IPv6Zone}${IPv6Prefix})`;
 const IPv6Full = `^${IPv6Mapped}$|^${IPv6Local}$|^${IPv6Complete}$`;
 
 /**
- * Check the zeros rules in the ipv6 address
+ * Checks the zeros rule in the ipv6 address
  * @param {string} ip ipv6 address
  * @returns {boolean}
  */

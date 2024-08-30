@@ -137,6 +137,6 @@ export const telephoneFormats: TelephoneFormats = {
 export const cardInfo: CardInfo = {
   AMEX: { first: [3], length: { min: 15, max: 15 }, cvv: 4 },
   VISA: { first: [4], length: { min: 16, max: 16 }, cvv: 3 },
-  MASTERCARD: { first: [5], length: { min: 16, max: 16 }, cvv: 3 },
-  DISCOVER: { first: [6], length: { min: 16, max: 16 }, cvv: 3 },
+  MAST: { first: [2, 5], length: { min: 16, max: 16 }, cvv: 3 },
+  DISC: { first: [6], length: { min: 16, max: 16 }, cvv: 3 },
 };

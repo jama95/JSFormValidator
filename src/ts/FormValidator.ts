@@ -945,7 +945,7 @@ class FormValidate {
 
   /**
    * Restricts typed characters of the input
-   * @param {(string | HTMLInputElement)} input Input element or input name to restrict
+   * @param {(string | HTMLInputElement)} input Input element or input id to restrict
    * @param {string} type Accepted types of characters (numbers, letters, text, all, none)
    * @param {?string} [reject] Additional rejected characters
    * @param {?string} [accept] Additional accepted characters
@@ -958,7 +958,7 @@ class FormValidate {
   ): void {
     let i: HTMLInputElement | null = null;
     if (!(input instanceof HTMLInputElement)) {
-      i = document.querySelector<HTMLInputElement>(`[name=${input}]`);
+      i = document.querySelector<HTMLInputElement>(`#${input}`);
       if (i) input = i;
       else {
         console.error(

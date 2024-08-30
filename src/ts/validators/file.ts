@@ -1,7 +1,7 @@
 import { language, configuration } from "../config";
 import { getImageDimensions, sizeStringToBytes } from "../utils";
 
-/* Checks if the selected files size has the correct size  */
+/* Checks if the size of the selected files is correct  */
 configuration.validators["file_size"] = {
   name: "file_size",
   validatorFunction: function (value, form, field, options, lang) {
@@ -29,7 +29,7 @@ configuration.validators["file_size"] = {
   messageKey: "file_size",
 };
 
-/* Checks if the selected files has the correct type (mime) */
+/* Checks if the selected files are of the correct MIME type */
 configuration.validators["file_type"] = {
   name: "file_type",
   validatorFunction: function (value, form, field, options, lang) {
@@ -87,7 +87,7 @@ configuration.validators["file_extension"] = {
   messageKey: "file_extension",
 };
 
-/* Checks if the selected images has the correct dimension */
+/* Checks if the selected images have the correct dimensions */
 configuration.asyncValidators["image_dimension"] = {
   name: "image_dimension",
   validatorFunction: async function (value, form, field, options, lang) {
@@ -118,6 +118,7 @@ configuration.asyncValidators["image_dimension"] = {
   messageKey: "image_dimension",
 };
 
+/* Checks if the selected images have the correct height */
 configuration.asyncValidators["image_height"] = {
   name: "image_height",
   validatorFunction: async function (value, form, field, options, lang) {
@@ -147,6 +148,7 @@ configuration.asyncValidators["image_height"] = {
   messageKey: "image_height",
 };
 
+/* Checks if the selected images have the correct width */
 configuration.asyncValidators["image_width"] = {
   name: "image_width",
   validatorFunction: async function (value, form, field, options, lang) {

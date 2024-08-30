@@ -112,7 +112,7 @@ function timeRegex(format: string): string {
         return `\\d{2}`;
       })
       .join(`\\x3A`) +
-    (format.lastIndexOf("A") > -1 ? "(AM|PM)" : "") +
+    (format.lastIndexOf("A") > -1 ? "(a\\s?m|p\\s?m|a.\\s?m.|p.\\s?m.)" : "") +
     "$"
   );
 }
@@ -127,8 +127,8 @@ function timeRegex(format: string): string {
 export function checkTimeFormat(time: string, format: string): string {
   if (!/^(HH\x3Amm)((\x3Ass)|(\x3Ass\x2Esss))?(A)?$/.test(format)) return "no";
   const regex = timeRegex(format);
-  if (!new RegExp(regex).test(time)) return "invalid";
-  const tParts = splitTime(time.replace(/AM|PM/, "")),
+  if (!new RegExp(regex, "i").test(time)) return "invalid";
+  const tParts = splitTime(time.replace(/a\s?m|p\s?m|a.\s?m.|p.\s?m./i, "")),
     fParts = splitTime(format.replace("A", ""));
   const hours = parseInt(tParts[fParts.indexOf("HH")], 10),
     minutes = parseInt(tParts[fParts.indexOf("mm")], 10),

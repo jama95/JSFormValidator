@@ -8,7 +8,10 @@ configuration.validators["required"] = {
   validatorFunction: function (value, form, field, options, lang) {
     const name = field.getAttribute("name");
     if (field instanceof HTMLInputElement && field.type == "checkbox") {
-      return field.checked;
+      return (
+        form.querySelectorAll(`input[type="checkbox"][name="${name}"]:checked`)
+          .length > 0
+      );
     } else if (field instanceof HTMLInputElement && field.type == "radio") {
       return (
         form.querySelectorAll(`input[type="radio"][name="${name}"]:checked`)
@@ -143,7 +146,7 @@ function setNumberMessage(check: string[], lang: Lang): string {
   }
 }
 
-/* Checks if the field value has only numbers and if match with the conditions */
+/* Checks if the field value contains only numbers and if it matches with the conditions */
 configuration.validators["numbers"] = {
   name: "numbers",
   validatorFunction: function (value, form, field, options, lang) {
@@ -177,7 +180,7 @@ configuration.validators["numbers"] = {
   messageKey: "numbers",
 };
 
-/* Checks if the field value has only letters and/or the allowed characters */
+/* Checks if the field value contains only letters and/or the allowed characters */
 configuration.validators["letters"] = {
   name: "letters",
   validatorFunction: function (value, form, field, options, lang) {
@@ -214,7 +217,7 @@ function setAlphanumericMessage(allow: string): string {
       .replace(/\x7B\w+\x7D/, allow);
 }
 
-/* Checks if the field value has only numbers and/or letters and/or the allowed characters */
+/* Checks if the field value contains only numbers and/or letters and/or the allowed characters */
 configuration.validators["alphanumeric"] = {
   name: "alphanumeric",
   validatorFunction: function (value, form, field, options, lang) {
@@ -230,7 +233,7 @@ configuration.validators["alphanumeric"] = {
   messageKey: "alphanumeric",
 };
 
-/* Checks if the field value match with the specified regular expression */
+/* Checks if the field value matches with the specified regular expression */
 configuration.validators["regex"] = {
   name: "regex",
   validatorFunction: function (value, form, field, options, lang) {
@@ -240,10 +243,10 @@ configuration.validators["regex"] = {
     return new RegExp(regex, flags).test(value);
   },
   invalidMessage: language.inv_regexp,
-  messageKey: "regexp",
+  messageKey: "regex",
 };
 
-/* Checks if the field value match with the specified time format   */
+/* Checks if the field value matches with the specified time format   */
 configuration.validators["telephone"] = {
   name: "telephone",
   validatorFunction: function (value, form, field, options, lang) {
@@ -272,7 +275,7 @@ const CMYK =
 const HEX =
   "((?:\\x23(?:[a-f\\d]{2}){3}(?:[a-f\\d]{2})?)|(?:\\x23[a-f\\d]{3}[a-f\\d]?))";
 
-/* Checks if the field value match with the specified color formats   */
+/* Checks if the field value matches with the specified color formats   */
 configuration.validators["color"] = {
   name: "color",
   validatorFunction: function (value, form, field, options, lang) {

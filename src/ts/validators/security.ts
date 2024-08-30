@@ -2,7 +2,7 @@ import { language, configuration, cardInfo } from "../config";
 import { Lang } from "../types";
 import { checkPasswordStrength, luhn } from "../utils";
 
-/* Checks if the field has a value */
+/* Checks if the field has a strong password */
 configuration.validators["password"] = {
   name: "password",
   validatorFunction: function (value, form, field, options, lang) {
@@ -29,7 +29,7 @@ function setConfirmationMessage(custom: string, lang: Lang): string {
   }
 }
 
-/* Checks if the field value match the target value */
+/* Checks if the field value matches the target value */
 configuration.validators["confirmation"] = {
   name: "confirmation",
   validatorFunction: function (value, form, field, options, lang) {

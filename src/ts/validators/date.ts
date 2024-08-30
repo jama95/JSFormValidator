@@ -1,7 +1,7 @@
 import { language, configuration } from "../config";
 import { checkDateFormat, checkTimeFormat } from "../utils";
 
-/* Checks if the field value match with the specified date format */
+/* Checks if the field value matches with the specified date format */
 configuration.validators["date"] = {
   name: "date",
   validatorFunction: function (value, form, field, options, lang) {
@@ -21,7 +21,7 @@ configuration.validators["date"] = {
   messageKey: "date",
 };
 
-/* Checks if the field value match with the specified time format   */
+/* Checks if the field value matches with the specified time format   */
 configuration.validators["time"] = {
   name: "time",
   validatorFunction: function (value, form, field, options, lang) {
