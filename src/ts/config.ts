@@ -97,7 +97,7 @@ export const language: Lang = {
   inv_image_ratio: "Image aspect ratio is not valid.",
   inv_credit_card: "Credit card number is not valid.",
   inv_cvv: "CVV number is not valid.",
-  inv_confirmation: "The [values] do not match.",
+  inv_confirmation: "[The values] do not match.",
   inv_security_answer: "Security question answer is not valid.",
   inv_strength: "Password is not strong enough.",
   passwordConditionsTitle: "Password must contain:",

@@ -45,7 +45,7 @@ const es_ec: Lang = {
   inv_image_ratio: "La relación de aspecto de la imagen no es válida.",
   inv_credit_card: "El número de tarjeta de crédito no es válido.",
   inv_cvv: "El número CVV no es válido.",
-  inv_confirmation: "Los [valores] no coinciden.",
+  inv_confirmation: "[Los valores] no coinciden.",
   inv_security_answer: "La respuesta a la pregunta de seguridad no es válida.",
   inv_strength: "La contraseña no es lo suficientemente fuerte.",
   passwordConditionsTitle: "La contraseña debe contener:",
