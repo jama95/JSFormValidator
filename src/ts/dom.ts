@@ -86,7 +86,7 @@ export function inputSuggestion(
 ): void {
   if (input.hasAttribute("data-fv-suggestions")) return;
   if (words.filter((w) => w.length > 0).length == 0) return;
-  let currentFocus = -1; // The first option element index is 0
+  let currentFocus = -1;
   const datalist = document.createElement("datalist");
   datalist.classList.add("fv-suggestions");
   datalist.classList.add(settings.containerClass);
@@ -119,7 +119,6 @@ export function inputSuggestion(
       datalist.style.display = "none";
     }
   };
-  // Hide the datalist when it is not focused
   input.addEventListener("blur", function () {
     const no = document.querySelector<HTMLDataListElement>(
       `datalist.fv-suggestions[target="#${input.id}"] option:hover`
@@ -127,11 +126,9 @@ export function inputSuggestion(
     if (no) return;
     datalist.style.display = "none";
   });
-  // Shows all options when double-clicked
   input.addEventListener("dblclick", function () {
     fillDatalist(words);
   });
-  // Shows matched options when input
   input.addEventListener("input", function () {
     datalist.style.display = "none";
     if (input.value.trim().length == 0) return;
@@ -141,7 +138,6 @@ export function inputSuggestion(
       if (match.length > 0) fillDatalist(match);
     }, 200);
   });
-  // Choose an option with the keyboard
   input.addEventListener("keydown", function (e) {
     if (datalist.style.display == "block" && datalist.options) {
       if (e.key == "Escape") {
@@ -165,7 +161,6 @@ export function inputSuggestion(
       }
     }
   });
-  // Select an option with the keyboard
   const addActive = function () {
     const selected = document.querySelector<HTMLDataListElement>(
       "datalist.fv-suggestions option.active"
@@ -176,7 +171,6 @@ export function inputSuggestion(
     datalist.options[currentFocus].classList.add("active");
     return true;
   };
-  // Simulates de scroll move when use up and down arrows
   const simulateScroll = function () {
     currentFocus = currentFocus <= -1 ? 0 : currentFocus;
     currentFocus =
@@ -191,7 +185,6 @@ export function inputSuggestion(
       datalist.options[0].offsetHeight * (currentFocus - c + 1)
     );
   };
-  // Append the DataList for the input in the DOM
   input.after(datalist);
   input.setAttribute("data-fv-suggestions", "");
   new ResizeObserver(() => {
