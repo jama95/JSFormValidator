@@ -3,7 +3,7 @@ import { iso3166, Lang } from "../types";
 const es_ec: Lang = {
   locale: "es-EC",
   currencyCode: "USD",
-  dateFormat: "YYYY-MM-DD",
+  dateFormat: "DD/MM/YYYY",
   timeFormat: "HH:mm:ss",
   validTitle: "¡Datos del formulario válidos!",
   invalidTitle: "¡Datos del formulario no válidos!",

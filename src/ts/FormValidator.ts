@@ -469,7 +469,7 @@ class FormValidate {
    * Adds the DOM features to the field
    * @param {HTMLFormElement} form Parent form
    * @param {ValidationField} field Target field
-   * @param {Options} options Form validation options
+   * @param {Options} options Validation options
    */
   private domFieldsFeatures(
     form: HTMLFormElement,
@@ -1030,7 +1030,7 @@ class FormValidate {
 /**
  * Validates form field contents before submission.
  * @param {?Options} [options] Form validation options
- * @param {?Lang} [lang] Form validation language options
+ * @param {?Lang} [lang] Form validation language
  * @returns {FormValidate} Form validation
  */
 export function FormValidator(options?: Options, lang?: Lang): FormValidate {

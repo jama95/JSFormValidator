@@ -338,7 +338,7 @@ function getFieldParent(
  * @param {ValidationField} field The validated field
  * @param {Validator} validator The validator
  * @param {Options} options Validation options
- * @param {Lang} language Form Validator language messages
+ * @param {Lang} language Form Validator language
  * @returns {string} Invalid message
  */
 function getInvalidMessage(
@@ -387,7 +387,7 @@ function getValidMessage(
  * Sets the styles for the field and their parent
  * @param {ValidationField} field The validated field
  * @param {HTMLFormElement} form The validated field parent form
- * @param {Options} options Form Validation options
+ * @param {Options} options Validation options
  * @param {boolean} valid_invalid True if is valid, false if is invalid
  */
 export function setStyles(

@@ -6,6 +6,22 @@ import {
   currencyFormat,
 } from "./utils";
 
+/* Converts the text to lowercase */
+configuration.modifiers["lower"] = {
+  name: "lower",
+  modifierFunction: function (value) {
+    return value.toLowerCase();
+  },
+};
+
+/* Converts the text to uppercase */
+configuration.modifiers["upper"] = {
+  name: "upper",
+  modifierFunction: function (value) {
+    return value.toUpperCase();
+  },
+};
+
 /* Converts the first letter of each word in the text to uppercase */
 configuration.modifiers["capital"] = {
   name: "capital",
@@ -44,9 +60,9 @@ configuration.modifiers["pascal"] = {
 configuration.modifiers["currency"] = {
   name: "currency",
   modifierFunction: function (value, form, input) {
-    const d = input.getAttribute("data-fm-decimals");
-    const locale = input.getAttribute("data-fm-locale") ?? undefined,
-      currency = input.getAttribute("data-fm-currency") ?? undefined,
+    const d = input.getAttribute("data-fv-decimals");
+    const locale = input.getAttribute("data-fv-locale") ?? undefined,
+      currency = input.getAttribute("data-fv-currency") ?? undefined,
       decimals = d ? parseInt(d) : undefined;
     if (!input.hasAttribute("data-fv-currency_original")) {
       input.setAttribute("data-fv-currency_original", value);

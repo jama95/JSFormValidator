@@ -109,7 +109,7 @@ export type Configuration = {
 export type Lang = {
   /* Signature symbol */
   [key: string]: string;
-  /** Language and region code (for more information see "BCP 47 standard language tags") */
+  /** Language and region code (for more information see "BCP 47 language tags") */
   locale: string;
   /** Currency code (for more information see "ISO 4217 standard") */
   currencyCode: string;

@@ -280,7 +280,8 @@ export function checkStringLength(value: number, range: string): string[] {
 /**
  * Convert a number to currency format
  * @param {string} value Number to convert
- * @param {?string} [locale] Language and region code (for more information see "BCP 47 standard language tags")
+ * @param {Lang} lang Form Validator language
+ * @param {?(string|string[])} [locale] List of language and region codes (for more information see "BCP 47 language tags")
  * @param {?string} [currency] Currency code (for more information se "ISO 4217 standard")
  * @param {?number} [decimals] Number of fixed decimal numbers to be displayed
  * @returns {string} Converted number
@@ -288,7 +289,7 @@ export function checkStringLength(value: number, range: string): string[] {
 export function currencyFormat(
   value: string,
   lang: Lang,
-  locale?: string,
+  locale?: string | string[],
   currency?: string,
   decimals?: number
 ): string {
@@ -299,6 +300,7 @@ export function currencyFormat(
   }
   locale = !locale ? lang.locale : locale;
   currency = !currency ? lang.currencyCode : currency;
+  decimals = Math.abs(decimals) > 100 ? 100 : Math.abs(decimals);
   try {
     return parseFloat(value).toLocaleString(locale, {
       style: "currency",
@@ -365,7 +367,7 @@ export function notAccept(
 /**
  * Trigger the callbacks when a message is showed
  * @param {boolean} isValid Validation state
- * @param {Options} options FormValidator options
+ * @param {Options} options Validation options
  * @param {ValidationField} field The validated field
  * @param {string} message The validation message
  */
