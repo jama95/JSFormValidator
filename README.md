@@ -184,6 +184,7 @@ Read more about these and other functions in [docs](./docs/functions.md).
 Read about how to contribute, [here](./CONTRIBUTING.md).
 
 Donations are welcome🙂.
+
 [![PayPal Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.me/jama95)
 
 ## License

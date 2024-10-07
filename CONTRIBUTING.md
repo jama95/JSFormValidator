@@ -25,19 +25,18 @@ A great way to interact with the community.
 ### When to use discussions?
 
 If you have questions about how to use or suggestions for new features or improvements.
-
 If you have a problem with the functionality and you are not sure if it is a bug or not.
-*In this case, if the conclusion of the community is that it is an unreported bug, please report it.*
+>*In this case, if the conclusion of the community is that it is an unreported bug, please report it in [issues](https://github.com/jama95/JSFormValidator/issues/new).*
 
 ### Create a discussion
 
 You should always check to see if a related [discussion](https://github.com/jama95/JSFormValidator/discussions) already exists before starting a [new one](https://github.com/jama95/JSFormValidator/discussions/new/choose).
 
->:memo:Select the correct category and always set an appropriate label.
+>:warning:Select the correct category and always set an appropriate label.
 
 ## Issues
 
-The only and the best way to report any problem.
+The only and the best way to report a bug.
 
 ### When to use issues?
 
@@ -76,7 +75,7 @@ If it is related to a discussion, it must be approved in advance.
 When you make changes in the code, there are a few considerations you should always keep in mind:
 
 - If you add a function, you must document it using JSDoc (in english).
-- If you add a validator or modifier, you must add a description about it (in english).
+- If you add a validator or modifier, you must add a short description about it (in english).
 - Be sure to maintain low [cognitive complexity](https://rules.sonarsource.com/typescript/RSPEC-3776/) in the code.
 - Do not add inline comments.
 
