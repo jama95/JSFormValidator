@@ -1,0 +1,68 @@
+{
+  "name": "js-form-validator",
+  "version": "1.0.0",
+  "description": "A JavaScript library for validating data in HTML forms.",
+  "homepage": "",
+  "author": "Jordi Miño <jama95.dev@gmail.com> (https://github.com/jama95)",
+  "keywords": [
+    "validation",
+    "validator",
+    "form validation",
+    "form validator",
+    "input validation",
+    "input validator",
+    "custom validation",
+    "custom validator",
+    "async validation",
+    "async validator"
+  ],
+  "main": "./dist/js/FormValidator.js",
+  "typings": "./dist/js/FormValidator.d.ts",
+  "engines": {
+    "node": "*"
+  },
+  "browserslist": "> 0.5%, last 2 versions, Firefox ESR, not dead",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jama95/JSFormValidator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jama95/JSFormValidator/issues"
+  },
+  "scripts": {
+    "dev": "NODE_ENV=development gulp dev",
+    "build": "NODE_ENV=production gulp",
+    "css": "gulp css",
+    "js": "gulp js",
+    "types": "tsc"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/plugin-transform-modules-umd": "^7.24.7",
+    "@babel/preset-env": "^7.24.7",
+    "@babel/preset-typescript": "^7.24.7",
+    "@typescript-eslint/eslint-plugin": "^7.13.0",
+    "@typescript-eslint/parser": "^7.13.0",
+    "autoprefixer": "^10.4.19",
+    "babel-core": "^6.26.3",
+    "browser-sync": "^3.0.2",
+    "bs-html-injector": "^3.0.3",
+    "cssnano": "^6.1.2",
+    "eslint": "^8.57.0",
+    "gulp": "^4.0.2",
+    "gulp-babel": "^8.0.0",
+    "gulp-concat-process": "^1.0.1",
+    "gulp-modifier": "^1.0.1",
+    "gulp-postcss": "^10.0.0",
+    "gulp-rename": "^2.0.0",
+    "gulp-sass": "^5.1.0",
+    "gulp-sourcemaps": "^3.0.0",
+    "gulp-uglify": "^3.0.2",
+    "postcss": "^8.4.38",
+    "postcss-load-config": "^5.1.0",
+    "postcss-normalize": "^10.0.1",
+    "postcss-preset-env": "^9.5.14",
+    "sass": "^1.77.4",
+    "typescript": "^5.4.5"
+  }
+}

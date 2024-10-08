@@ -1,0 +1,150 @@
+$valid: #198754;
+$invalid: #dc3545;
+$very-weak: #dc3545;
+$weak: #fd7e14;
+$normal: #ffc107;
+$strong: #198754;
+$very-strong: #198754;
+$sgBorderWidth: 1px !default;
+$sgBorderRadius: 0.375rem !default;
+$sgActiveBG: #1f64a5 !default;
+$sgActiveColor: #fff !default;
+$lengthRestrictColor: #808080 !default;
+:root {
+  --valid: #{$valid};
+  --invalid: #{$invalid};
+  --very-weak: #{$very-weak};
+  --weak: #{$weak};
+  --normal: #{$normal};
+  --strong: #{$strong};
+  --very-strong: #{$very-strong};
+  --sgBorderWidth: #{$sgBorderWidth};
+  --sgBorderRadius: #{$sgBorderRadius};
+  --sgActiveBG: #{$sgActiveBG};
+  --sgActiveColor: #{$sgActiveColor};
+  --lengthRestrictColor: #{$lengthRestrictColor};
+}
+
+form.fv {
+  // Optional class to group fields and labels
+  .fv-group {
+    margin-bottom: 10px;
+  }
+  // Inline validation messages style
+  div input ~ span[for-field] {
+    margin-left: 10px;
+  }
+  // Top messages tittle style
+  div.fv-top-messages {
+    h4 {
+      font-variant: small-caps slashed-zero;
+    }
+  }
+}
+// Default datalist styles
+datalist.fv-suggestions {
+  position: absolute;
+  z-index: 9999;
+  cursor: pointer;
+  overflow-x: hidden;
+  overflow-y: auto;
+  &.fv-suggestion_container {
+    margin-top: 5px;
+    border-width: var(--sgBorderWidth);
+    border-style: solid;
+    border-radius: var(--sgBorderRadius);
+  }
+  // Default options styles
+  option {
+    user-select: none;
+  }
+  option.fv-suggestion_option {
+    font-size: 1rem;
+    font-weight: 400;
+    text-align: left;
+    line-height: 1.5;
+    text-decoration: none;
+    padding: 0.375rem 0.75rem;
+    border-top-width: var(--sgBorderWidth);
+    border-top-style: solid;
+    &.active,
+    &:hover {
+      background-color: var(--sgActiveBG);
+      color: var(--sgActiveColor);
+    }
+    &:first-child {
+      border-top: none;
+    }
+  }
+}
+// Default textarea length info styles
+div.fv-textAreaLength {
+  border: 0;
+  color: var(--lengthRestrictColor);
+  position: absolute;
+  user-select: none;
+  cursor: default;
+  line-height: 1;
+  font-size: small;
+  font-weight: bold;
+}
+// Password requirements styles
+div.fv-password {
+  position: absolute;
+  padding: 0.375rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+  div.tittle {
+    font-weight: bold;
+    user-select: none;
+  }
+  div.condition {
+    margin: 0.375rem;
+    user-select: none;
+  }
+  div.condition.check {
+    color: var(--valid);
+  }
+  div.condition.no-check {
+    color: var(--invalid);
+  }
+  div.condition::before {
+    margin-right: 0.375rem;
+    content: "\2212";
+  }
+  div.condition.no-check::before {
+    content: "\2715";
+  }
+  div.condition.check::before {
+    content: "\2713";
+  }
+  div.strength-text {
+    user-select: none;
+  }
+  div.strength-bar {
+    text-align: center;
+    min-height: 5px;
+    max-height: 5px;
+    margin-bottom: 5px;
+  }
+  div.strength-bar.very-weak {
+    background-color: var(--very-weak);
+    width: 20%;
+  }
+  div.strength-bar.weak {
+    background-color: var(--weak);
+    width: 40%;
+  }
+  div.strength-bar.normal {
+    background-color: var(--normal);
+    width: 60%;
+  }
+  div.strength-bar.strong {
+    background-color: var(--strong);
+    width: 80%;
+  }
+  div.strength-bar.very-strong {
+    background-color: var(--very-strong);
+    width: 100%;
+  }
+}
