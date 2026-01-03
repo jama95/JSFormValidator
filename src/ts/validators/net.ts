@@ -1,4 +1,4 @@
-import { configuration, language } from "../config";
+import { configuration } from "../config";
 
 // Regex according to RFC791 and RFC4632, compatible with "test" and "match"
 const IPv4Regex =
@@ -10,11 +10,12 @@ const IPv4Complete = `${IPv4Regex}${IPv4Prefix}`;
 configuration.validators["ipv4"] = {
   name: "ipv4",
   validatorFunction: function (value, form, field, options, lang) {
+    this.invalidMessage = lang.inv_ipv4;
     const regex = new RegExp(`^${IPv4Complete}$`);
     if (regex.test(value)) return true;
     return false;
   },
-  invalidMessage: language.inv_ipv4,
+  invalidMessage: "",
   messageKey: "ipv4",
 };
 
@@ -61,6 +62,7 @@ function zeros(ip: string): boolean {
 configuration.validators["ipv6"] = {
   name: "ipv6",
   validatorFunction: function (value, form, field, options, lang) {
+    this.invalidMessage = lang.inv_ipv6;
     const zerosRule = field.getAttribute("data-fv-ipv6_zeros") == "true";
     const regex = new RegExp(`${IPv6Full}`);
     if (regex.test(value)) {
@@ -73,7 +75,7 @@ configuration.validators["ipv6"] = {
     }
     return false;
   },
-  invalidMessage: language.inv_ipv6,
+  invalidMessage: "",
   messageKey: "ipv6",
 };
 
@@ -85,6 +87,7 @@ const domainRegex =
 configuration.validators["domain"] = {
   name: "domain",
   validatorFunction: function (value, form, field, options, lang) {
+    this.invalidMessage = lang.inv_domain;
     if (value.length > 253) return false;
     if (/\x2D{2,}/g.test(value)) return false;
     const regex = new RegExp(`^${domainRegex}$`, "i");
@@ -105,7 +108,7 @@ configuration.validators["domain"] = {
     }
     return !equal;
   },
-  invalidMessage: language.inv_domain,
+  invalidMessage: "",
   messageKey: "domain",
 };
 
@@ -130,6 +133,7 @@ const emailRegex = `(${emailLocal}\\x40${emailDomain})`;
 configuration.validators["email"] = {
   name: "email",
   validatorFunction: function (value, form, field, options, lang) {
+    this.invalidMessage = lang.inv_email;
     if (value.startsWith(".")) return false;
     if (value.endsWith(".")) return false;
     if (value.length > 254) return false;
@@ -154,7 +158,7 @@ configuration.validators["email"] = {
         return false;
     return true;
   },
-  invalidMessage: language.inv_email,
+  invalidMessage: "",
   messageKey: "email",
 };
 
@@ -176,10 +180,11 @@ const URLRegex = `(${schemePart}${authorityPart}${pathPart}${queryPart}${fragmen
 configuration.validators["url"] = {
   name: "url",
   validatorFunction: function (value, form, field, options, lang) {
+    this.invalidMessage = lang.inv_url;
     const regex = new RegExp(`^${URLRegex}$`, "i");
     if (!regex.test(value)) return false;
     return true;
   },
-  invalidMessage: language.inv_url,
+  invalidMessage: "",
   messageKey: "url",
 };

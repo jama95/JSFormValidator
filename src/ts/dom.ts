@@ -93,9 +93,8 @@ export function inputSuggestion(
   datalist.style.maxHeight = settings.maxHeight;
   datalist.style.display = "none";
   datalist.setAttribute("target", `#${input.id}`);
-  datalist.style.backgroundColor = window.getComputedStyle(
-    document.getElementsByTagName("body")[0]
-  ).backgroundColor;
+  datalist.style.backgroundColor =
+    window.getComputedStyle(input).backgroundColor;
   input.setAttribute("autocomplete", "off");
   input.setAttribute("list", "");
   const fillDatalist = function (words: string[]) {
@@ -327,8 +326,8 @@ function getFieldParent(
   options: Options
 ): HTMLElement | null {
   let parent: HTMLElement | null = null;
-  const p = form.querySelector<HTMLElement>(options.parentField.trim());
-  if (p) parent = p ?? field.parentElement;
+  const p = field.closest<HTMLElement>(options.parentField.trim());
+  parent = p ?? field.parentElement;
   if (parent?.nodeName == "FORM") parent = null;
   return parent;
 }
@@ -492,8 +491,9 @@ function setInlineMessage(
   const span = document.createElement("span"),
     parent = getFieldParent(field, form, options),
     fieldName =
-      form.querySelector<HTMLLabelElement>(`label[for="${field.name}"]`)
-        ?.textContent ?? field.name;
+      form
+        .querySelector<HTMLLabelElement>(`label[for="${field.name}"]`)
+        ?.textContent.trim() ?? field.name;
   let message: string;
   span.classList.add(options.inlineMessageClass);
   span.setAttribute("for-field", field.name);
@@ -538,8 +538,9 @@ function setTopMessage(
 ): void {
   let message: string;
   const fieldName =
-    form.querySelector<HTMLLabelElement>(`label[for="${field.name}"]`)
-      ?.textContent ?? field.name;
+    form
+      .querySelector<HTMLLabelElement>(`label[for="${field.name}"]`)
+      ?.textContent.trim() ?? field.name;
   const validView = options.topMessagesTemplate
       .replace("{topMessagesClass}", options.topMessagesClass)
       .replace("{formID}", form.id)
@@ -633,8 +634,9 @@ function syncTopMessages(
   valid_invalid: boolean
 ): void {
   const fieldName =
-    form.querySelector<HTMLLabelElement>(`label[for="${field.name}"]`)
-      ?.textContent ?? field.name;
+    form
+      .querySelector<HTMLLabelElement>(`label[for="${field.name}"]`)
+      ?.textContent.trim() ?? field.name;
   if (!valid_invalid && configuration.validMessages[form.id][fieldName]) {
     delete configuration.validMessages[form.id][fieldName];
     form

@@ -2,11 +2,12 @@
   "include": ["src/ts/*.ts"],
   "compilerOptions": {
     "strict": true,
+    "lib": ["ES2024", "DOM"],
     "forceConsistentCasingInFileNames": true,
     "emitDeclarationOnly": true,
     "declaration": true,
     "declarationMap": true,
-    "outFile": "./dist/js/FormValidator.js"
+    "declarationDir": "/types/"
   },
   "exclude": ["src/ts/modifiers.ts"]
 }
