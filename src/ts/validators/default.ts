@@ -1,4 +1,4 @@
-import { configuration, language, telephoneFormats } from "../config";
+import { configuration, telephoneFormats } from "../config";
 import { Lang } from "../types";
 import { checkRangeStep, checkStringLength, escapeRegExp } from "../utils";
 
@@ -6,46 +6,67 @@ import { checkRangeStep, checkStringLength, escapeRegExp } from "../utils";
 configuration.validators["required"] = {
   name: "required",
   validatorFunction: function (value, form, field, options, lang) {
+    this.invalidMessage = lang.notConfirmed;
     const name = field.getAttribute("name");
+    let r;
     if (field instanceof HTMLInputElement && field.type == "checkbox") {
-      return (
+      r =
         form.querySelectorAll(`input[type="checkbox"][name="${name}"]:checked`)
-          .length > 0
-      );
+          .length > 0;
     } else if (field instanceof HTMLInputElement && field.type == "radio") {
-      return (
+      r =
         form.querySelectorAll(`input[type="radio"][name="${name}"]:checked`)
-          .length > 0
-      );
+          .length > 0;
     } else {
-      return value.trim().length > 0;
+      r = value.trim().length > 0;
     }
+    if (!r) this.invalidMessage = lang.inv_required;
+    return r;
   },
-  invalidMessage: language.inv_required,
+  invalidMessage: "",
   messageKey: "required",
 };
-
-let lengthMessage = language.notConfirmed;
 
 /**
  * Set the invalid length message
  * @param {boolean} file True if it is a file input
  * @param {boolean} multiple True if it is a multiple select
- * @param {boolean} check True if it is a checkbox input
+ * @param {boolean} checkbox True if it is a checkbox input
+ * @param {string[]} check Response of check function
+ * @param {Lang} lang Language
  * @returns {string} Length message
  */
 function setLengthMessage(
   file: boolean,
   multiple: boolean,
-  check: boolean
+  checkbox: boolean,
+  check: string[],
+  lang: Lang
 ): string {
+  let lengthMessage = "";
+  switch (check[0]) {
+    case "max":
+      lengthMessage = lang.inv_lengthMax.replace("{max}", check[1]);
+      break;
+    case "min":
+      lengthMessage = lang.inv_lengthMin.replace("{min}", check[1]);
+      break;
+    case "range":
+      lengthMessage = lang.inv_lengthRange
+        .replace("{max}", check[2])
+        .replace("{min}", check[1]);
+      break;
+    case "equal":
+      lengthMessage = lang.inv_lengthEqual.replace("{equal}", check[1]);
+      break;
+  }
   if (file)
     return lengthMessage
       .replace(/1\x5B.+2\x5B/, "")
       .replace("]2", "")
       .replace(/3\x5B.+4\x5B/, "")
       .replace(/\x5D4.+\x5D5/, "");
-  else if (multiple || check)
+  else if (multiple || checkbox)
     return lengthMessage
       .replace(/1\x5B.+2\x5B/, "")
       .replace("]2", "")
@@ -63,7 +84,9 @@ function setLengthMessage(
 configuration.validators["length"] = {
   name: "length",
   validatorFunction: function (value, form, field, options, lang) {
+    this.invalidMessage = lang.notConfirmed;
     const length = field.getAttribute("data-fv-length");
+    let r;
     if (!length) {
       this.invalidMessage = lang.notConfirmed;
       return false;
@@ -93,30 +116,29 @@ configuration.validators["length"] = {
     const check = checkStringLength(val, length);
     switch (check[0]) {
       case "max":
-        lengthMessage = lang.inv_lengthMax.replace("{max}", check[1]);
-        this.invalidMessage = setLengthMessage(file, multiple, checkbox);
-        return false;
       case "min":
-        lengthMessage = lang.inv_lengthMin.replace("{min}", check[1]);
-        this.invalidMessage = setLengthMessage(file, multiple, checkbox);
-        return false;
       case "range":
-        lengthMessage = lang.inv_lengthRange
-          .replace("{max}", check[2])
-          .replace("{min}", check[1]);
-        this.invalidMessage = setLengthMessage(file, multiple, checkbox);
-        return false;
       case "equal":
-        lengthMessage = lang.inv_lengthEqual.replace("{equal}", check[1]);
-        this.invalidMessage = setLengthMessage(file, multiple, checkbox);
-        return false;
+        this.invalidMessage = setLengthMessage(
+          file,
+          multiple,
+          checkbox,
+          check,
+          lang
+        );
+        r = false;
+        break;
       case "no":
         this.invalidMessage = lang.notConfirmed;
-        return false;
+        r = false;
+        break;
+      default:
+        r = true;
+        break;
     }
-    return true;
+    return r;
   },
-  invalidMessage: lengthMessage,
+  invalidMessage: "",
   messageKey: "length",
 };
 
@@ -150,33 +172,36 @@ function setNumberMessage(check: string[], lang: Lang): string {
 configuration.validators["numbers"] = {
   name: "numbers",
   validatorFunction: function (value, form, field, options, lang) {
+    this.invalidMessage = lang.notConfirmed;
     const allow = (field.getAttribute("data-fv-numbers_allow") ?? "").split(
       /[,|-]+\s*|\s+/
     );
-    if (allow.includes("noPositive") && !value.includes("-")) return false;
+    let r = true;
+    if (allow.includes("noPositive") && !value.includes("-")) r = false;
     if (
       !allow.includes("negative") &&
       !allow.includes("noPositive") &&
       value.includes("-")
     )
-      return false;
-    if (!allow.includes("decimal") && value.includes(".")) return false;
+      r = false;
+    if (!allow.includes("decimal") && value.includes(".")) r = false;
     if (/^-?\d+(\x2E\d+)?$/.test(value)) {
       const range = field.getAttribute("data-fv-numbers_range") ?? "",
         step = field.getAttribute("data-fv-numbers_step") ?? "",
         check = checkRangeStep(allow, parseFloat(value), range, step);
       if (check[0][0] && check[0][0] != "ok") {
         this.invalidMessage = setNumberMessage(check[0], lang);
-        return false;
+        r = false;
       }
       if (check[1][0] && check[1][0] != "ok") {
         this.invalidMessage = setNumberMessage(check[1], lang);
-        return false;
+        r = false;
       }
-    } else return false;
-    return true;
+    } else r = false;
+    if (!r) this.invalidMessage = lang.inv_numbers;
+    return r;
   },
-  invalidMessage: language.inv_numbers,
+  invalidMessage: "",
   messageKey: "numbers",
 };
 
@@ -184,13 +209,14 @@ configuration.validators["numbers"] = {
 configuration.validators["letters"] = {
   name: "letters",
   validatorFunction: function (value, form, field, options, lang) {
+    this.invalidMessage = lang.notConfirmed;
     const allow = field.getAttribute("data-fv-letters_allow") ?? "";
     const regex = new RegExp(`^[a-z${escapeRegExp(allow)}]+$`, "i");
     if (!regex.test(value)) {
       if (allow.length == 0)
-        this.invalidMessage = language.inv_letters.replace(/\x5B.+\x5D/, "");
+        this.invalidMessage = lang.inv_letters.replace(/\x5B.+\x5D/, "");
       else
-        this.invalidMessage = language.inv_letters
+        this.invalidMessage = lang.inv_letters
           .replace("[", "")
           .replace("]", "")
           .replace(/\x7B.+\x7D/, allow);
@@ -198,20 +224,21 @@ configuration.validators["letters"] = {
     }
     return true;
   },
-  invalidMessage: language.notConfirmed,
+  invalidMessage: "",
   messageKey: "letters",
 };
 
 /**
  * Set the invalid alphanumeric message
  * @param {string} allow Allowed characters
+ * @param {Lang} lang Language
  * @returns {string} Alphanumeric message
  */
-function setAlphanumericMessage(allow: string): string {
+function setAlphanumericMessage(allow: string, lang: Lang): string {
   if (allow.length == 0)
-    return language.inv_alphanumeric.replace(/\x5B.+\x5D/i, "");
+    return lang.inv_alphanumeric.replace(/\x5B.+\x5D/i, "");
   else
-    return language.inv_alphanumeric
+    return lang.inv_alphanumeric
       .replace("[", "")
       .replace("]", "")
       .replace(/\x7B\w+\x7D/, allow);
@@ -221,15 +248,16 @@ function setAlphanumericMessage(allow: string): string {
 configuration.validators["alphanumeric"] = {
   name: "alphanumeric",
   validatorFunction: function (value, form, field, options, lang) {
+    this.invalidMessage = lang.notConfirmed;
     const allow = field.getAttribute("data-fv-letters_allow") ?? "";
     const regex = new RegExp(`^[a-z\\d${escapeRegExp(allow)}]+$`, "i");
     if (!regex.test(value)) {
-      this.invalidMessage = setAlphanumericMessage(allow);
+      this.invalidMessage = setAlphanumericMessage(allow, lang);
       return false;
     }
     return true;
   },
-  invalidMessage: language.notConfirmed,
+  invalidMessage: "",
   messageKey: "alphanumeric",
 };
 
@@ -237,12 +265,16 @@ configuration.validators["alphanumeric"] = {
 configuration.validators["regex"] = {
   name: "regex",
   validatorFunction: function (value, form, field, options, lang) {
+    this.invalidMessage = lang.notConfirmed;
     const regex = field.getAttribute("data-fv-regex") ?? "";
     const flags = field.getAttribute("data-fv-flags") ?? undefined;
-    if (!regex) return false;
-    return new RegExp(regex, flags).test(value);
+    let r;
+    if (!regex) r = false;
+    r = new RegExp(regex, flags).test(value);
+    if (!r) this.invalidMessage = lang.inv_regexp;
+    return r;
   },
-  invalidMessage: language.inv_regexp,
+  invalidMessage: "",
   messageKey: "regex",
 };
 
@@ -250,14 +282,17 @@ configuration.validators["regex"] = {
 configuration.validators["telephone"] = {
   name: "telephone",
   validatorFunction: function (value, form, field, options, lang) {
+    this.invalidMessage = lang.notConfirmed;
     const format = field.getAttribute("data-fv-telephone_format") ?? "EC";
+    let r = false;
     if (telephoneFormats[format])
-      return new RegExp(
+      r = new RegExp(
         telephoneFormats[format].join("|").replace(/\//g, "")
       ).test(value);
-    return false;
+    if (!r) this.invalidMessage = lang.inv_telephone;
+    return r;
   },
-  invalidMessage: language.inv_telephone,
+  invalidMessage: "",
   messageKey: "telephone",
 };
 
@@ -279,8 +314,10 @@ const HEX =
 configuration.validators["color"] = {
   name: "color",
   validatorFunction: function (value, form, field, options, lang) {
+    this.invalidMessage = lang.notConfirmed;
     const colors = field.getAttribute("data-fv-colors") ?? "";
     const regex: string[] = [];
+    let r = false;
     if (colors.trim().length == 0)
       regex.push(`^${RGB}$|^${RGBA}$|^${HSL}$|^${HSLA}$|^${CMYK}$|^${HEX}$`);
     else {
@@ -293,9 +330,10 @@ configuration.validators["color"] = {
       regex.length > 1 ? regex.join("|") : regex[0],
       "i"
     );
-    if (check.test(value)) return true;
-    return false;
+    if (check.test(value)) r = true;
+    if (!r) this.invalidMessage = lang.inv_color;
+    return r;
   },
-  invalidMessage: language.inv_color,
+  invalidMessage: "",
   messageKey: "color",
 };

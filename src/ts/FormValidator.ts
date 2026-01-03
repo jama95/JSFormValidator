@@ -34,7 +34,7 @@ class FormValidate {
   private conf: Configuration;
   private opt: Options;
   private lang: Lang;
-  constructor(opt?: Options, lang?: Lang) {
+  constructor(opt?: Partial<Options>, lang?: Lang) {
     this.conf = configuration;
     this.conf.language = { ...language, ...lang };
     this.opt = { ...options, ...opt };
@@ -334,6 +334,9 @@ class FormValidate {
     const depending = field.getAttribute("data-fv-depends-on");
     if (!depending) return;
     const target = form.querySelector<ValidationField>(`[name=${depending}]`);
+    const fieldName =
+      form.querySelector(`label[for=${field.name}]`)?.textContent.trim() ??
+      field.name;
     if (target) {
       field.setAttribute("data-fv-skip", "true");
       const validators =
@@ -350,12 +353,15 @@ class FormValidate {
         field.setAttribute("data-fv-skip", "true");
         removeStyles(field, form, options);
         removeInlineMessages(field, field.form as HTMLFormElement);
-        if (config.validMessages[form.id][field.name])
-          delete config.validMessages[form.id][field.name];
-        if (config.invalidMessages[form.id][field.name])
-          delete config.invalidMessages[form.id][field.name];
-        document
-          .querySelector(`.${options.topMessagesClass} li[for=${field.name}]`)
+        if (config.validMessages[form.id][fieldName])
+          delete config.validMessages[form.id][fieldName];
+        if (config.invalidMessages[form.id][fieldName])
+          delete config.invalidMessages[form.id][fieldName];
+        form
+          .querySelector(`div[data-fv-top-invalid] li[for=${fieldName}]`)
+          ?.remove();
+        form
+          .querySelector(`div[data-fv-top-valid] li[for=${fieldName}]`)
           ?.remove();
         if (target.value.trim().length > 0)
           field.setAttribute("data-fv-skip", "false");
@@ -367,12 +373,15 @@ class FormValidate {
       target.addEventListener(tEvent, function () {
         removeStyles(field, form, options);
         removeInlineMessages(field, field.form as HTMLFormElement);
-        if (config.validMessages[form.id][field.name])
-          delete config.validMessages[form.id][field.name];
-        if (config.invalidMessages[form.id][field.name])
-          delete config.invalidMessages[form.id][field.name];
-        document
-          .querySelector(`.${options.topMessagesClass} li[for=${field.name}]`)
+        if (config.validMessages[form.id][fieldName])
+          delete config.validMessages[form.id][fieldName];
+        if (config.invalidMessages[form.id][fieldName])
+          delete config.invalidMessages[form.id][fieldName];
+        form
+          .querySelector(`div[data-fv-top-invalid] li[for=${fieldName}]`)
+          ?.remove();
+        form
+          .querySelector(`div[data-fv-top-valid] li[for=${fieldName}]`)
           ?.remove();
         if (
           field.classList.contains(options.validClass) ||
@@ -382,7 +391,7 @@ class FormValidate {
       });
     } else {
       console.error(
-        `FormValidator: Failed to set the dependant validation on ${field.name}, the target field ${depending} can not be found.`
+        `FormValidator: Failed to set the dependant validation on '${fieldName}', the target field '${depending}' can not be found.`
       );
     }
   }
@@ -413,7 +422,11 @@ class FormValidate {
         );
       const event = field instanceof HTMLSelectElement ? "change" : "input";
       field.addEventListener(event, function () {
-        if (field.value.trim().length > 0)
+        if (
+          field instanceof HTMLInputElement
+            ? field.checked
+            : field.value.trim().length > 0
+        )
           field.setAttribute("data-fv-skip", "false");
         else {
           field.setAttribute("data-fv-skip", "true");
@@ -798,9 +811,10 @@ class FormValidate {
   /**
    * Validates the specified fields of the specified forms
    * @param {?string} [form] Form or forms id to validate (comma separated)
-   * @param {?Options} [options] Validation options
+   * @param {?Partial<Options>} [options] Validation options
    */
-  public validate(form?: string, options?: Options): void {
+
+  public validate(form?: string, options?: Partial<Options>): void {
     const opt = { ...this.opt, ...options },
       conf = this.conf;
     let f: string;
@@ -818,9 +832,9 @@ class FormValidate {
   /**
    * Sets the validation attributes on the form's fields then validates
    * @param {JSONConfig} json Form's Validation configuration
-   * @param {?Options} [options] Validation options
+   * @param {?Partial<Options>} [options] Validation options
    */
-  public fromJSON(json: JSONConfig, options?: Options): void {
+  public fromJSON(json: JSONConfig, options?: Partial<Options>): void {
     const forms = Object.keys(json);
     if (forms.length == 0) return;
     const frm = json[0];
@@ -874,15 +888,23 @@ class FormValidate {
     if (element) {
       switch (event) {
         case "beforeValidate":
+          if (configuration.onBeforeValidate[element.name])
+            configuration.onBeforeValidate[element.name] = [];
           configuration.onBeforeValidate[element.name].push(eventFunction);
           break;
         case "valid":
+          if (configuration.onValid[element.name])
+            configuration.onValid[element.name] = [];
           configuration.onValid[element.name].push(eventFunction);
           break;
         case "invalid":
+          if (configuration.onInvalid[element.name])
+            configuration.onInvalid[element.name] = [];
           configuration.onInvalid[element.name].push(eventFunction);
           break;
         case "afterValidate":
+          if (configuration.onAfterValidate[element.name])
+            configuration.onAfterValidate[element.name] = [];
           configuration.onAfterValidate[element.name].push(eventFunction);
           break;
         default:
@@ -1029,10 +1051,13 @@ class FormValidate {
 
 /**
  * Validates form field contents before submission.
- * @param {?Options} [options] Form validation options
+ * @param {?Partial<Options>} [options] Form validation options
  * @param {?Lang} [lang] Form validation language
  * @returns {FormValidate} Form validation
  */
-export function FormValidator(options?: Options, lang?: Lang): FormValidate {
+export function FormValidator(
+  options?: Partial<Options>,
+  lang?: Lang
+): FormValidate {
   return new FormValidate(options, lang);
 }

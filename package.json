@@ -17,7 +17,7 @@
     "async validator"
   ],
   "main": "./dist/js/FormValidator.js",
-  "typings": "./dist/js/FormValidator.d.ts",
+  "typings": "./types/FormValidator.d.ts",
   "engines": {
     "node": "*"
   },

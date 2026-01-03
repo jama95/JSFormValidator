@@ -1,4 +1,4 @@
-import { language, configuration, cardInfo } from "../config";
+import { configuration, cardInfo } from "../config";
 import { Lang } from "../types";
 import { checkPasswordStrength, luhn } from "../utils";
 
@@ -6,12 +6,13 @@ import { checkPasswordStrength, luhn } from "../utils";
 configuration.validators["password"] = {
   name: "password",
   validatorFunction: function (value, form, field, options, lang) {
+    this.invalidMessage = lang.inv_password;
     const min = parseInt(field.getAttribute("data-fv-min_strength") ?? "5", 10);
     const strength = checkPasswordStrength(value).strength;
     if (strength >= min) return true;
     return false;
   },
-  invalidMessage: language.inv_strength,
+  invalidMessage: "",
   messageKey: "password",
 };
 
@@ -33,6 +34,7 @@ function setConfirmationMessage(custom: string, lang: Lang): string {
 configuration.validators["confirmation"] = {
   name: "confirmation",
   validatorFunction: function (value, form, field, options, lang) {
+    this.invalidMessage = lang.notConfirmed;
     const target = field.getAttribute("data-fv-target") ?? "";
     if (target.trim() === "") return false;
     const custom = field.getAttribute("data-fv-custom_value_message") ?? "";
@@ -45,7 +47,7 @@ configuration.validators["confirmation"] = {
     }
     return true;
   },
-  invalidMessage: language.notConfirmed,
+  invalidMessage: "",
   messageKey: "confirmation",
 };
 
@@ -53,6 +55,7 @@ configuration.validators["confirmation"] = {
 configuration.validators["credit_card"] = {
   name: "credit_card",
   validatorFunction: function (value, form, field, options, lang) {
+    this.invalidMessage = lang.inv_credit_card;
     if (/\D/.test(value)) return false;
     let card = "unknown";
     let min = 16;
@@ -78,7 +81,7 @@ configuration.validators["credit_card"] = {
     if (digits.length < min || digits.length > max) return false;
     return luhn(digits) === 0;
   },
-  invalidMessage: language.inv_credit_card,
+  invalidMessage: "",
   messageKey: "credit_card",
 };
 
@@ -86,6 +89,7 @@ configuration.validators["credit_card"] = {
 configuration.validators["cvv"] = {
   name: "cvv",
   validatorFunction: function (value, form, field, options, lang) {
+    this.invalidMessage = lang.inv_cvv;
     if (/\D/.test(value)) return false;
     const target = field.getAttribute("data-fv-target") ?? "";
     if (target.trim() === "") return false;
@@ -101,6 +105,6 @@ configuration.validators["cvv"] = {
       return value.length < 3 || value.length > 4;
     }
   },
-  invalidMessage: language.inv_cvv,
+  invalidMessage: "",
   messageKey: "cvv",
 };

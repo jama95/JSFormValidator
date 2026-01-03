@@ -1,10 +1,11 @@
-import { language, configuration } from "../config";
+import { configuration } from "../config";
 import { getImageDimensions, sizeStringToBytes } from "../utils";
 
 /* Checks if the size of the selected files is correct  */
 configuration.validators["file_size"] = {
   name: "file_size",
   validatorFunction: function (value, form, field, options, lang) {
+    this.invalidMessage = lang.notConfirmed;
     if (field instanceof HTMLInputElement && field.type == "file") {
       const files = field.files;
       if (files) {
@@ -25,7 +26,7 @@ configuration.validators["file_size"] = {
     }
     return false;
   },
-  invalidMessage: language.notConfirmed,
+  invalidMessage: "",
   messageKey: "file_size",
 };
 
@@ -33,6 +34,7 @@ configuration.validators["file_size"] = {
 configuration.validators["file_type"] = {
   name: "file_type",
   validatorFunction: function (value, form, field, options, lang) {
+    this.invalidMessage = lang.notConfirmed;
     if (field instanceof HTMLInputElement && field.type === "file") {
       const files = field.files;
       if (files) {
@@ -53,7 +55,7 @@ configuration.validators["file_type"] = {
     }
     return false;
   },
-  invalidMessage: language.notConfirmed,
+  invalidMessage: "",
   messageKey: "file_type",
 };
 
@@ -61,6 +63,7 @@ configuration.validators["file_type"] = {
 configuration.validators["file_extension"] = {
   name: "file_extension",
   validatorFunction: function (value, form, field, options, lang) {
+    this.invalidMessage = lang.notConfirmed;
     if (field instanceof HTMLInputElement && field.type === "file") {
       const files = field.files;
       if (files) {
@@ -83,7 +86,7 @@ configuration.validators["file_extension"] = {
     }
     return false;
   },
-  invalidMessage: language.notConfirmed,
+  invalidMessage: "",
   messageKey: "file_extension",
 };
 
@@ -91,6 +94,7 @@ configuration.validators["file_extension"] = {
 configuration.asyncValidators["image_dimension"] = {
   name: "image_dimension",
   validatorFunction: async function (value, form, field, options, lang) {
+    this.invalidMessage = lang.notConfirmed;
     if (!(field instanceof HTMLInputElement && field.type === "file"))
       return false;
     const dimension = field.getAttribute("data-fv-image_dimension") ?? "";
@@ -114,7 +118,7 @@ configuration.asyncValidators["image_dimension"] = {
     }
     return check;
   },
-  invalidMessage: language.notConfirmed,
+  invalidMessage: "",
   messageKey: "image_dimension",
 };
 
@@ -122,6 +126,7 @@ configuration.asyncValidators["image_dimension"] = {
 configuration.asyncValidators["image_height"] = {
   name: "image_height",
   validatorFunction: async function (value, form, field, options, lang) {
+    this.invalidMessage = lang.notConfirmed;
     if (!(field instanceof HTMLInputElement && field.type === "file"))
       return false;
     const height = field.getAttribute("data-fv-image_height") ?? "";
@@ -144,7 +149,7 @@ configuration.asyncValidators["image_height"] = {
     }
     return check;
   },
-  invalidMessage: language.notConfirmed,
+  invalidMessage: "",
   messageKey: "image_height",
 };
 
@@ -152,6 +157,7 @@ configuration.asyncValidators["image_height"] = {
 configuration.asyncValidators["image_width"] = {
   name: "image_width",
   validatorFunction: async function (value, form, field, options, lang) {
+    this.invalidMessage = lang.notConfirmed;
     if (!(field instanceof HTMLInputElement && field.type === "file"))
       return false;
     const width = field.getAttribute("data-fv-image_width") ?? "";
@@ -174,6 +180,6 @@ configuration.asyncValidators["image_width"] = {
     }
     return check;
   },
-  invalidMessage: language.notConfirmed,
+  invalidMessage: "",
   messageKey: "image_width",
 };

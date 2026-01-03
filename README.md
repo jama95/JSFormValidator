@@ -1,6 +1,6 @@
 # JSFormValidator
 
-[![JavaScript](https://img.shields.io/badge/JavaScript-%23F7DF1E?logo=javascript&logoColor=%23000)](https://developer.mozilla.org/en-US/docs/Web/JavaScript) [![TypeScript](https://img.shields.io/badge/TypeScript-%233178C6?logo=typescript&logoColor=%23fff)](https://www.typescriptlang.org) [![Sass](https://img.shields.io/badge/Sass-%23CC6699?logo=sass&logoColor=%23fff)](https://sass-lang.com) [![CSS](https://img.shields.io/badge/CSS-%231572B6?logo=css3&logoColor=%23fff)](https://developer.mozilla.org/en-US/docs/Web/CSS) [![Gulp](https://img.shields.io/badge/Gulp-%23CF4647?logo=gulp&logoColor=%23fff)](https://gulpjs.com/) [![Babel](https://img.shields.io/badge/Babel-%23F9DC3E?logo=babel&logoColor=%23000)](https://babeljs.io) [![NPM](https://img.shields.io/badge/NPM-%23CB3837?logo=npm)](https://www.npmjs.com) [![standard-readme compliant](https://img.shields.io/badge/readme%20style%20standard-brightgreen)](https://github.com/RichardLitt/standard-readme) [![contributor covenant code of conduct](https://img.shields.io/badge/contributor_covenant-9f16c3)](https://github.com/RichardLitt/standard-readme) [![Keep a Changelog v1.1.0 badge](https://img.shields.io/badge/Keep%20a%20Changelog%20v1.1.0-%23E05735)](./CHANGELOG.md)  [![MIT LiCENSE](https://img.shields.io/badge/MIT%20License-blue.svg?style=flat)](/LICENSE)
+[![JavaScript](https://img.shields.io/badge/JavaScript-%23F7DF1E?logo=javascript&logoColor=%23000)](https://developer.mozilla.org/en-US/docs/Web/JavaScript) [![TypeScript](https://img.shields.io/badge/TypeScript-%233178C6?logo=typescript&logoColor=%23fff)](https://www.typescriptlang.org) [![Sass](https://img.shields.io/badge/Sass-%23CC6699?logo=sass&logoColor=%23fff)](https://sass-lang.com) [![CSS](https://img.shields.io/badge/CSS-%231572B6?logo=css3&logoColor=%23fff)](https://developer.mozilla.org/en-US/docs/Web/CSS) [![Gulp](https://img.shields.io/badge/Gulp-%23CF4647?logo=gulp&logoColor=%23fff)](https://gulpjs.com/) [![Babel](https://img.shields.io/badge/Babel-%23F9DC3E?logo=babel&logoColor=%23000)](https://babeljs.io) [![NPM](https://img.shields.io/badge/NPM-%23CB3837?logo=npm)](https://www.npmjs.com) [![standard-readme compliant](https://img.shields.io/badge/readme%20style%20standard-brightgreen)](https://github.com/RichardLitt/standard-readme) [![contributor covenant code of conduct](https://img.shields.io/badge/contributor_covenant-9f16c3)](https://github.com/RichardLitt/standard-readme) [![Keep a Changelog v1.1.0 badge](https://img.shields.io/badge/Keep%20a%20Changelog%20v1.1.0-%23E05735)](./CHANGELOG.md) [![MIT LiCENSE](https://img.shields.io/badge/MIT%20License-blue.svg?style=flat)](/LICENSE)
 
 A JavaScript library for validating data in HTML forms.
 
@@ -47,17 +47,30 @@ npm install js-form-validator
 ### Via CDN or Release
 
 ```html
-<link href="https://cdn.jsdelivr.net/npm/js-form-validator/dist/css/FormValidator.min.css" rel="stylesheet" type="text/css">
-<script src="https://cdn.jsdelivr.net/npm/js-form-validator/dist/js/FormValidator.min.js" type="text/javascript"></script>
+<link
+  href="https://cdn.jsdelivr.net/npm/js-form-validator/dist/css/FormValidator.min.css"
+  rel="stylesheet"
+  type="text/css"
+/>
+<script
+  src="https://cdn.jsdelivr.net/npm/js-form-validator/dist/js/FormValidator.min.js"
+  type="text/javascript"
+></script>
 <!-- (optional) if you want to use the country list info -->
-<script src="https://cdn.jsdelivr.net/npm/js-form-validator/dist/js/lang/countries.min.js" type="text/javascript"></script>
+<script
+  src="https://cdn.jsdelivr.net/npm/js-form-validator/dist/js/lang/countries.min.js"
+  type="text/javascript"
+></script>
 <!-- (optional) if you want to use a translation -->
-<script src="https://cdn.jsdelivr.net/npm/js-form-validator/dist/js/lang/es.min.js" type="text/javascript"></script>
+<script
+  src="https://cdn.jsdelivr.net/npm/js-form-validator/dist/js/lang/es.min.js"
+  type="text/javascript"
+></script>
 ```
 
 If you want to download a version, add the file references as shown above by replacing the href and src values with the appropriate file paths.
 
->:memo:The translations already includes the country list info.
+> :memo:The translations already includes the country list info.
 
 ## Usage
 
@@ -78,26 +91,34 @@ To use `validate`, you must add attributes to the form fields.
 <form id="login">
   <div class="fv-group">
     <label for="user">User</label>
-    <input type="text" name="user" id="user"
-    data-fv-validators="required">
+    <input type="text" name="user" id="user" data-fv-validators="required" />
   </div>
   <div class="fv-group">
     <label for="psw">Password</label>
-    <input type="password" name="psw" id="psw"
-    class="form-control" data-fv-validators="required">
+    <input
+      type="password"
+      name="psw"
+      id="psw"
+      class="form-control"
+      data-fv-validators="required"
+    />
   </div>
   <div class="fv-group">
     <label for="remember">Remember me</label>
-    <input type="checkbox" name="remember" id="remember"
-    data-fv-validators="required">
+    <input
+      type="checkbox"
+      name="remember"
+      id="remember"
+      data-fv-validators="required"
+    />
   </div>
-  <br>
+  <br />
   <button type="submit">Submit</button>
   <button type="reset">Reset</button>
 </form>
 ```
 
->:memo:All the default attributes used by the library start with `data-fv`, but you can change some ot them in the options.
+> :memo:All the default attributes used by the library start with `data-fv`, but you can change some ot them in the options.
 
 ```javascript
 FormValidator().validate("login");
@@ -108,27 +129,27 @@ To use `fromJSON` is not needed to add attributes to the form fields. This is us
 ```javascript
 let config = {
   "#login": {
-      "#user": {
-        validators: "required"
-      },
-      "#psw": {
-        validators: "required"
-      },
-      "#remember": {
-        validators: "required"
-      }
-    }
-  };
+    "#user": {
+      validators: "required",
+    },
+    "#psw": {
+      validators: "required",
+    },
+    "#remember": {
+      validators: "required",
+    },
+  },
+};
 FormValidator().fromJSON(config);
 ```
 
->:bulb:To list the validators o modifiers you can do it by separating them with any combination of: , | - or spaces.
+> :bulb:To list the validators o modifiers you can do it by separating them with any combination of: , | - or spaces.
 
 Read more about its use in [examples](./examples).
 
 Check the [FAQ](./FAQ.md) if you have a question, you can also view the existing [discussions](https://github.com/jama95/JSFormValidator/discussions/categories/q-a), if there is none related to your question, you can start a [new discussion](https://github.com/jama95/JSFormValidator/discussions/new?category=q-a) to ask the community.
 
->:memo:Remember to choose the Q&A category if you want to ask questions to the community through a discussion.
+> :memo:Remember to choose the Q&A category if you want to ask questions to the community through a discussion.
 
 ## Security
 
@@ -163,7 +184,7 @@ The most important types of the library are `options` and `lang`, because they a
 
 `Lang`: Where all language-related options are listed.
 
->:warning:Knowing the types is important if you want to contribute to the code.
+> :warning:Knowing the types is important if you want to contribute to the code.
 
 Read more about these and other types in [docs](./docs/types.md).
 
@@ -181,7 +202,7 @@ Read more about these and other functions in [docs](./docs/functions.md).
 
 ## Contributing
 
-Read about how to contribute, [here](./CONTRIBUTING.md).
+Read about how to contribute, in the [contribute guide](./CONTRIBUTING.md).
 
 Donations are welcome🙂.
 
@@ -191,4 +212,4 @@ Donations are welcome🙂.
 
 JSFormValidator is freely distributable under the terms of the [MIT License](https://spdx.org/licenses/MIT.html).
 
-See the license file [here](/LICENSE).
+See the [license file](/LICENSE).
