@@ -7,7 +7,7 @@ configuration.validators["password"] = {
   name: "password",
   validatorFunction: function (value, form, field, options, lang) {
     this.invalidMessage = lang.inv_password;
-    const min = parseInt(field.getAttribute("data-fv-min_strength") ?? "5", 10);
+    const min = Number.parseInt(field.dataset.fvMin_strength ?? "5", 10);
     const strength = checkPasswordStrength(value).strength;
     if (strength >= min) return true;
     return false;
@@ -24,7 +24,7 @@ configuration.validators["password"] = {
  */
 function setConfirmationMessage(custom: string, lang: Lang): string {
   if (custom.length > 0) {
-    return lang.inv_confirmation.replace(/\x5B.+\x5D/g, custom);
+    return lang.inv_confirmation.replaceAll(/\x5B.+\x5D/g, custom);
   } else {
     return lang.inv_confirmation.replace("[", "").replace("]", "");
   }
@@ -35,9 +35,9 @@ configuration.validators["confirmation"] = {
   name: "confirmation",
   validatorFunction: function (value, form, field, options, lang) {
     this.invalidMessage = lang.notConfirmed;
-    const target = field.getAttribute("data-fv-target") ?? "";
+    const target = field.dataset.fvTarget ?? "";
     if (target.trim() === "") return false;
-    const custom = field.getAttribute("data-fv-custom_value_message") ?? "";
+    const custom = field.dataset.fvCustom_value_message ?? "";
     const targetValue = document.querySelector<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >(target)?.value;
@@ -61,8 +61,7 @@ configuration.validators["credit_card"] = {
     let min = 16;
     let max = 19;
     const allowing = (
-      field.getAttribute("data-fv-allowed_cards") ??
-      Object.keys(cardInfo).join(",")
+      field.dataset.fvAllowed_cards ?? Object.keys(cardInfo).join(",")
     ).split(/[,|-]+\s*|\s+/);
     allowing.filter((c) => Object.keys(cardInfo).includes(c.toUpperCase()));
     for (const c of allowing) {
@@ -76,7 +75,7 @@ configuration.validators["credit_card"] = {
       }
       if (card !== "unknown") break;
     }
-    field.setAttribute("data-fv-card", card);
+    field.dataset.fvCard = card;
     const digits = value.split("").map(Number);
     if (digits.length < min || digits.length > max) return false;
     return luhn(digits) === 0;
@@ -91,18 +90,16 @@ configuration.validators["cvv"] = {
   validatorFunction: function (value, form, field, options, lang) {
     this.invalidMessage = lang.inv_cvv;
     if (/\D/.test(value)) return false;
-    const target = field.getAttribute("data-fv-target") ?? "";
+    const target = field.dataset.fvTarget ?? "";
     if (target.trim() === "") return false;
-    const creditCard = document
-      .querySelector<
-        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-      >(target)
-      ?.getAttribute("data-fv-card");
+    const creditCard = document.querySelector<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >(target)?.dataset.fvCard;
     if (!creditCard) return false;
-    if (creditCard !== "unknown") {
-      return cardInfo[creditCard].cvv === value.length;
-    } else {
+    if (creditCard === "unknown") {
       return value.length < 3 || value.length > 4;
+    } else {
+      return cardInfo[creditCard].cvv === value.length;
     }
   },
   invalidMessage: "",

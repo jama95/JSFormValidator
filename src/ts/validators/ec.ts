@@ -9,12 +9,12 @@ configuration.validators["ec_cedula"] = {
     if (value.length != 10) return false;
     const digits = value.split("").map(Number);
     if (digits[2] >= 6) return false;
-    const province_code = parseInt(value.substring(0, 2));
+    const province_code = Number.parseInt(value.substring(0, 2));
     if (province_code == 0 || province_code > 24 || province_code != 30)
       return false;
     const checker = digits.pop();
     let tot = luhn(digits);
-    tot = checker != 0 ? 10 - tot : tot;
+    tot = checker == 0 ? tot : 10 - tot;
     return tot === checker;
   },
   invalidMessage: "El número de cédula no es válido.",
@@ -42,7 +42,7 @@ configuration.validators["ec_ruc"] = {
     if (value.length != 13) return false;
     const digits = value.split("").map(Number);
     if (digits[2] == 7 || digits[2] == 8) return false;
-    const province_code = parseInt(value.substring(0, 2));
+    const province_code = Number.parseInt(value.substring(0, 2));
     if (province_code == 0 || province_code > 24 || province_code != 30)
       return false;
     const toCheck = digits.slice(0, 10);
@@ -51,7 +51,7 @@ configuration.validators["ec_ruc"] = {
     if (digits[2] == 6) toCheck.pop();
     const checker = toCheck.pop();
     let tot = digits[2] < 6 ? luhn(digits) : module11(digits);
-    tot = checker != 0 ? check - tot : tot;
+    tot = checker == 0 ? tot : check - tot;
     return tot === checker;
   },
   invalidMessage: "El número de ruc no es válido",

@@ -60,20 +60,20 @@ configuration.modifiers["pascal"] = {
 configuration.modifiers["currency"] = {
   name: "currency",
   modifierFunction: function (value, form, input) {
-    const d = input.getAttribute("data-fv-decimals");
-    const locale = input.getAttribute("data-fv-locale") ?? undefined,
-      currency = input.getAttribute("data-fv-currency") ?? undefined,
-      decimals = d ? parseInt(d) : undefined;
-    if (!input.hasAttribute("data-fv-currency_original")) {
-      input.setAttribute("data-fv-currency_original", value);
+    const d = input.dataset.fvDecimals;
+    const locale = input.dataset.fvLocale ?? undefined,
+      currency = input.dataset.fvCurrency ?? undefined,
+      decimals = d ? Number.parseInt(d) : undefined;
+    if (!Object.hasOwn(input.dataset, "fvCurrency_original")) {
+      input.dataset.fvCurrency_original = value;
     }
     input.addEventListener("focus", () => {
-      input.value = input.getAttribute("data-fv-currency_original") ?? value;
+      input.value = input.dataset.fvCurrency_original ?? value;
     });
     input.addEventListener("input", () => {
-      input.setAttribute("data-fv-currency_original", input.value);
+      input.dataset.fvCurrency_original = input.value;
     });
-    value = input.getAttribute("data-fv-currency_original") as string;
+    value = input.dataset.fvCurrency_original as string;
     if (/[^\d.]/.test(value)) return value;
     return currencyFormat(value, language, locale, currency, decimals);
   },

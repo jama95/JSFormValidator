@@ -9,7 +9,7 @@ configuration.validators["file_size"] = {
     if (field instanceof HTMLInputElement && field.type == "file") {
       const files = field.files;
       if (files) {
-        const sizeSTR = field.getAttribute("data-fv-file_max_size") ?? "5MB";
+        const sizeSTR = field.dataset.fvFile_max_size ?? "5MB";
         const maxSize = sizeStringToBytes(sizeSTR);
         let check = true;
         for (const file of Array.from(files)) {
@@ -38,16 +38,16 @@ configuration.validators["file_type"] = {
     if (field instanceof HTMLInputElement && field.type === "file") {
       const files = field.files;
       if (files) {
-        const typeList = (field.getAttribute("data-fv-file_type") ?? "").split(
-          /[,|-]+\s*|\s+/
+        const typeList = (field.dataset.fvFile_type ?? "").split(
+          /[,|-]+\s*|\s+/,
         );
         const check = Array.from(files).every((file) =>
-          typeList.includes(file.type)
+          typeList.includes(file.type),
         );
         if (!check) {
           this.invalidMessage = lang.inv_file_type.replace(
             "{type}",
-            `(${typeList.join(", ")})`
+            `(${typeList.join(", ")})`,
           );
         }
         return check;
@@ -67,18 +67,18 @@ configuration.validators["file_extension"] = {
     if (field instanceof HTMLInputElement && field.type === "file") {
       const files = field.files;
       if (files) {
-        const extensionList = (
-          field.getAttribute("data-fv-file_extension") ?? ""
-        ).split(/[,|-]+\s*|\s+/);
+        const extensionList = (field.dataset.fvFile_extension ?? "").split(
+          /[,|-]+\s*|\s+/,
+        );
         const check = Array.from(files).every((file) =>
           extensionList.includes(
-            file.name.slice(file.name.lastIndexOf(".") + 1)
-          )
+            file.name.slice(file.name.lastIndexOf(".") + 1),
+          ),
         );
         if (!check) {
           this.invalidMessage = lang.inv_file_extension.replace(
             "{extension}",
-            `(${extensionList.join(", ")})`
+            `(${extensionList.join(", ")})`,
           );
         }
         return check;
@@ -97,7 +97,7 @@ configuration.asyncValidators["image_dimension"] = {
     this.invalidMessage = lang.notConfirmed;
     if (!(field instanceof HTMLInputElement && field.type === "file"))
       return false;
-    const dimension = field.getAttribute("data-fv-image_dimension") ?? "";
+    const dimension = field.dataset.fvImage_dimension ?? "";
     if (dimension.trim().length === 0) return false;
     const files = field.files;
     if (!files) return false;
@@ -129,7 +129,7 @@ configuration.asyncValidators["image_height"] = {
     this.invalidMessage = lang.notConfirmed;
     if (!(field instanceof HTMLInputElement && field.type === "file"))
       return false;
-    const height = field.getAttribute("data-fv-image_height") ?? "";
+    const height = field.dataset.fvImage_height ?? "";
     if (height.trim().length === 0) return false;
     const files = field.files;
     if (!files) return false;
@@ -141,7 +141,7 @@ configuration.asyncValidators["image_height"] = {
         break;
       }
       const dim = await getImageDimensions(file);
-      check = dim[0] <= parseFloat(height);
+      check = dim[0] <= Number.parseFloat(height);
       if (!check) {
         this.invalidMessage = lang.inv_image_heigh.replace("{max}", height);
         break;
@@ -160,7 +160,7 @@ configuration.asyncValidators["image_width"] = {
     this.invalidMessage = lang.notConfirmed;
     if (!(field instanceof HTMLInputElement && field.type === "file"))
       return false;
-    const width = field.getAttribute("data-fv-image_width") ?? "";
+    const width = field.dataset.fvImage_width ?? "";
     if (width.trim().length === 0) return false;
     const files = field.files;
     if (!files) return false;
@@ -172,7 +172,7 @@ configuration.asyncValidators["image_width"] = {
         break;
       }
       const dim = await getImageDimensions(file);
-      check = dim[0] <= parseFloat(width);
+      check = dim[0] <= Number.parseFloat(width);
       if (!check) {
         this.invalidMessage = lang.inv_image_width.replace("{max}", width);
         break;

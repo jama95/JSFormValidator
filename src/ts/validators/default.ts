@@ -41,7 +41,7 @@ function setLengthMessage(
   multiple: boolean,
   checkbox: boolean,
   check: string[],
-  lang: Lang
+  lang: Lang,
 ): string {
   let lengthMessage = "";
   switch (check[0]) {
@@ -85,7 +85,7 @@ configuration.validators["length"] = {
   name: "length",
   validatorFunction: function (value, form, field, options, lang) {
     this.invalidMessage = lang.notConfirmed;
-    const length = field.getAttribute("data-fv-length");
+    const length = field.dataset.fvLength;
     let r;
     if (!length) {
       this.invalidMessage = lang.notConfirmed;
@@ -105,7 +105,7 @@ configuration.validators["length"] = {
     }
     if (field instanceof HTMLInputElement && field.type == "checkbox") {
       val = document.querySelectorAll(
-        `input[name=${field.name}]:checked`
+        `input[name=${field.name}]:checked`,
       ).length;
       checkbox = true;
     }
@@ -124,7 +124,7 @@ configuration.validators["length"] = {
           multiple,
           checkbox,
           check,
-          lang
+          lang,
         );
         r = false;
         break;
@@ -157,7 +157,7 @@ function setNumberMessage(check: string[], lang: Lang): string {
     case "range":
       return lang.inv_numberRange.replace(
         "{range}",
-        `${check[1]}::${check[2]}`
+        `${check[1]}::${check[2]}`,
       );
     case "equal":
       return lang.inv_numberEqual.replace("{equal}", check[1]);
@@ -173,9 +173,7 @@ configuration.validators["numbers"] = {
   name: "numbers",
   validatorFunction: function (value, form, field, options, lang) {
     this.invalidMessage = lang.notConfirmed;
-    const allow = (field.getAttribute("data-fv-numbers_allow") ?? "").split(
-      /[,|-]+\s*|\s+/
-    );
+    const allow = (field.dataset.fvNumbers_allow ?? "").split(/[,|-]+\s*|\s+/);
     let r = true;
     if (allow.includes("noPositive") && !value.includes("-")) r = false;
     if (
@@ -186,9 +184,9 @@ configuration.validators["numbers"] = {
       r = false;
     if (!allow.includes("decimal") && value.includes(".")) r = false;
     if (/^-?\d+(\x2E\d+)?$/.test(value)) {
-      const range = field.getAttribute("data-fv-numbers_range") ?? "",
-        step = field.getAttribute("data-fv-numbers_step") ?? "",
-        check = checkRangeStep(allow, parseFloat(value), range, step);
+      const range = field.dataset.fvNumbers_range ?? "",
+        step = field.dataset.fvNumbers_step ?? "",
+        check = checkRangeStep(allow, Number.parseFloat(value), range, step);
       if (check[0][0] && check[0][0] != "ok") {
         this.invalidMessage = setNumberMessage(check[0], lang);
         r = false;
@@ -210,7 +208,7 @@ configuration.validators["letters"] = {
   name: "letters",
   validatorFunction: function (value, form, field, options, lang) {
     this.invalidMessage = lang.notConfirmed;
-    const allow = field.getAttribute("data-fv-letters_allow") ?? "";
+    const allow = field.dataset.fvLetters_allow ?? "";
     const regex = new RegExp(`^[a-z${escapeRegExp(allow)}]+$`, "i");
     if (!regex.test(value)) {
       if (allow.length == 0)
@@ -249,8 +247,8 @@ configuration.validators["alphanumeric"] = {
   name: "alphanumeric",
   validatorFunction: function (value, form, field, options, lang) {
     this.invalidMessage = lang.notConfirmed;
-    const allow = field.getAttribute("data-fv-letters_allow") ?? "";
-    const regex = new RegExp(`^[a-z\\d${escapeRegExp(allow)}]+$`, "i");
+    const allow = field.dataset.fvLetters_allow ?? "";
+    const regex = new RegExp(String.raw`^[a-z\d${escapeRegExp(allow)}]+$`, "i");
     if (!regex.test(value)) {
       this.invalidMessage = setAlphanumericMessage(allow, lang);
       return false;
@@ -266,8 +264,8 @@ configuration.validators["regex"] = {
   name: "regex",
   validatorFunction: function (value, form, field, options, lang) {
     this.invalidMessage = lang.notConfirmed;
-    const regex = field.getAttribute("data-fv-regex") ?? "";
-    const flags = field.getAttribute("data-fv-flags") ?? undefined;
+    const regex = field.dataset.fvRegex ?? "";
+    const flags = field.dataset.fvFlags ?? undefined;
     let r;
     if (!regex) r = false;
     r = new RegExp(regex, flags).test(value);
@@ -283,11 +281,11 @@ configuration.validators["telephone"] = {
   name: "telephone",
   validatorFunction: function (value, form, field, options, lang) {
     this.invalidMessage = lang.notConfirmed;
-    const format = field.getAttribute("data-fv-telephone_format") ?? "EC";
+    const format = field.dataset.fvTelephone_format ?? "EC";
     let r = false;
     if (telephoneFormats[format])
       r = new RegExp(
-        telephoneFormats[format].join("|").replace(/\//g, "")
+        telephoneFormats[format].join("|").replaceAll("/", ""),
       ).test(value);
     if (!r) this.invalidMessage = lang.inv_telephone;
     return r;
@@ -297,25 +295,19 @@ configuration.validators["telephone"] = {
 };
 
 // Regex compatible with "test" and "match"
-const RGB =
-  "(rgb\\x28(25[0-5]|2[0-4]\\d|1?\\d{1,2})\\s*\\x2C\\s*(25[0-5]|2[0-4]\\d|1?\\d{1,2})\\s*\\x2C\\s*(25[0-5]|2[0-4]\\d|1?\\d{1,2})\\x29)";
-const RGBA =
-  "(rgba\\x28(25[0-5]|2[0-4]\\d|1?\\d{1,2})\\s*\\x2C\\s*(25[0-5]|2[0-4]\\d|1?\\d{1,2})\\s*\\x2C\\s*(25[0-5]|2[0-4]\\d|1?\\d{1,2})\\s*\\x2C\\s*(0?\\x2E\\d+|[01])\\x29)";
-const HSL =
-  "(hsl\\x28(360|3[0-5]\\d|[12]?\\d{1,2})\\s?\\x2C\\s?(100|[1-9]?\\d)\\x25\\s?\\x2C\\s?(100|[1-9]?\\d)\\x25\\x29)";
-const HSLA =
-  "(hsla\\x28(360|3[0-5]\\d|[12]?\\d{1,2})\\s?\\x2C\\s?(100|[1-9]?\\d)\\x25\\s?\\x2C\\s?(100|[1-9]?\\d)\\x25\\s*\\x2C\\s*(0\\x2E\\d+|[01])\\x29)";
-const CMYK =
-  "(CMYK\\x28(100|[1-9]?\\d)\\x25\\s?\\x2C\\s?(100|[1-9]?\\d)\\x25\\s?\\x2C\\s?(100|[1-9]?\\d)\\x25\\s*\\x2C\\s*(100|[1-9]?\\d)\\x25\\x29)";
-const HEX =
-  "((?:\\x23(?:[a-f\\d]{2}){3}(?:[a-f\\d]{2})?)|(?:\\x23[a-f\\d]{3}[a-f\\d]?))";
+const RGB = String.raw`(rgb\x28(25[0-5]|2[0-4]\d|1?\d{1,2})\s*\x2C\s*(25[0-5]|2[0-4]\d|1?\d{1,2})\s*\x2C\s*(25[0-5]|2[0-4]\d|1?\d{1,2})\x29)`;
+const RGBA = String.raw`(rgba\x28(25[0-5]|2[0-4]\d|1?\d{1,2})\s*\x2C\s*(25[0-5]|2[0-4]\d|1?\d{1,2})\s*\x2C\s*(25[0-5]|2[0-4]\d|1?\d{1,2})\s*\x2C\s*(0?\x2E\d+|[01])\x29)`;
+const HSL = String.raw`(hsl\x28(360|3[0-5]\d|[12]?\d{1,2})\s?\x2C\s?(100|[1-9]?\d)\x25\s?\x2C\s?(100|[1-9]?\d)\x25\x29)`;
+const HSLA = String.raw`(hsla\x28(360|3[0-5]\d|[12]?\d{1,2})\s?\x2C\s?(100|[1-9]?\d)\x25\s?\x2C\s?(100|[1-9]?\d)\x25\s*\x2C\s*(0\x2E\d+|[01])\x29)`;
+const CMYK = String.raw`(CMYK\x28(100|[1-9]?\d)\x25\s?\x2C\s?(100|[1-9]?\d)\x25\s?\x2C\s?(100|[1-9]?\d)\x25\s*\x2C\s*(100|[1-9]?\d)\x25\x29)`;
+const HEX = String.raw`((?:\x23(?:[a-f\d]{2}){3}(?:[a-f\d]{2})?)|(?:\x23[a-f\d]{3}[a-f\d]?))`;
 
 /* Checks if the field value matches with the specified color formats   */
 configuration.validators["color"] = {
   name: "color",
   validatorFunction: function (value, form, field, options, lang) {
     this.invalidMessage = lang.notConfirmed;
-    const colors = field.getAttribute("data-fv-colors") ?? "";
+    const colors = field.dataset.fvColors ?? "";
     const regex: string[] = [];
     let r = false;
     if (colors.trim().length == 0)
@@ -328,7 +320,7 @@ configuration.validators["color"] = {
     }
     const check = new RegExp(
       regex.length > 1 ? regex.join("|") : regex[0],
-      "i"
+      "i",
     );
     if (check.test(value)) r = true;
     if (!r) this.invalidMessage = lang.inv_color;

@@ -31,9 +31,9 @@ import { escapeRegExp, notAccept } from "./utils";
  * @class FormValidate
  */
 class FormValidate {
-  private conf: Configuration;
-  private opt: Options;
-  private lang: Lang;
+  private readonly conf: Configuration;
+  private readonly opt: Options;
+  private readonly lang: Lang;
   constructor(opt?: Partial<Options>, lang?: Lang) {
     this.conf = configuration;
     this.conf.language = { ...language, ...lang };
@@ -54,7 +54,7 @@ class FormValidate {
     form: HTMLFormElement,
     field: ValidationField,
     state: boolean,
-    options: Options
+    options: Options,
   ): void {
     let fns: ValidatorEvent[] = [];
     switch (event) {
@@ -91,7 +91,7 @@ class FormValidate {
     form: HTMLFormElement,
     options: Options,
     config: Configuration,
-    event: string
+    event: string,
   ): boolean {
     this.triggerEvent("beforeValidate", form, field, false, options);
     const list = this.searchSyncValidators(field, options, config),
@@ -112,7 +112,7 @@ class FormValidate {
           form,
           field,
           options,
-          this.lang
+          this.lang,
         );
         if (r) this.triggerEvent("valid", form, field, true, options);
         else this.triggerEvent("invalid", form, field, false, options);
@@ -126,11 +126,11 @@ class FormValidate {
           config,
           this.lang,
           r,
-          config.validators[validator]
+          config.validators[validator],
         );
       } else {
         console.error(
-          `FormValidator: Failed to trigger the validator: ${validator}, can not be found.`
+          `FormValidator: Failed to trigger the validator: ${validator}, can not be found.`,
         );
       }
       if (valid_invalid.includes(false)) break;
@@ -140,7 +140,7 @@ class FormValidate {
       form,
       field,
       !valid_invalid.includes(false),
-      options
+      options,
     );
     return !valid_invalid.includes(false);
   }
@@ -159,7 +159,7 @@ class FormValidate {
     form: HTMLFormElement,
     options: Options,
     config: Configuration,
-    event: string
+    event: string,
   ): Promise<boolean> {
     this.triggerEvent("beforeValidate", form, field, false, options);
     const list = this.searchAsyncValidators(field, options, config),
@@ -180,7 +180,7 @@ class FormValidate {
           form,
           field,
           options,
-          this.lang
+          this.lang,
         );
         if (r) this.triggerEvent("valid", form, field, true, options);
         else this.triggerEvent("invalid", form, field, false, options);
@@ -194,11 +194,11 @@ class FormValidate {
           config,
           this.lang,
           r,
-          config.asyncValidators[validator]
+          config.asyncValidators[validator],
         );
       } else {
         console.error(
-          `FormValidator: Failed to trigger the validator: ${validator}, can not be found.`
+          `FormValidator: Failed to trigger the validator: ${validator}, can not be found.`,
         );
       }
       if (valid_invalid.includes(false)) break;
@@ -208,7 +208,7 @@ class FormValidate {
       form,
       field,
       !valid_invalid.includes(false),
-      options
+      options,
     );
     return !valid_invalid.includes(false);
   }
@@ -227,10 +227,10 @@ class FormValidate {
     not: string,
     options: Options,
     config: Configuration,
-    event: string
+    event: string,
   ): boolean {
     const fields = form.querySelectorAll<ValidationField>(
-        `textarea, select, input:not(${not})`
+        `textarea, select, input:not(${not})`,
       ),
       valid: boolean[] = [];
     fields.forEach((field) => {
@@ -255,17 +255,17 @@ class FormValidate {
     not: string,
     options: Options,
     config: Configuration,
-    event: string
+    event: string,
   ): Promise<boolean> {
     const fields = form.querySelectorAll<ValidationField>(
-        `textarea, select, input:not(${not})`
+        `textarea, select, input:not(${not})`,
       ),
       valid: boolean[] = [];
     for (const element of Array.from(fields)) {
       const field = element;
       if (this.validateFieldController(field, "submit", options))
         valid.push(
-          await this.validateFieldAsync(field, form, options, config, event)
+          await this.validateFieldAsync(field, form, options, config, event),
         );
     }
     if (valid.length == 0) valid.push(true);
@@ -285,7 +285,7 @@ class FormValidate {
     form: HTMLFormElement,
     event: string,
     options: Options,
-    config: Configuration
+    config: Configuration,
   ): void {
     const modifiersList = field.getAttribute(options.fieldModifyAttribute),
       isForModifier =
@@ -293,7 +293,7 @@ class FormValidate {
           !["search", "checkbox", "radio", "file"].includes(field.type)) ||
         field instanceof HTMLTextAreaElement;
     if (!isForModifier) return;
-    const list = !modifiersList ? [] : modifiersList.split(/[,|-]+\s*|\s+/);
+    const list = modifiersList ? modifiersList.split(/[,|-]+\s*|\s+/) : [];
     let value = field.value;
     for (const modifier of list) {
       if (config.modifiers[modifier]) {
@@ -307,11 +307,11 @@ class FormValidate {
           form,
           field,
           options,
-          this.lang
+          this.lang,
         );
       } else {
         console.error(
-          `FormValidator: Failed to trigger the modifier: ${modifier}, can not be found.`
+          `FormValidator: Failed to trigger the modifier: ${modifier}, can not be found.`,
         );
       }
     }
@@ -329,28 +329,28 @@ class FormValidate {
     form: HTMLFormElement,
     field: ValidationField,
     options: Options,
-    config: Configuration
+    config: Configuration,
   ): void {
-    const depending = field.getAttribute("data-fv-depends-on");
+    const depending = field.dataset.fvDependsOn;
     if (!depending) return;
     const target = form.querySelector<ValidationField>(`[name=${depending}]`);
     const fieldName =
       form.querySelector(`label[for=${field.name}]`)?.textContent.trim() ??
       field.name;
     if (target) {
-      field.setAttribute("data-fv-skip", "true");
+      field.dataset.fvSkip = "true";
       const validators =
         field.getAttribute(options.fieldValidateAttribute) ?? "";
       if (!validators.includes("required"))
         field.setAttribute(
           options.fieldValidateAttribute,
-          validators + "required"
+          validators + "required",
         );
-      target.setAttribute("data-fv-dependant", depending);
+      target.dataset.fvDependant = depending;
       const fEvent = field instanceof HTMLSelectElement ? "change" : "input";
-      const value = field.getAttribute("data-fv-depends-on-value") ?? "";
+      const value = field.dataset.fvDependsOnValue ?? "";
       field.addEventListener(fEvent, function () {
-        field.setAttribute("data-fv-skip", "true");
+        field.dataset.fvSkip = "true";
         removeStyles(field, form, options);
         removeInlineMessages(field, field.form as HTMLFormElement);
         if (config.validMessages[form.id][fieldName])
@@ -363,13 +363,11 @@ class FormValidate {
         form
           .querySelector(`div[data-fv-top-valid] li[for=${fieldName}]`)
           ?.remove();
-        if (target.value.trim().length > 0)
-          field.setAttribute("data-fv-skip", "false");
+        if (target.value.trim().length > 0) field.dataset.fvSkip = "false";
         if (value.length > 0)
-          if (value != target.value) field.setAttribute("data-fv-skip", "true");
+          if (value != target.value) field.dataset.fvSkip = "true";
       });
       const tEvent = field instanceof HTMLSelectElement ? "change" : "input";
-      const _self = this;
       target.addEventListener(tEvent, function () {
         removeStyles(field, form, options);
         removeInlineMessages(field, field.form as HTMLFormElement);
@@ -387,11 +385,17 @@ class FormValidate {
           field.classList.contains(options.validClass) ||
           field.classList.contains(options.invalidClass)
         )
-          _self.validateField(field, form, options, config, tEvent);
+          FormValidate.prototype.validateField(
+            field,
+            form,
+            options,
+            config,
+            tEvent,
+          );
       });
     } else {
       console.error(
-        `FormValidator: Failed to set the dependant validation on '${fieldName}', the target field '${depending}' can not be found.`
+        `FormValidator: Failed to set the dependant validation on '${fieldName}', the target field '${depending}' can not be found.`,
       );
     }
   }
@@ -407,18 +411,18 @@ class FormValidate {
     form: HTMLFormElement,
     field: ValidationField,
     options: Options,
-    config: Configuration
+    config: Configuration,
   ): void {
-    if (field.hasAttribute("data-fv-depends-on")) return;
-    const optional = field.getAttribute("data-fv-optional") ?? "";
+    if (Object.hasOwn(field.dataset, "fvDependsOn")) return;
+    const optional = field.dataset.fvOptional ?? "";
     if (optional == "true") {
-      field.setAttribute("data-fv-skip", "true");
+      field.dataset.fvSkip = "true";
       const validators =
         field.getAttribute(options.fieldValidateAttribute) ?? "";
       if (!validators.includes("required"))
         field.setAttribute(
           options.fieldValidateAttribute,
-          validators + "required"
+          validators + "required",
         );
       const event = field instanceof HTMLSelectElement ? "change" : "input";
       field.addEventListener(event, function () {
@@ -427,9 +431,9 @@ class FormValidate {
             ? field.checked
             : field.value.trim().length > 0
         )
-          field.setAttribute("data-fv-skip", "false");
+          field.dataset.fvSkip = "false";
         else {
-          field.setAttribute("data-fv-skip", "true");
+          field.dataset.fvSkip = "true";
           removeStyles(field, form, options);
           removeInlineMessages(field, field.form as HTMLFormElement);
           if (config.validMessages[form.id][field.name])
@@ -454,10 +458,10 @@ class FormValidate {
   private validateFieldController(
     field: ValidationField,
     event: string,
-    options: Options
+    options: Options,
   ): boolean {
-    const isIgnored = field.getAttribute("data-fv-ignored") ?? "false";
-    const isSkipped = field.getAttribute("data-fv-skip") ?? "false";
+    const isIgnored = field.dataset.fvIgnored ?? "false";
+    const isSkipped = field.dataset.fvSkip ?? "false";
     if (isIgnored == "true" || isSkipped == "true") return false;
     const isCheckOrRadio =
       field instanceof HTMLInputElement &&
@@ -487,10 +491,10 @@ class FormValidate {
   private domFieldsFeatures(
     form: HTMLFormElement,
     field: ValidationField,
-    options: Options
+    options: Options,
   ): void {
     const fieldsToIgnore = form.querySelectorAll<HTMLInputElement>(
-      notAccept(false, false)
+      notAccept(false, false),
     );
     if (
       field instanceof HTMLInputElement &&
@@ -504,7 +508,7 @@ class FormValidate {
         inputSuggestion(
           field,
           suggestions.split(/[,|-]+\s*|\s+/),
-          options.suggestionConfig
+          options.suggestionConfig,
         );
       }
       if (options.addPasswordInfo) {
@@ -516,8 +520,8 @@ class FormValidate {
       if (restriction)
         textAreaLengthRestriction(
           field,
-          parseInt(restriction, 10),
-          options.lengthRestrictInfo
+          Number.parseInt(restriction, 10),
+          options.lengthRestrictInfo,
         );
     }
     if (options.showHelpMessagesOnFocus) {
@@ -537,10 +541,10 @@ class FormValidate {
   private ignoreField(
     form: HTMLFormElement,
     field: ValidationField,
-    options: Options
+    options: Options,
   ): void {
     const fieldsToIgnore = form.querySelectorAll<HTMLInputElement>(
-      notAccept(false, false)
+      notAccept(false, false),
     );
     if (
       field instanceof HTMLInputElement &&
@@ -554,12 +558,12 @@ class FormValidate {
     } else if (typeof options.ignoredFieldsNames == "string") {
       list = options.ignoredFieldsNames.split(/[,|-]+\s*|\s+/);
     }
-    if (list.indexOf(name) > -1) {
-      field.setAttribute("data-fv-ignored", "true");
+    if (list.includes(name)) {
+      field.dataset.fvIgnored = "true";
     } else {
-      field.setAttribute("data-fv-ignored", "false");
+      field.dataset.fvIgnored = "false";
     }
-    field.setAttribute("data-fv-skip", "false");
+    field.dataset.fvSkip = "false";
   }
 
   /**
@@ -572,13 +576,13 @@ class FormValidate {
   private searchAsyncValidators(
     field: ValidationField,
     options: Options,
-    config: Configuration
+    config: Configuration,
   ): string[] {
     const asyncValidators = Object.keys(config.asyncValidators),
       validatorsList = field.getAttribute(options.fieldValidateAttribute),
-      list = !validatorsList ? [] : validatorsList.split(/[,|-]+\s*|\s+/);
+      list = validatorsList ? validatorsList.split(/[,|-]+\s*|\s+/) : [];
     return asyncValidators.filter((asyncValidator) =>
-      list.includes(asyncValidator)
+      list.includes(asyncValidator),
     );
   }
 
@@ -592,13 +596,13 @@ class FormValidate {
   private searchSyncValidators(
     field: ValidationField,
     options: Options,
-    config: Configuration
+    config: Configuration,
   ): string[] {
     const syncValidators = Object.keys(config.validators),
       validatorsList = field.getAttribute(options.fieldValidateAttribute),
-      list = !validatorsList ? [] : validatorsList.split(/[,|-]+\s*|\s+/);
+      list = validatorsList ? validatorsList.split(/[,|-]+\s*|\s+/) : [];
     return syncValidators.filter((syncValidator) =>
-      list.includes(syncValidator)
+      list.includes(syncValidator),
     );
   }
 
@@ -613,10 +617,10 @@ class FormValidate {
     form: HTMLFormElement,
     field: ValidationField,
     options: Options,
-    config: Configuration
+    config: Configuration,
   ): void {
     const fieldsToIgnore = form.querySelectorAll<HTMLInputElement>(
-      notAccept(options.validateHiddenFields, false)
+      notAccept(options.validateHiddenFields, false),
     );
     if (
       field instanceof HTMLInputElement &&
@@ -672,7 +676,7 @@ class FormValidate {
   private addEventListenersToForm(
     form: HTMLFormElement,
     options: Options,
-    config: Configuration
+    config: Configuration,
   ): void {
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -681,7 +685,7 @@ class FormValidate {
         notAccept(options.validateHiddenFields, false),
         options,
         config,
-        "submit"
+        "submit",
       );
       if (isValid)
         isValid = await this.validateAllFieldsAsync(
@@ -689,7 +693,7 @@ class FormValidate {
           notAccept(options.validateHiddenFields, false),
           options,
           config,
-          "submit"
+          "submit",
         );
       form.setAttribute("valid-state", isValid ? "validForm" : "invalidForm");
       if (!isValid) {
@@ -724,7 +728,7 @@ class FormValidate {
       form.noValidate = true;
       this.addEventListenersToForm(form, options, config);
       const fields = form.querySelectorAll<ValidationField>(
-        "input, textarea, select"
+        "input, textarea, select",
       );
       fields.forEach((field) => {
         this.domFieldsFeatures(form, field, options);
@@ -745,7 +749,7 @@ class FormValidate {
   public setSuggestions(
     input: string | HTMLInputElement,
     words: string[],
-    config?: Suggestion
+    config?: Suggestion,
   ): void {
     let i: HTMLInputElement | null = null;
     if (!(input instanceof HTMLInputElement)) {
@@ -753,12 +757,12 @@ class FormValidate {
       if (i) input = i;
       else {
         console.error(
-          `FormValidator: Failed to set the suggestions, the input '${input}' can not be found.`
+          `FormValidator: Failed to set the suggestions, the input '${input}' can not be found.`,
         );
         return;
       }
     }
-    if (!config) config = options.suggestionConfig;
+    config ??= options.suggestionConfig;
     inputSuggestion(input, words, config);
   }
 
@@ -771,7 +775,7 @@ class FormValidate {
   public setTextAreaLengthRestriction(
     TextArea: string | HTMLTextAreaElement,
     max: number,
-    info?: string
+    info?: string,
   ): void {
     let t: HTMLTextAreaElement | null = null;
     if (!(TextArea instanceof HTMLTextAreaElement)) {
@@ -779,7 +783,7 @@ class FormValidate {
       if (t) TextArea = t;
       else {
         console.error(
-          `FormValidator: Failed to set the text length restriction, the textarea '${TextArea}' can not be found.`
+          `FormValidator: Failed to set the text length restriction, the textarea '${TextArea}' can not be found.`,
         );
         return;
       }
@@ -800,7 +804,7 @@ class FormValidate {
       if (i) input = i;
       else {
         console.error(
-          `FormValidator: Failed to set the password info, the input '${input}' can not be found.`
+          `FormValidator: Failed to set the password info, the input '${input}' can not be found.`,
         );
         return;
       }
@@ -818,12 +822,11 @@ class FormValidate {
     const opt = { ...this.opt, ...options },
       conf = this.conf;
     let f: string;
-    if (!form) {
-      f = opt.form;
-    } else {
+    if (form) {
       f = form ?? "";
-
       f = f.trim().length > 0 ? f : opt.form;
+    } else {
+      f = opt.form;
     }
     opt.form = f;
     this.setUpFV(opt, conf);
@@ -844,7 +847,7 @@ class FormValidate {
       console.error(
         `FormValidator: Failed to set the validation config on the from, '${
           Object.keys(json)[0]
-        }' can not be found.`
+        }' can not be found.`,
       );
       return;
     }
@@ -855,7 +858,7 @@ class FormValidate {
       const field = form.querySelector<ValidationField>(fld);
       if (!field) {
         console.error(
-          `FormValidator: Failed to set the validation on the field, '${fld}' can not be found.`
+          `FormValidator: Failed to set the validation on the field, '${fld}' can not be found.`,
         );
         continue;
       }
@@ -882,41 +885,41 @@ class FormValidate {
   public addFormValidationEvent(
     event: string,
     field: string,
-    eventFunction: ValidatorEvent
+    eventFunction: ValidatorEvent,
   ): void {
     const element = document.getElementById(field) as ValidationField;
-    if (element) {
-      switch (event) {
-        case "beforeValidate":
-          if (configuration.onBeforeValidate[element.name])
-            configuration.onBeforeValidate[element.name] = [];
-          configuration.onBeforeValidate[element.name].push(eventFunction);
-          break;
-        case "valid":
-          if (configuration.onValid[element.name])
-            configuration.onValid[element.name] = [];
-          configuration.onValid[element.name].push(eventFunction);
-          break;
-        case "invalid":
-          if (configuration.onInvalid[element.name])
-            configuration.onInvalid[element.name] = [];
-          configuration.onInvalid[element.name].push(eventFunction);
-          break;
-        case "afterValidate":
-          if (configuration.onAfterValidate[element.name])
-            configuration.onAfterValidate[element.name] = [];
-          configuration.onAfterValidate[element.name].push(eventFunction);
-          break;
-        default:
-          console.error(
-            `FormValidator: Failed to add the event, '${event}' is not a valid event.`
-          );
-          break;
-      }
-    } else {
+    if (!element) {
       console.error(
-        `FormValidator: Failed to add the event,  the field named '${field}' cant not be found.`
+        `FormValidator: Failed to add the event,  the field named '${field}' cant not be found.`,
       );
+      return;
+    }
+    switch (event) {
+      case "beforeValidate":
+        if (configuration.onBeforeValidate[element.name])
+          configuration.onBeforeValidate[element.name] = [];
+        configuration.onBeforeValidate[element.name].push(eventFunction);
+        break;
+      case "valid":
+        if (configuration.onValid[element.name])
+          configuration.onValid[element.name] = [];
+        configuration.onValid[element.name].push(eventFunction);
+        break;
+      case "invalid":
+        if (configuration.onInvalid[element.name])
+          configuration.onInvalid[element.name] = [];
+        configuration.onInvalid[element.name].push(eventFunction);
+        break;
+      case "afterValidate":
+        if (configuration.onAfterValidate[element.name])
+          configuration.onAfterValidate[element.name] = [];
+        configuration.onAfterValidate[element.name].push(eventFunction);
+        break;
+      default:
+        console.error(
+          `FormValidator: Failed to add the event, '${event}' is not a valid event.`,
+        );
+        break;
     }
   }
 
@@ -928,7 +931,7 @@ class FormValidate {
     const list = Object.keys(this.conf.validators);
     if (list.includes(validator.name)) {
       console.error(
-        `FormValidator: Failed to add the validator, the name '${validator.name}' is already in use.`
+        `FormValidator: Failed to add the validator, the name '${validator.name}' is already in use.`,
       );
       return;
     }
@@ -943,7 +946,7 @@ class FormValidate {
     const list = Object.keys(this.conf.asyncValidators);
     if (list.includes(validator.name)) {
       console.error(
-        `FormValidator: Failed to add the validator, the name '${validator.name}' is already in use.`
+        `FormValidator: Failed to add the validator, the name '${validator.name}' is already in use.`,
       );
       return;
     }
@@ -958,7 +961,7 @@ class FormValidate {
     const list = Object.keys(this.conf.modifiers);
     if (list.includes(modifier.name)) {
       console.error(
-        `FormValidator: Failed to add the modifier, the name '${modifier.name}' is already in use.`
+        `FormValidator: Failed to add the modifier, the name '${modifier.name}' is already in use.`,
       );
       return;
     }
@@ -976,7 +979,7 @@ class FormValidate {
     input: string | HTMLInputElement,
     type: string,
     reject?: string,
-    accept?: string
+    accept?: string,
   ): void {
     let i: HTMLInputElement | null = null;
     if (!(input instanceof HTMLInputElement)) {
@@ -984,7 +987,7 @@ class FormValidate {
       if (i) input = i;
       else {
         console.error(
-          `FormValidator: Failed to set the characters restriction on the input, '${input}' can not be found.`
+          `FormValidator: Failed to set the characters restriction on the input, '${input}' can not be found.`,
         );
         return;
       }
@@ -1000,7 +1003,9 @@ class FormValidate {
         acceptRegexp = new RegExp(`[a-zA-Z${accept ?? ""}]`);
         break;
       case "text":
-        acceptRegexp = new RegExp(`[a-zA-Z0-9\\s\\,\\;\\.${accept ?? ""}]`);
+        acceptRegexp = new RegExp(
+          String.raw`[a-zA-Z0-9\s\,\;\.${accept ?? ""}]`,
+        );
         break;
       case "none":
         acceptRegexp = new RegExp(`[${accept ?? ""}]`);
@@ -1009,7 +1014,7 @@ class FormValidate {
         acceptRegexp = /[.]/;
         break;
     }
-    const acceptDefault = [
+    const acceptDefault = new Set([
       "ArrowUp",
       "ArrowDown",
       "ArrowLeft",
@@ -1026,24 +1031,24 @@ class FormValidate {
       "End",
       "PageUp",
       "PageDown",
-    ];
+    ]);
     const rejectRegexp = new RegExp(`[${reject}]`);
     input.addEventListener("keydown", function (e) {
       if (
-        !acceptDefault.includes(e.key) &&
+        !acceptDefault.has(e.key) &&
         (!acceptRegexp.test(e.key) || rejectRegexp.test(e.key))
       )
         e.preventDefault();
     });
     input.addEventListener("input", function (e) {
       if (!acceptRegexp.test(input.value) || rejectRegexp.test(input.value))
-        input.value = input.value.replace(
+        input.value = input.value.replaceAll(
           new RegExp(`[^${acceptRegexp.source}]`, "g"),
-          ""
+          "",
         );
-      input.value = input.value.replace(
+      input.value = input.value.replaceAll(
         new RegExp(`[${rejectRegexp.source}]`, "g"),
-        ""
+        "",
       );
     });
   }
@@ -1057,7 +1062,7 @@ class FormValidate {
  */
 export function FormValidator(
   options?: Partial<Options>,
-  lang?: Lang
+  lang?: Lang,
 ): FormValidate {
   return new FormValidate(options, lang);
 }

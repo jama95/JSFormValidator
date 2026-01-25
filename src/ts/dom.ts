@@ -8,11 +8,7 @@ import {
   Configuration,
   AsyncValidator,
 } from "./types";
-import {
-  checkPasswordStrength,
-  escapeRegExp,
-  triggerMessageCallback,
-} from "./utils";
+import { checkPasswordStrength, escapeRegExp } from "./utils";
 
 /**
  * Restricts the number of characters in a TextArea and displays the information
@@ -23,9 +19,9 @@ import {
 export function textAreaLengthRestriction(
   TextArea: HTMLTextAreaElement,
   max: number,
-  info: string
+  info: string,
 ): void {
-  if (TextArea.hasAttribute("data-fv-length_restriction")) return;
+  if (Object.hasOwn(TextArea.dataset, "fvLength_restriction")) return;
   const container = document.createElement("div");
   container.classList.add("fv-textAreaLength");
   let remaining: number;
@@ -52,22 +48,22 @@ export function textAreaLengthRestriction(
       }
     position();
   };
-  container.style.backgroundColor = window.getComputedStyle(
-    document.getElementsByTagName("body")[0]
+  container.style.backgroundColor = globalThis.getComputedStyle(
+    document.getElementsByTagName("body")[0],
   ).backgroundColor;
   const position = function () {
     let left =
       TextArea.getBoundingClientRect().width -
       container.getBoundingClientRect().width -
       20;
-    left = left < 8 ? 8 : left;
+    left = Math.max(left, 8);
     container.style.marginLeft = `${left}px`;
     container.style.marginTop = `-${
       container.getBoundingClientRect().height / 2
     }px`;
   };
   TextArea.before(container);
-  TextArea.setAttribute("data-fv-length_restriction", "");
+  TextArea.dataset.fvLength_restriction = "";
   TextArea.addEventListener("input", characterCount);
   TextArea.dispatchEvent(new Event("input"));
   new ResizeObserver(position).observe(TextArea);
@@ -82,24 +78,23 @@ export function textAreaLengthRestriction(
 export function inputSuggestion(
   input: HTMLInputElement,
   words: string[],
-  settings: Suggestion
+  settings: Suggestion,
 ): void {
-  if (input.hasAttribute("data-fv-suggestions")) return;
+  if (Object.hasOwn(input.dataset, "fvSuggestions")) return;
   if (words.filter((w) => w.length > 0).length == 0) return;
   let currentFocus = -1;
   const datalist = document.createElement("datalist");
-  datalist.classList.add("fv-suggestions");
-  datalist.classList.add(settings.containerClass);
+  datalist.classList.add("fv-suggestions", settings.containerClass);
   datalist.style.maxHeight = settings.maxHeight;
   datalist.style.display = "none";
   datalist.setAttribute("target", `#${input.id}`);
   datalist.style.backgroundColor =
-    window.getComputedStyle(input).backgroundColor;
+    globalThis.getComputedStyle(input).backgroundColor;
   input.setAttribute("autocomplete", "off");
   input.setAttribute("list", "");
   const fillDatalist = function (words: string[]) {
     currentFocus = -1;
-    while (datalist.firstChild) datalist.removeChild(datalist.firstChild);
+    while (datalist.firstChild) datalist.firstChild.remove();
     for (const word of words) {
       const option = document.createElement("option");
       option.value = word;
@@ -120,7 +115,7 @@ export function inputSuggestion(
   };
   input.addEventListener("blur", function () {
     const no = document.querySelector<HTMLDataListElement>(
-      `datalist.fv-suggestions[target="#${input.id}"] option:hover`
+      `datalist.fv-suggestions[target="#${input.id}"] option:hover`,
     );
     if (no) return;
     datalist.style.display = "none";
@@ -162,7 +157,7 @@ export function inputSuggestion(
   });
   const addActive = function () {
     const selected = document.querySelector<HTMLDataListElement>(
-      "datalist.fv-suggestions option.active"
+      "datalist.fv-suggestions option.active",
     );
     if (selected) selected.classList.remove("active");
     if (currentFocus >= datalist.options.length) currentFocus = 0;
@@ -172,20 +167,18 @@ export function inputSuggestion(
   };
   const simulateScroll = function () {
     currentFocus = currentFocus <= -1 ? 0 : currentFocus;
-    currentFocus =
-      currentFocus > datalist.options.length - 1
-        ? datalist.options.length - 1
-        : currentFocus;
+    currentFocus = Math.min(currentFocus, datalist.options.length - 1);
     const c = Math.floor(
-      parseInt(datalist.style.maxHeight, 10) / datalist.options[0].offsetHeight
+      Number.parseInt(datalist.style.maxHeight, 10) /
+        datalist.options[0].offsetHeight,
     );
     datalist.scrollTo(
       0,
-      datalist.options[0].offsetHeight * (currentFocus - c + 1)
+      datalist.options[0].offsetHeight * (currentFocus - c + 1),
     );
   };
   input.after(datalist);
-  input.setAttribute("data-fv-suggestions", "");
+  input.dataset.fvSuggestions = "";
   new ResizeObserver(() => {
     datalist.style.width = `${input.getBoundingClientRect().width}px`;
   }).observe(input);
@@ -197,7 +190,7 @@ export function inputSuggestion(
  * @param {Options} options Validation options
  */
 export function passwordInfo(input: HTMLInputElement, options: Options): void {
-  if (input.hasAttribute("data-fv-password_info")) return;
+  if (Object.hasOwn(input.dataset, "fvPassword_info")) return;
   if (input.type != "password") return;
   const container = document.createElement("div");
   const additionalClass = options.passwordInfoClass ?? "";
@@ -214,12 +207,12 @@ export function passwordInfo(input: HTMLInputElement, options: Options): void {
 <div class="strength-bar"></div>`;
   container.innerHTML = content;
   input.after(container);
-  input.setAttribute("data-fv-password_info", "");
+  input.dataset.fvPassword_info = "";
   const strengthBar = document.querySelector<HTMLDivElement>(
-      `div.fv-password[target="#${input.id}"] div.strength-bar`
+      `div.fv-password[target="#${input.id}"] div.strength-bar`,
     ) as HTMLDivElement,
     strength = document.querySelector<HTMLDivElement>(
-      `div.fv-password[target="#${input.id}"] div.strength-text`
+      `div.fv-password[target="#${input.id}"] div.strength-text`,
     ) as HTMLDivElement;
   input.addEventListener("blur", function () {
     container.style.display = "none";
@@ -231,12 +224,12 @@ export function passwordInfo(input: HTMLInputElement, options: Options): void {
       "strong",
       "normal",
       "weak",
-      "very-weak"
+      "very-weak",
     );
     strength.innerHTML = "";
     document
       .querySelectorAll<HTMLDivElement>(
-        `div.fv-password[target="#${input.id}"] div.condition`
+        `div.fv-password[target="#${input.id}"] div.condition`,
       )
       .forEach((condition) => {
         condition.classList.remove("check", "no-check");
@@ -248,7 +241,7 @@ export function passwordInfo(input: HTMLInputElement, options: Options): void {
     ["UC", "LC", "SC", "NC", "L"].forEach((c) => {
       document
         .querySelector<HTMLDivElement>(
-          `div.fv-password[target="#${input.id}"] div.condition.${c}`
+          `div.fv-password[target="#${input.id}"] div.condition.${c}`,
         )
         ?.classList.add(checkList.includes(c) ? "check" : "no-check");
     });
@@ -275,10 +268,10 @@ export function passwordInfo(input: HTMLInputElement, options: Options): void {
         strengthBar.classList.add("very-weak");
         break;
     }
-    input.setAttribute("data-fv-password_strength", strengthLevel.toString());
+    input.dataset.fvPassword_strength = strengthLevel.toString();
     const left =
-      (parseFloat(window.getComputedStyle(input).width) -
-        parseFloat(window.getComputedStyle(container).width)) /
+      (Number.parseFloat(globalThis.getComputedStyle(input).width) -
+        Number.parseFloat(globalThis.getComputedStyle(container).width)) /
       2;
     container.style.marginLeft = `${left}px`;
   });
@@ -291,7 +284,7 @@ export function passwordInfo(input: HTMLInputElement, options: Options): void {
  */
 export function fieldHelpMessage(
   field: ValidationField,
-  message: string
+  message: string,
 ): void {
   const span = document.createElement("span"),
     name = field.getAttribute("name");
@@ -300,14 +293,14 @@ export function fieldHelpMessage(
   span.setAttribute("for", name);
   span.textContent = message;
   span.style.display = "none";
-  if (field.hasAttribute("data-fv-suggestions")) {
+  if (Object.hasOwn(field.dataset, "fvSuggestions")) {
     const dt = document.querySelector<HTMLDataListElement>(
-      `datalist.fv-suggestions[target="#${field.id}"]`
+      `datalist.fv-suggestions[target="#${field.id}"]`,
     ) as HTMLDataListElement;
     dt.after(span);
-  } else if (field.hasAttribute("data-fv-password_info")) {
+  } else if (Object.hasOwn(field.dataset, "fvPassword_info")) {
     const pi = document.querySelector<HTMLDivElement>(
-      `div.fv-password[target="#${field.id}`
+      `div.fv-password[target="#${field.id}`,
     ) as HTMLDivElement;
     pi.after(span);
   } else field.after(span);
@@ -323,7 +316,7 @@ export function fieldHelpMessage(
 function getFieldParent(
   field: ValidationField,
   form: HTMLFormElement,
-  options: Options
+  options: Options,
 ): HTMLElement | null {
   let parent: HTMLElement | null = null;
   const p = field.closest<HTMLElement>(options.parentField.trim());
@@ -344,12 +337,12 @@ function getInvalidMessage(
   field: ValidationField,
   validator: Validator | AsyncValidator,
   options: Options,
-  language: Lang
+  language: Lang,
 ): string {
   let message = field.getAttribute(
     `${options.fieldInvalidMessageAttribute}-${
       validator.messageKey ?? validator.name
-    }`
+    }`,
   );
   if (!message) {
     message = field.getAttribute(options.fieldInvalidMessageAttribute);
@@ -368,12 +361,12 @@ function getInvalidMessage(
 function getValidMessage(
   field: ValidationField,
   validator: Validator | AsyncValidator,
-  options: Options
+  options: Options,
 ): string {
   let message = field.getAttribute(
     `${options.fieldValidMessageAttribute}-${
       validator.messageKey ?? validator.name
-    }`
+    }`,
   );
   if (!message) {
     message = field.getAttribute(options.fieldValidMessageAttribute);
@@ -393,7 +386,7 @@ export function setStyles(
   field: ValidationField,
   form: HTMLFormElement,
   options: Options,
-  valid_invalid: boolean
+  valid_invalid: boolean,
 ): void {
   let fieldClass: string,
     fieldRemove: string,
@@ -446,25 +439,25 @@ export function setStyles(
 export function removeStyles(
   field: ValidationField,
   form: HTMLFormElement,
-  options: Options
+  options: Options,
 ): void {
   document
     .querySelectorAll<ValidationField>(`[name=${field.name}]`)
     .forEach((f) => {
-      f.classList.remove(options.invalidClass);
-      f.classList.remove(options.validClass);
+      f.classList.remove(options.invalidClass, options.validClass);
       const parent = getFieldParent(f, form, options);
       if (parent) {
-        parent.classList.remove("Valid");
-        parent.classList.remove("Invalid");
+        parent.classList.remove("Valid", "Invalid");
       }
       const name = ["checkbox", "radio"].includes(field.type)
         ? field.id
         : field.name;
       const label = document.querySelector(`label[for=${name}]`);
       if (label) {
-        label.classList.remove(options.validLabelClass);
-        label.classList.remove(options.invalidLabelClass);
+        label.classList.remove(
+          options.validLabelClass,
+          options.invalidLabelClass,
+        );
       }
     });
 }
@@ -486,7 +479,7 @@ function setInlineMessage(
   configuration: Configuration,
   language: Lang,
   valid_invalid: boolean,
-  validator: Validator | AsyncValidator
+  validator: Validator | AsyncValidator,
 ): void {
   const span = document.createElement("span"),
     parent = getFieldParent(field, form, options),
@@ -510,11 +503,15 @@ function setInlineMessage(
   span.innerText = message;
   span.style.display = "block";
   if (parent) {
-    parent.insertAdjacentElement("beforeend", span);
+    parent.append(span);
   } else {
     field.after(span);
   }
-  triggerMessageCallback(valid_invalid, options, form, field, message);
+  if (valid_invalid && options.validMessageCallback) {
+    options.validMessageCallback(form, field, message, options);
+  } else if (!valid_invalid && options.invalidMessageCallback) {
+    options.invalidMessageCallback(form, field, message, options);
+  }
 }
 
 /**
@@ -534,13 +531,8 @@ function setTopMessage(
   configuration: Configuration,
   language: Lang,
   valid_invalid: boolean,
-  validator: Validator | AsyncValidator
+  validator: Validator | AsyncValidator,
 ): void {
-  let message: string;
-  const fieldName =
-    form
-      .querySelector<HTMLLabelElement>(`label[for="${field.name}"]`)
-      ?.textContent.trim() ?? field.name;
   const validView = options.topMessagesTemplate
       .replace("{topMessagesClass}", options.topMessagesClass)
       .replace("{formID}", form.id)
@@ -553,38 +545,101 @@ function setTopMessage(
       .replace("{title}", language.invalidTitle)
       .replace("{valid_invalid}", options.invalidMessagesClass)
       .replace("{vi}", "invalid");
-  if (valid_invalid) {
-    message = getValidMessage(field, validator, options);
-    configuration.validMessages[form.id][fieldName] = message;
-  } else {
-    message = getInvalidMessage(field, validator, options, language);
-    configuration.invalidMessages[form.id][fieldName] = message;
-  }
-  let validMessages = "",
-    invalidMessages = "";
+  const validMessages = valid_invalid
+      ? validTopMessages(field, form, options, configuration, validator)
+      : "",
+    invalidMessages = valid_invalid
+      ? ""
+      : invalidTopMessages(
+          field,
+          form,
+          options,
+          configuration,
+          language,
+          validator,
+        );
+  if (!valid_invalid && invalidMessages.length > 0)
+    form.insertAdjacentHTML(
+      "afterbegin",
+      invalidView.replace("{fields&messagesList}", invalidMessages),
+    );
+  if (valid_invalid && validMessages.length > 0)
+    form.insertAdjacentHTML(
+      "afterbegin",
+      validView.replace("{fields&messagesList}", validMessages),
+    );
+}
+
+/**
+ * Prepare the list of valid top messages
+ * @param {ValidationField} field The validated field
+ * @param {HTMLFormElement} form The validated field parent form
+ * @param {Options} options Validation options
+ * @param {Configuration} configuration Validation configuration
+ * @param {(Validator | AsyncValidator)} validator The validator
+ * @returns {string} The list of valid messages
+ */
+function validTopMessages(
+  field: ValidationField,
+  form: HTMLFormElement,
+  options: Options,
+  configuration: Configuration,
+  validator: Validator | AsyncValidator,
+): string {
+  const fieldName =
+    form
+      .querySelector<HTMLLabelElement>(`label[for="${field.name}"]`)
+      ?.textContent.trim() ?? field.name;
+  const message = getValidMessage(field, validator, options);
+  configuration.validMessages[form.id][fieldName] = message;
+  let validMessages = "";
   for (const key in configuration.validMessages[form.id]) {
     if (configuration.validMessages[form.id][key].trim().length > 0)
       validMessages += `<li for="${key}"><strong>${key}</strong> ${
         configuration.validMessages[form.id][key]
       }</li>`;
   }
+  if (options.validMessageCallback) {
+    options.validMessageCallback(form, field, message, options);
+  }
+  return validMessages;
+}
+
+/**
+ * Prepare the list of invalid top messages
+ * @param {ValidationField} field The validated field
+ * @param {HTMLFormElement} form The validated field parent form
+ * @param {Options} options Validation options
+ * @param {Configuration} configuration Validation configuration
+ * @param {Lang} language Form Validator language
+ * @param {(Validator | AsyncValidator)} validator The validator
+ * @returns {string} The list of invalid messages
+ */
+function invalidTopMessages(
+  field: ValidationField,
+  form: HTMLFormElement,
+  options: Options,
+  configuration: Configuration,
+  language: Lang,
+  validator: Validator | AsyncValidator,
+): string {
+  const fieldName =
+    form
+      .querySelector<HTMLLabelElement>(`label[for="${field.name}"]`)
+      ?.textContent.trim() ?? field.name;
+  const message = getInvalidMessage(field, validator, options, language);
+  configuration.invalidMessages[form.id][fieldName] = message;
+  let invalidMessages = "";
   for (const key in configuration.invalidMessages[form.id]) {
     if (configuration.invalidMessages[form.id][key].length > 0)
       invalidMessages += `<li for="${key}"><strong>${key}</strong> ${
         configuration.invalidMessages[form.id][key]
       }</li>`;
   }
-  if (!valid_invalid && invalidMessages.length > 0)
-    form.insertAdjacentHTML(
-      "afterbegin",
-      invalidView.replace("{fields&messagesList}", invalidMessages)
-    );
-  else if (valid_invalid && validMessages.length > 0)
-    form.insertAdjacentHTML(
-      "afterbegin",
-      validView.replace("{fields&messagesList}", validMessages)
-    );
-  triggerMessageCallback(valid_invalid, options, form, field, message);
+  if (options.invalidMessageCallback) {
+    options.invalidMessageCallback(form, field, message, options);
+  }
+  return invalidMessages;
 }
 
 /**
@@ -594,10 +649,10 @@ function setTopMessage(
  */
 export function removeInlineMessages(
   field: ValidationField,
-  form: HTMLFormElement
+  form: HTMLFormElement,
 ): void {
   const span = form.querySelector<HTMLSpanElement>(
-    `span[for-field="${field.name}"]`
+    `span[for-field="${field.name}"]`,
   );
   if (span) span.remove();
 }
@@ -609,13 +664,13 @@ export function removeInlineMessages(
  */
 function removeTopMessage(
   form: HTMLFormElement,
-  configuration: Configuration
+  configuration: Configuration,
 ): void {
   configuration.validMessages[form.id] = {};
   configuration.invalidMessages[form.id] = {};
   form
     .querySelectorAll<HTMLDivElement>(
-      "div[data-fv-top-valid],div[data-fv-top-invalid]"
+      "div[data-fv-top-valid],div[data-fv-top-invalid]",
     )
     .forEach((div) => div.remove());
 }
@@ -631,7 +686,7 @@ function syncTopMessages(
   field: ValidationField,
   form: HTMLFormElement,
   configuration: Configuration,
-  valid_invalid: boolean
+  valid_invalid: boolean,
 ): void {
   const fieldName =
     form
@@ -641,7 +696,7 @@ function syncTopMessages(
     delete configuration.validMessages[form.id][fieldName];
     form
       .querySelector<HTMLLIElement>(
-        `div[data-fv-top-valid] li[for="${fieldName}"]`
+        `div[data-fv-top-valid] li[for="${fieldName}"]`,
       )
       ?.remove();
   } else if (
@@ -651,7 +706,7 @@ function syncTopMessages(
     delete configuration.invalidMessages[form.id][fieldName];
     form
       .querySelector<HTMLLIElement>(
-        `div[data-fv-top-invalid] li[for="${fieldName}"]`
+        `div[data-fv-top-invalid] li[for="${fieldName}"]`,
       )
       ?.remove();
   }
@@ -684,10 +739,11 @@ export function setMessage(
   configuration: Configuration,
   language: Lang,
   valid_invalid: boolean,
-  validator: Validator | AsyncValidator
+  validator: Validator | AsyncValidator,
 ): void {
   const isHidden =
-    field.type == "hidden" || window.getComputedStyle(field).display == "none";
+    field.type == "hidden" ||
+    globalThis.getComputedStyle(field).display == "none";
   syncTopMessages(field, form, configuration, valid_invalid);
   removeInlineMessages(field, form);
   if (valid_invalid && options.validMessagesPosition == "top") {
@@ -699,7 +755,7 @@ export function setMessage(
       configuration,
       language,
       valid_invalid,
-      validator
+      validator,
     );
   } else if (
     valid_invalid &&
@@ -713,7 +769,7 @@ export function setMessage(
       configuration,
       language,
       valid_invalid,
-      validator
+      validator,
     );
   }
   if (!valid_invalid && options.invalidMessagesPosition == "top") {
@@ -725,7 +781,7 @@ export function setMessage(
       configuration,
       language,
       valid_invalid,
-      validator
+      validator,
     );
   } else if (
     !valid_invalid &&
@@ -739,7 +795,7 @@ export function setMessage(
       configuration,
       language,
       valid_invalid,
-      validator
+      validator,
     );
   }
 }
@@ -753,10 +809,10 @@ export function setMessage(
 export function formReset(
   form: HTMLFormElement,
   options: Options,
-  configuration: Configuration
+  configuration: Configuration,
 ): void {
   const fields = form.querySelectorAll<ValidationField>(
-    'textarea, select, input:not([type="submit"],[type="button"],[type="reset"])'
+    'textarea, select, input:not([type="submit"],[type="button"],[type="reset"])',
   );
   fields.forEach((field) => {
     removeStyles(field, form, options);
@@ -776,12 +832,12 @@ export function toggleHelpMessage(
   field: ValidationField,
   form: HTMLFormElement,
   options: Options,
-  show: boolean
+  show: boolean,
 ): void {
   if (options.showHelpMessagesOnFocus) {
     const name = field.name ?? "",
       span = form.querySelector<HTMLSpanElement>(
-        `span.fv-help_message[for="${name}"]`
+        `span.fv-help_message[for="${name}"]`,
       );
     if (span) {
       span.style.display = show ? "block" : "none";
@@ -796,11 +852,11 @@ export function toggleHelpMessage(
  */
 export function addValidStyleInAllFields(
   form: HTMLFormElement,
-  options: Options
+  options: Options,
 ): void {
   if (!options.addValidClassOnAll) return;
   const fields = form.querySelectorAll<ValidationField>(
-    `textarea:not(.${options.validClass}, .${options.invalidClass}), input:not(.${options.validClass}, .${options.invalidClass}), select:not(.${options.validClass}, .${options.invalidClass})`
+    `textarea:not(.${options.validClass}, .${options.invalidClass}), input:not(.${options.validClass}, .${options.invalidClass}), select:not(.${options.validClass}, .${options.invalidClass})`,
   );
   fields.forEach((field) => setStyles(field, form, options, true));
 }
